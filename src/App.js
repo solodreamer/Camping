@@ -2,6 +2,7 @@
 // import './App.css';
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
   // useEffect(() => {
@@ -27,7 +28,7 @@ function App() {
 
   // const submit = async(e) => {
   //   try {
-  //     const res = await axios.get(`http://172.105.209.194/api/test`);
+  //     const res = await axios.get(`http://172.105.209.194/api/test`); 
   //     console.log('我是fetch', res);
   //   } catch (err) {
 
@@ -36,8 +37,10 @@ function App() {
 
   return (
     <div className="App">
+      {/* 設定路由路徑 */}
       <Routes>
         <Route path="/login" element={<Login />}></Route>
+        <Route path="/register" element={<Register />}></Route>
       </Routes>
     </div>
   );

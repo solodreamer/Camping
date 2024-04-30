@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const [restostring, setRestostring] = useState("尚未登入");
 
   const [data, setData] = useState({
@@ -37,6 +39,10 @@ function Login() {
   const clear = (e) => {
     setRestostring("尚未登入");
   };
+
+  const register = (e) => {
+    navigate("/register");
+  }
 
   return (
     <div className="App">
@@ -74,7 +80,7 @@ function Login() {
               </label>
             </div>
             <Button onClick={clear}>清空</Button>
-            <Button>註冊</Button>
+            <Button onClick={register}>註冊</Button>
             <Button type="primary" onClick={login}>
               登入
             </Button>
