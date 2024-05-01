@@ -143,7 +143,7 @@ function Register() {
         rules={[
           {
             required: true,
-            message: "Please input your nickname!",
+            message: "請輸入姓名!",
             whitespace: true,
           },
         ]}
@@ -156,11 +156,11 @@ function Register() {
         rules={[
           {
             type: "email",
-            message: "The input is not valid E-mail!",
+            message: "這不是有效的 E-mail!",
           },
           {
             required: true,
-            message: "Please input your E-mail!",
+            message: "請輸入 E-mail!",
           },
         ]}
       >
@@ -173,7 +173,7 @@ function Register() {
         rules={[
           {
             required: true,
-            message: "Please input your password!",
+            message: "請輸入密碼!",
           },
         ]}
         hasFeedback
@@ -189,7 +189,7 @@ function Register() {
         rules={[
           {
             required: true,
-            message: "Please confirm your password!",
+            message: "請再次輸入密碼!",
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
@@ -197,7 +197,7 @@ function Register() {
                 return Promise.resolve();
               }
               return Promise.reject(
-                new Error("The new password that you entered do not match!")
+                new Error("密碼不相符!")
               );
             },
           }),
