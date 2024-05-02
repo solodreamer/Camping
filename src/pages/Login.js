@@ -55,13 +55,13 @@ function Login() {
             </div>
             <div className="mb-2">
               <label htmlFor="email" className="form-label w-100">
-                Email
+                電子郵件
                 <input
                   id="email"
                   className="form-control"
                   name="username"
                   type="email"
-                  placeholder="Email Address"
+                  placeholder="name@example.com"
                   onChange={handleChange}
                 />
               </label>
@@ -69,15 +69,15 @@ function Login() {
             <div className="mb-2">
               <label htmlFor="password" className="form-label w-100">
                 密碼
+                </label>
                 <input
                   type="password"
                   className="form-control"
                   name="password"
                   id="password"
-                  placeholder="name@example.com"
+                  placeholder=""
                   onChange={handleChange}
                 />
-              </label>
             </div>
             <Button onClick={clear}>清空</Button>
             <Button onClick={register}>註冊</Button>
