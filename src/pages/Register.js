@@ -58,7 +58,6 @@ function Register() {
         }}
       >
         <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
       </Select>
     </Form.Item>
   );
@@ -117,6 +116,56 @@ function Register() {
         <Input />
       </Form.Item>
       <Form.Item
+        name="gender"
+        label="性別"
+        rules={[
+          {
+            required: true,
+            message: "請選擇性別!",
+          },
+        ]}
+      >
+        <Select placeholder="select your gender">
+          <Option value="male">男性</Option>
+          <Option value="female">女性</Option>
+          <Option value="other">其他</Option>
+        </Select>
+      </Form.Item>
+      <Form.Item
+        name="birthday"
+        label="出生年月日"
+        rules={[
+          {
+            type: "email",
+            message: "這不是有效的 E-mail!",
+          },
+          {
+            required: true,
+            message: "請輸入 E-mail!",
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        name="phone"
+        label="手機號碼"
+        rules={[
+          {
+            required: true,
+            message: "請輸入手機號碼!",
+          },
+        ]}
+      >
+        <Input
+          addonBefore={prefixSelector}
+          style={{
+            width: "100%",
+          }}
+        />
+      </Form.Item>
+
+      <Form.Item
         name="email"
         label="電子郵件"
         rules={[
@@ -130,7 +179,7 @@ function Register() {
           },
         ]}
       >
-        <Input />
+        <Input placeholder="name@example.com" />
       </Form.Item>
 
       <Form.Item
@@ -171,42 +220,6 @@ function Register() {
       >
         <Input.Password />
       </Form.Item>
-
-      {/* <Form.Item
-        name="phone"
-        label="Phone Number"
-        rules={[
-          {
-            required: true,
-            message: "Please input your phone number!",
-          },
-        ]}
-      >
-        <Input
-          addonBefore={prefixSelector}
-          style={{
-            width: "100%",
-          }}
-        />
-      </Form.Item> */}
-
-      {/* <Form.Item
-        name="gender"
-        label="性別"
-        rules={[
-          {
-            required: true,
-            message: "Please select gender!",
-          },
-        ]}
-      >
-        <Select placeholder="select your gender">
-          <Option value="male">Male</Option>
-          <Option value="female">Female</Option>
-          <Option value="other">Other</Option>
-        </Select>
-      </Form.Item> */}
-
       {/* <Form.Item
         label="我不是機器人"
         extra="We must make sure that your are a human."
@@ -246,7 +259,7 @@ function Register() {
         {...tailFormItemLayout}
       >
         <Checkbox>
-          I have read the <a href="https://www.google.com.tw/search?sca_esv=2f61a0c390a4d1ff&hl=zh_TW&sxsrf=ACQVn0_Wd4cIsEjMvsZNRz2ZJ9THshCwig:1714557213328&q=%E6%88%90%E4%B9%8B%E5%85%A7&uds=AMwkrPsKdw6NKXr7dpE0DWrb0bVbvaFz8JK9bHkN7Gvo-32EhkV6M2t3sTxDwGjowy9_-7s2aVmfcKeWEeLc__srOhq8o-5Lo3tLH2QLtUGYU17pfNceOWbRkVI1ITevICUwBfTCxd6Zq-BhgpaJ-BdSW4FdxIu1QsgEYr3ftZa8lVSt0mC0S2Q1HKu6NByOW4ca8Itf8cIov6HbV99k98luZ9_MN9x3OlDKQ-vP4GAftju67ollEXKGgbEQhHkELKKRvcUSO2OJ&udm=2&prmd=ivsnbmtz&sa=X&ved=2ahUKEwiY15atl-yFAxUnQPUHHSZxBsYQtKgLegQIHRAB&biw=1920&bih=919&dpr=1#vhid=1LI9w5ut_vaNKM&vssid=mosaic">agreement</a>
+          我已詳細閱讀規章 <a href="https://www.google.com.tw/search?sca_esv=2f61a0c390a4d1ff&hl=zh_TW&sxsrf=ACQVn0_Wd4cIsEjMvsZNRz2ZJ9THshCwig:1714557213328&q=%E6%88%90%E4%B9%8B%E5%85%A7&uds=AMwkrPsKdw6NKXr7dpE0DWrb0bVbvaFz8JK9bHkN7Gvo-32EhkV6M2t3sTxDwGjowy9_-7s2aVmfcKeWEeLc__srOhq8o-5Lo3tLH2QLtUGYU17pfNceOWbRkVI1ITevICUwBfTCxd6Zq-BhgpaJ-BdSW4FdxIu1QsgEYr3ftZa8lVSt0mC0S2Q1HKu6NByOW4ca8Itf8cIov6HbV99k98luZ9_MN9x3OlDKQ-vP4GAftju67ollEXKGgbEQhHkELKKRvcUSO2OJ&udm=2&prmd=ivsnbmtz&sa=X&ved=2ahUKEwiY15atl-yFAxUnQPUHHSZxBsYQtKgLegQIHRAB&biw=1920&bih=919&dpr=1#vhid=1LI9w5ut_vaNKM&vssid=mosaic">agreement</a>
         </Checkbox>
       </Form.Item>
       <Form.Item {...tailFormItemLayout}>
