@@ -36,10 +36,6 @@ function Login() {
     }
   };
 
-  const clear = (e) => {
-    setRestostring("尚未登入");
-  };
-
   const register = (e) => {
     navigate("/register");
   }
@@ -79,7 +75,6 @@ function Login() {
                   onChange={handleChange}
                 />
             </div>
-            <Button onClick={clear}>清空</Button>
             <Button onClick={register}>註冊</Button>
             <Button type="primary" onClick={login}>
               登入
