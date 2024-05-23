@@ -3,7 +3,7 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Home from "./pages/Home";
+import HomePage from "./pages/HomePage";
 
 function App() {
   // useEffect(() => {
@@ -42,7 +42,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
-        <Route path="/home" element={<Home />}></Route>
+        <Route path="/homepage" element={<HomePage />}></Route>
       </Routes>
     </div>
   );
