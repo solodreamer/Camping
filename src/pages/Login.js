@@ -24,7 +24,7 @@ function Login() {
       const formData = new FormData();
       formData.append("username", data.username);
       formData.append("password", data.password);
-      const res = await axios.post(`http://172.105.209.194/v1/login`, formData);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/login`, data);
       console.log(res);
       console.log(restostring);
       const { token } = res.data;

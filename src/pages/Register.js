@@ -53,74 +53,26 @@ function Register() {
     console.log("Received values of form: ", values);
   };
 
-  /**手機號碼 */
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 120,
-        }}
-      >
-        <Option value="86">台灣+886</Option>
-      </Select>
-    </Form.Item>
-  );
-
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
     console.log(date, dateString);
   };
 
-  const monthOptions = [
-    {
-      value: "1",
-      label: "1月",
-    },
-    {
-      value: "2",
-      label: "2月",
-    },
-    {
-      value: "3",
-      label: "3月",
-    },
-    {
-      value: "4",
-      label: "4月",
-    },
-    {
-      value: "5",
-      label: "5月",
-    },
-    {
-      value: "6",
-      label: "6月",
-    },
-    {
-      value: "7",
-      label: "7月",
-    },
-    {
-      value: "8",
-      label: "8月",
-    },
-    {
-      value: "9",
-      label: "9月",
-    },
-    {
-      value: "10",
-      label: "10月",
-    },
-    {
-      value: "11",
-      label: "11月",
-    },
-    {
-      value: "12",
-      label: "12月",
-    },
-  ];
+  
+  // const save = async (e) => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("username", data.username);
+  //     formData.append("password", data.password);
+  //     const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`, formData);
+  //     console.log(res);
+  //     console.log(restostring);
+  //     const { token } = res.data;
+  //     setRestostring(token);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   return (
     <Form
@@ -167,24 +119,6 @@ function Register() {
         </Select>
       </Form.Item>
       <Form.Item name="birthday" label="出生年月日" rules={[{ required: true }]}>
-        <Space style={{display: 'flex'}}>
-          <Form.Item
-            name="year"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber placeholder="西元年" min={1911} />
-          </Form.Item>
-          <Form.Item name="month" rules={[{ required: true }]}>
-            <Select placeholder="月" options={monthOptions} />
-          </Form.Item>
-          <Form.Item name="day" rules={[{ required: true }]}>
-            <InputNumber placeholder="日" min={1} max={31} />
-          </Form.Item>
-        </Space>
         <DatePicker onChange={dateTimeOnChange} />
       </Form.Item>
       <Form.Item
