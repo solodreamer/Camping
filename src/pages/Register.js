@@ -49,30 +49,41 @@ const tailFormItemLayout = {
 
 function Register() {
   const [form] = Form.useForm();
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-  };
 
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
     console.log(date, dateString);
   };
 
-  
-  // const save = async (e) => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("username", data.username);
-  //     formData.append("password", data.password);
-  //     const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`, formData);
-  //     console.log(res);
-  //     console.log(restostring);
-  //     const { token } = res.data;
-  //     setRestostring(token);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+  const [data, setData] = useState({
+    name: "",
+    password: "",
+    password_confirm: "",
+    sex: "",
+    birthday: "",
+    verify_code: "",
+    phone: "",
+  });
+
+  /** 存檔 */
+  const onFinish = (values) => {
+    console.log("Received values of form: ", values);
+    save(values);
+  };
+
+  /** 呼叫存檔api */
+  const save = async (data) => {
+    try {
+      console.log('data:', data);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`, data);
+      console.log('saveapi:', res);
+      // console.log(restostring);
+      const { token } = res.data;
+      // setRestostring(token);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Form

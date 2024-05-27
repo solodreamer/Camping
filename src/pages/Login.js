@@ -21,9 +21,7 @@ function Login() {
 
   const login = async (e) => {
     try {
-      const formData = new FormData();
-      formData.append("username", data.username);
-      formData.append("password", data.password);
+      console.log('data:',data);
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/login`, data);
       console.log(res);
       console.log(restostring);
