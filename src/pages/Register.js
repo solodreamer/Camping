@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import axios from "axios";
 import {
   AutoComplete,
@@ -52,30 +53,24 @@ function Register() {
 
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
-    console.log(date, dateString);
+    console.log('生日:', date, dateString);
+    // form.setFieldsValue({ birthday: dateString });
   };
-
-  const [data, setData] = useState({
-    name: "",
-    password: "",
-    password_confirm: "",
-    sex: "",
-    birthday: "",
-    verify_code: "",
-    phone: "",
-  });
 
   /** 存檔 */
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-    save(values);
+    const inputValues = {
+      ...values,
+      'birthday': values['birthday'].format('YYYY-MM-DD')
+    }
+    console.log("Received values of form: ", inputValues);
+    save(inputValues);
   };
 
   /** 呼叫存檔api */
   const save = async (data) => {
     try {
-      console.log('data:', data);
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`, data);
+      const res = await axios.post(`/v1/auth/signup/using-phone`, data);
       console.log('saveapi:', res);
       // console.log(restostring);
       const { token } = res.data;
@@ -106,7 +101,7 @@ function Register() {
         rules={[
           {
             required: true,
-            message: "請輸入姓名",
+            message: "請輸入最少兩個字",
             whitespace: true,
           },
         ]}
@@ -114,7 +109,7 @@ function Register() {
         <Input />
       </Form.Item>
       <Form.Item
-        name="gender"
+        name="sex"
         label="性別"
         rules={[
           {
@@ -124,12 +119,12 @@ function Register() {
         ]}
       >
         <Select placeholder="select your gender">
-          <Option value="male">男性</Option>
-          <Option value="female">女性</Option>
-          <Option value="other">其他</Option>
+          <Option value="m">男性</Option>
+          <Option value="f">女性</Option>
+          <Option value="o">其他</Option>
         </Select>
       </Form.Item>
-      <Form.Item name="birthday" label="出生年月日" rules={[{ required: true }]}>
+      <Form.Item name="birthday" label="出生年月日" rules={[{ required: true, message: "請選擇生日" }]}>
         <DatePicker onChange={dateTimeOnChange} />
       </Form.Item>
       <Form.Item
@@ -143,24 +138,38 @@ function Register() {
         ]}
       >
         <Input
-          // addonBefore={prefixSelector}
           style={{
             width: "100%",
           }}
         />
       </Form.Item>
-
+      <Form.Item label="驗證碼">
+        <Row gutter={8}>
+          <Col span={12}>
+            <Form.Item
+              name="verify_code"
+              noStyle
+              rules={[{ required: true, message: '請輸入驗證碼' }]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Button type="primary">取得驗證碼</Button>
+          </Col>
+        </Row>
+      </Form.Item>
       <Form.Item
         name="email"
         label="電子郵件"
         rules={[
           {
             type: "email",
-            message: "這不是有效的 E-mail",
+            message: "這不是有效的電子郵件",
           },
           {
             required: true,
-            message: "請輸入 E-mail",
+            message: "請輸入電子郵件",
           },
         ]}
       >
@@ -178,11 +187,11 @@ function Register() {
         ]}
         hasFeedback
       >
-        <Input.Password />
+        <Input.Password placeholder="建議混合8個字以上的英文字母、數字和符號" />
       </Form.Item>
 
       <Form.Item
-        name="confirm"
+        name="password_confirm"
         label="再次確認密碼"
         dependencies={["password"]}
         hasFeedback
@@ -242,10 +251,14 @@ function Register() {
         {...tailFormItemLayout}
       >
         <Checkbox>
-          我已詳細閱讀並同意隱私政策與服務條款{" "}
-          <a href="https://www.google.com.tw/search?sca_esv=2f61a0c390a4d1ff&hl=zh_TW&sxsrf=ACQVn0_Wd4cIsEjMvsZNRz2ZJ9THshCwig:1714557213328&q=%E6%88%90%E4%B9%8B%E5%85%A7&uds=AMwkrPsKdw6NKXr7dpE0DWrb0bVbvaFz8JK9bHkN7Gvo-32EhkV6M2t3sTxDwGjowy9_-7s2aVmfcKeWEeLc__srOhq8o-5Lo3tLH2QLtUGYU17pfNceOWbRkVI1ITevICUwBfTCxd6Zq-BhgpaJ-BdSW4FdxIu1QsgEYr3ftZa8lVSt0mC0S2Q1HKu6NByOW4ca8Itf8cIov6HbV99k98luZ9_MN9x3OlDKQ-vP4GAftju67ollEXKGgbEQhHkELKKRvcUSO2OJ&udm=2&prmd=ivsnbmtz&sa=X&ved=2ahUKEwiY15atl-yFAxUnQPUHHSZxBsYQtKgLegQIHRAB&biw=1920&bih=919&dpr=1#vhid=1LI9w5ut_vaNKM&vssid=mosaic">
-            agreement
-          </a>
+          我已詳細閱讀並同意{" "}
+          <NavLink to='/privacyPolicy' style={{ color: 'blue', textDecoration: 'underline' }}>
+            隱私政策
+          </NavLink>
+          、
+          <NavLink to='/termService' style={{ color: 'blue', textDecoration: 'underline' }}>
+            服務條款
+          </NavLink>
         </Checkbox>
       </Form.Item>
       <Form.Item {...tailFormItemLayout}>

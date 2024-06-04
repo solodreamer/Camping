@@ -22,7 +22,7 @@ function Login() {
   const login = async (e) => {
     try {
       console.log('data:',data);
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/login`, data);
+      const res = await axios.post(`/v1/auth/login/using-password`, data);
       console.log(res);
       console.log(restostring);
       const { token } = res.data;

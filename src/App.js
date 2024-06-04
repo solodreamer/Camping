@@ -4,6 +4,8 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import HomePage from "./pages/HomePage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermService from "./pages/TermService";
 
 function App() {
   // useEffect(() => {
@@ -40,9 +42,11 @@ function App() {
     <div className="App">
       {/* 設定路由路徑 */}
       <Routes>
+        <Route path="" element={<HomePage />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
-        <Route path="/homepage" element={<HomePage />}></Route>
+        <Route path="/privacyPolicy" element={<PrivacyPolicy />}></Route>
+        <Route path="/termService" element={<TermService />}></Route>
       </Routes>
     </div>
   );
