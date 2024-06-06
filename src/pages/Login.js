@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { Button } from "antd";
+import { Button,Input } from "antd";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -8,7 +8,7 @@ function Login() {
   const [restostring, setRestostring] = useState("尚未登入");
 
   const [data, setData] = useState({
-    username: "",
+    login_id: "",
     password: "",
   });
 
@@ -22,13 +22,16 @@ function Login() {
   const login = async (e) => {
     try {
       console.log('data:',data);
-      const res = await axios.post(`/v1/auth/login/using-password`, data);
+      const res = await axios.post(`/v1/auth/login/using-password`, data, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        }
+      });
       console.log(res);
-      console.log(restostring);
-      const { token } = res.data;
-      setRestostring(token);
+      // console.log(restostring);
+      // const { token } = res.data;
+      // setRestostring(token);
       // axios.defaults.headers.common['Authorization'] = token;
-      // const productRes = await axios.get(`/v2/api/${process.env.REACT_APP_API_PATH}/admin/products/all`);
     } catch (err) {
       console.log(err);
     }
@@ -49,13 +52,12 @@ function Login() {
             </div>
             <div className="mb-2">
               <label htmlFor="email" className="form-label w-100">
-                電子郵件
-                <input
-                  id="email"
-                  className="form-control"
-                  name="username"
-                  type="email"
-                  placeholder="name@example.com"
+              手機號碼
+                <Input
+                  id="login_id"
+                  name="login_id"
+                  type="login_id"
+                  placeholder="請輸入您的手機號碼"
                   onChange={handleChange}
                 />
               </label>
@@ -63,15 +65,14 @@ function Login() {
             <div className="mb-2">
               <label htmlFor="password" className="form-label w-100">
                 密碼
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="password"
-                  id="password"
-                  placeholder=""
-                  onChange={handleChange}
-                />
+              </label>
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                placeholder=""
+                onChange={handleChange}
+              />
             </div>
             <Button onClick={register}>註冊</Button>
             <Button type="primary" onClick={login}>
