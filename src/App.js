@@ -1,11 +1,11 @@
 // import logo from './logo.svg';
 // import './App.css';
 import { Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import HomePage from "./pages/HomePage";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermService from "./pages/TermService";
+import Login from "./pages/login";
+import Register from "./pages/register";
+import HomePage from "./pages/homePage";
+import PrivacyPolicy from "./pages/privacyPolicy";
+import TermService from "./pages/termService";
 
 function App() {
   // useEffect(() => {

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Button,Input } from "antd";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
@@ -20,21 +20,26 @@ function Login() {
   };
 
   const login = async (e) => {
-    try {
+
+    // try {
       console.log('data:',data);
       const res = await axios.post(`/v1/auth/login/using-password`, data, {
         headers: {
           "Access-Control-Allow-Origin": "*",
         }
-      });
-      console.log(res);
+      }).then(response => {console.log('過程:'+response);})
+      .catch(error => {console.error('Error:', error);});
+      console.log('結果:'+res);
       // console.log(restostring);
       // const { token } = res.data;
       // setRestostring(token);
       // axios.defaults.headers.common['Authorization'] = token;
-    } catch (err) {
-      console.log(err);
-    }
+    // } catch (err) {
+    //   console.log(err);
+    // }
+    const result = axios.get(`https://jsonplaceholder.typicode.com/posts/1`).then(response => {console.log('過程:'+ response.data);})
+    console.log('結果:'+json.toString(result.data));
+
   };
 
   const register = (e) => {

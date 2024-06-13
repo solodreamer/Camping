@@ -15,8 +15,8 @@ import {
     Space,
     Modal
 } from "antd";
-import Login from "./Login.js"
-import Register from "./Register.js"
+import Login from "./login.js"
+import Register from "./register.js"
 
 
 function HomePage() {
