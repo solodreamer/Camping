@@ -70,7 +70,7 @@ function Register() {
   /** 呼叫存檔api */
   const save = async (data) => {
     try {
-      const res = await axios.post(`/v1/auth/signup/using-phone`, data);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`, data);
       console.log('saveapi:', res);
       // console.log(restostring);
       const { token } = res.data;

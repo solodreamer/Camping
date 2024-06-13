@@ -22,12 +22,8 @@ function Login() {
   const login = async (e) => {
 
     // try {
-      console.log('data:',data);
-      const res = await axios.post(`/v1/auth/login/using-password`, data, {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-        }
-      }).then(response => {console.log('過程:'+response);})
+      console.log('reqdata:',data);
+      const res = axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/login/using-password`, data).then(response => {console.log('過程:'+response);})
       .catch(error => {console.error('Error:', error);});
       console.log('結果:'+res);
       // console.log(restostring);
@@ -37,8 +33,7 @@ function Login() {
     // } catch (err) {
     //   console.log(err);
     // }
-    const result = axios.get(`https://jsonplaceholder.typicode.com/posts/1`).then(response => {console.log('過程:'+ response.data);})
-    console.log('結果:'+json.toString(result.data));
+    // console.log('結果:'+json.toString(result));
 
   };
 
