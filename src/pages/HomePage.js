@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
-    Button, Modal, Layout, Menu, theme
+    Button, Modal, Layout, Menu, theme,
+    Flex
 } from "antd";
 import { LoginOutlined, UserAddOutlined, HomeOutlined } from "@ant-design/icons"
 
@@ -17,6 +18,8 @@ const headerStyle = {
     paddingInline: 48,
     lineHeight: '64px',
     backgroundColor: '#4096ff',
+    top: 0,
+    position: 'sticky',
 };
 const contentStyle = {
     textAlign: 'center',
@@ -56,14 +59,8 @@ function HomePage() {
         <Layout >
             <Sider
                 style={siderStyle}
-                breakpoint="lg"
+                breakpoint="md"
                 collapsedWidth="0"
-                onBreakpoint={(broken) => {
-                    console.log(broken);
-                }}
-                onCollapse={(collapsed, type) => {
-                    console.log(collapsed, type);
-                }}
             >
                 <Menu mode="inline" theme="dark">
                     {items.map(item => (
