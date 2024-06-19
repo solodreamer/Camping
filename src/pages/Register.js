@@ -85,6 +85,25 @@ function Register() {
     // form.setFieldsValue({ birthday: dateString });
   };
 
+  const [phone, setPhone] = useState();
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    setPhone({ phone: value });
+    console.log(phone);
+  };
+  
+
+  /** 取得手機驗證碼api */
+  const getVerifyCode = async () => {
+    try{
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/send-verify-code`, phone)
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
+
   /** 存檔 */
   const onFinish = (values) => {
     const inputValues = {
@@ -92,14 +111,14 @@ function Register() {
       'birthday': values['birthday'].format('YYYY-MM-DD')
     }
     console.log("Received values of form: ", inputValues);
-    save(inputValues);
+    saveRegister(inputValues);
   };
 
   /** 呼叫存檔api */
-  const save = async (data) => {
+  const saveRegister = async (params) => {
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`, data);
-      console.log('saveapi:', res);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`, params);
+      console.log('saveRegisterApi:', res);
       // console.log(restostring);
       const { token } = res.data;
       // setRestostring(token);
@@ -171,7 +190,7 @@ function Register() {
             <Input
               style={{
                 width: "100%",
-              }}
+              }} onChange={handleChange} value={phone}
             />
           </Form.Item>
           <Form.Item label="驗證碼">
@@ -186,7 +205,7 @@ function Register() {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Button type="primary">取得驗證碼</Button>
+                <Button type="primary" onClick={getVerifyCode}>取得驗證碼</Button>
               </Col>
             </Row>
           </Form.Item>
