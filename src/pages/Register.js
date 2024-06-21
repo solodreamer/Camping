@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import {
@@ -10,39 +10,39 @@ import {
   Row,
   Select,
   DatePicker,
-  Layout
+  Layout,
 } from "antd";
 
 const { Header, Content, Footer } = Layout;
 const headerStyle = {
-  textAlign: 'center',
-  color: '#fff',
+  textAlign: "center",
+  color: "#fff",
   height: 64,
   paddingInline: 48,
-  lineHeight: '64px',
-  backgroundColor: '#4096ff',
+  lineHeight: "64px",
+  backgroundColor: "#4096ff",
 };
 const contentStyle = {
-  textAlign: 'center',
+  textAlign: "center",
   minHeight: 120,
-  lineHeight: '120px',
-  color: '#fff',
+  lineHeight: "120px",
+  color: "#fff",
 };
 const siderStyle = {
-  textAlign: 'center',
-  lineHeight: '120px',
-  color: '#fff',
+  textAlign: "center",
+  lineHeight: "120px",
+  color: "#fff",
 };
 const footerStyle = {
-  textAlign: 'center',
-  color: '#fff',
-  backgroundColor: '#4096ff',
+  textAlign: "center",
+  color: "#fff",
+  backgroundColor: "#4096ff",
 };
 const layoutStyle = {
   borderRadius: 8,
-  overflow: 'hidden',
-  width: 'calc(100% - 8px)',
-  maxWidth: 'calc(100% - 8px)',
+  overflow: "hidden",
+  width: "calc(100% - 8px)",
+  maxWidth: "calc(100% - 8px)",
 };
 const { Option } = Select;
 const formItemLayout = {
@@ -78,38 +78,57 @@ const tailFormItemLayout = {
 
 function Register() {
   const [form] = Form.useForm();
+  //驗證碼倒數
+  const [countdown, setCountdown] = useState(0);
+  //手機號碼
+  const [phone, setPhone] = useState();
 
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
-    console.log('生日:', date, dateString);
+    console.log("生日:", date, dateString);
     // form.setFieldsValue({ birthday: dateString });
   };
 
-  const [phone, setPhone] = useState();
 
   const handleChange = (e) => {
     const { value } = e.target;
     setPhone({ phone: value });
     console.log(phone);
   };
-  
+
+  useEffect(() => {
+    let timerId;
+    if (countdown > 0) {
+      timerId = setInterval(()=> {
+        setCountdown(countdown - 1);
+      }, 1000);
+      console.log(timerId);
+    }
+    return () => {
+      if (timerId) {
+        clearInterval(timerId);
+      }
+    };
+  }, [countdown]);
 
   /** 取得手機驗證碼api */
   const getVerifyCode = async () => {
-    try{
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/send-verify-code`, phone)
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/send-verify-code`, phone);
+      if(res.success === true) {
+        setCountdown(60);
+      }
     } catch (err) {
       console.log(err);
     }
-
-  }
+  };
 
   /** 存檔 */
   const onFinish = (values) => {
     const inputValues = {
       ...values,
-      'birthday': values['birthday'].format('YYYY-MM-DD')
-    }
+      birthday: values["birthday"].format("YYYY-MM-DD"),
+    };
     console.log("Received values of form: ", inputValues);
     saveRegister(inputValues);
   };
@@ -117,8 +136,11 @@ function Register() {
   /** 呼叫存檔api */
   const saveRegister = async (params) => {
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`, params);
-      console.log('saveRegisterApi:', res);
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`,
+        params
+      );
+      console.log("saveRegisterApi:", res);
       // console.log(restostring);
       const { token } = res.data;
       // setRestostring(token);
@@ -174,7 +196,11 @@ function Register() {
               <Option value="o">其他</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="birthday" label="出生年月日" rules={[{ required: true, message: "請選擇生日" }]}>
+          <Form.Item
+            name="birthday"
+            label="出生年月日"
+            rules={[{ required: true, message: "請選擇生日" }]}
+          >
             <DatePicker onChange={dateTimeOnChange} />
           </Form.Item>
           <Form.Item
@@ -190,7 +216,9 @@ function Register() {
             <Input
               style={{
                 width: "100%",
-              }} onChange={handleChange} value={phone}
+              }}
+              onChange={handleChange}
+              value={phone}
             />
           </Form.Item>
           <Form.Item label="驗證碼">
@@ -199,13 +227,15 @@ function Register() {
                 <Form.Item
                   name="verify_code"
                   noStyle
-                  rules={[{ required: true, message: '請輸入驗證碼' }]}
+                  rules={[{ required: true, message: "請輸入驗證碼" }]}
                 >
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Button type="primary" onClick={getVerifyCode}>取得驗證碼</Button>
+                <Button type="primary" onClick={getVerifyCode} disabled={countdown > 0}>
+                  { countdown > 0 ? `${countdown}秒後重新獲取` : '取得驗證碼'}
+                </Button>
               </Col>
             </Row>
           </Form.Item>
@@ -302,11 +332,17 @@ function Register() {
           >
             <Checkbox>
               我已詳細閱讀並同意{" "}
-              <NavLink to='/privacyPolicy' style={{ color: 'blue', textDecoration: 'underline' }}>
+              <NavLink
+                to="/privacyPolicy"
+                style={{ color: "blue", textDecoration: "underline" }}
+              >
                 隱私政策
               </NavLink>
               、
-              <NavLink to='/termService' style={{ color: 'blue', textDecoration: 'underline' }}>
+              <NavLink
+                to="/termService"
+                style={{ color: "blue", textDecoration: "underline" }}
+              >
                 服務條款
               </NavLink>
             </Checkbox>
@@ -320,7 +356,6 @@ function Register() {
       </Content>
       <Footer style={footerStyle}>Footer</Footer>
     </Layout>
-
   );
 }
 
