@@ -101,10 +101,12 @@ function Register() {
     if (countdown > 0) {
       timerId = setInterval(()=> {
         setCountdown(countdown - 1);
+        console.log('countdown',countdown);
       }, 1000);
-      console.log(timerId);
+      console.log('timerId1',timerId);
     }
     return () => {
+      console.log('timerId2',timerId);
       if (timerId) {
         clearInterval(timerId);
       }
@@ -115,11 +117,12 @@ function Register() {
   const getVerifyCode = async () => {
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/signup/send-verify-code`, phone);
-      if(res.success === true) {
-        setCountdown(60);
+      console.log("getVerifyCodeApi:", res);
+      if(res.data.success === true) {
+        setCountdown(30);
       }
     } catch (err) {
-      console.log(err);
+      console.log("getVerifyCodeApiErr:",err);
     }
   };
 
@@ -153,6 +156,11 @@ function Register() {
     <Layout style={layoutStyle}>
       <Header style={headerStyle}>Header</Header>
       <Content style={contentStyle}>
+      <img
+        src='https://images.unsplash.com/photo-1470246973918-29a93221c455?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGNhbXB8ZW58MHx8MHx8fDA%3D'
+        sizes="(min-width: 1335px) 410.6666666666667px, (min-width: 992px) calc(calc(100vw - 88px) / 3), (min-width: 768px) calc(calc(100vw - 64px) / 2), 100vw"
+        className='object-cover'
+      ></img>
         <Form
           {...formItemLayout}
           form={form}
@@ -292,31 +300,6 @@ function Register() {
           >
             <Input.Password />
           </Form.Item>
-          {/* <Form.Item
-        label="我不是機器人"
-        extra="We must make sure that your are a human."
-      >
-        <Row gutter={8}>
-          <Col span={12}>
-            <Form.Item
-              name="captcha"
-              noStyle
-              rules={[
-                {
-                  required: true,
-                  message: "Please input the captcha you got!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Button>Get captcha</Button>
-          </Col>
-        </Row>
-      </Form.Item> */}
-
           <Form.Item
             name="agreement"
             valuePropName="checked"
