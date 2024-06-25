@@ -12,38 +12,10 @@ import {
   DatePicker,
   Layout,
 } from "antd";
+import './register.css';
 
 const { Header, Content, Footer } = Layout;
-const headerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  height: 64,
-  paddingInline: 48,
-  lineHeight: "64px",
-  backgroundColor: "#4096ff",
-};
-const contentStyle = {
-  textAlign: "center",
-  minHeight: 120,
-  lineHeight: "120px",
-  color: "#fff",
-};
-const siderStyle = {
-  textAlign: "center",
-  lineHeight: "120px",
-  color: "#fff",
-};
-const footerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  backgroundColor: "#4096ff",
-};
-const layoutStyle = {
-  borderRadius: 8,
-  overflow: "hidden",
-  width: "calc(100% - 8px)",
-  maxWidth: "calc(100% - 8px)",
-};
+
 const { Option } = Select;
 const formItemLayout = {
   labelCol: {
@@ -121,7 +93,7 @@ function Register() {
       );
       console.log("getVerifyCodeApi:", res);
       if (res.data.success === true) {
-        setCountdown(30);
+        setCountdown(20);
       }
     } catch (err) {
       console.log("getVerifyCodeApiErr:", err);
@@ -155,21 +127,21 @@ function Register() {
   };
 
   return (
-    <Layout style={layoutStyle}>
-      <Header style={headerStyle}>Header</Header>
-      <Content style={contentStyle}>
-        <Row>
-          <Col md={0} lg={8}>
-            <div>
+    <Layout className="reg-layout">
+      <Header className="reg-header">Header</Header>
+      <Content className="reg-content ">
+        <Row className="reg-row">
+          <Col xs={0} sm={0} md={0} lg={8} xl={8} xxl={8}>
+            <div className="item1">
               <img
-                src="https://images.unsplash.com/photo-1470246973918-29a93221c455?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGNhbXB8ZW58MHx8MHx8fDA%3D"
+                src="https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGNhbXBmaXJlfGVufDB8fDB8fHww"
                 sizes="(min-width: 1335px) 410.6666666666667px, (min-width: 992px) calc(calc(100vw - 88px) / 3), (min-width: 768px) calc(calc(100vw - 64px) / 2), 100vw"
                 className="object-cover"
               ></img>
             </div>
           </Col>
-          <Col md={24} lg={16}>
-            <div>
+          <Col xs={24} sm={24} md={24} lg={16} xl={16} xxl={16}>
+            <div className="item2">
               <Form
                 {...formItemLayout}
                 form={form}
@@ -357,7 +329,7 @@ function Register() {
           </Col>
         </Row>
       </Content>
-      <Footer style={footerStyle}>Footer</Footer>
+      <Footer className="reg-footer">Footer</Footer>
     </Layout>
   );
 }
