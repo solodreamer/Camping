@@ -12,7 +12,7 @@ import {
   DatePicker,
   Layout,
 } from "antd";
-import './register.css';
+import "./register.css";
 
 const { Header, Content, Footer } = Layout;
 
@@ -53,7 +53,7 @@ function Register() {
   //驗證碼倒數
   const [countdown, setCountdown] = useState(0);
   //手機號碼
-  const [phone, setPhone] = useState();
+  const [phone, setPhone] = useState('');
 
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
@@ -61,12 +61,20 @@ function Register() {
     // form.setFieldsValue({ birthday: dateString });
   };
 
+  /**輸入手機號碼事件 */
   const handleChange = (e) => {
     const { value } = e.target;
     setPhone({ phone: value });
-    console.log(phone);
   };
 
+  const isVerifyCodeDisabled = () => {
+     if (countdown > 0) {return true}
+     else if (!phone || phone.phone.length < 10 || phone.phone.length > 10) { return true}
+
+    return false;
+  }
+
+  /**驗證碼重置倒數計時器 */
   useEffect(() => {
     let timerId;
     if (countdown > 0) {
@@ -74,10 +82,8 @@ function Register() {
         setCountdown(countdown - 1);
         console.log("countdown", countdown);
       }, 1000);
-      console.log("timerId1", timerId);
     }
     return () => {
-      console.log("timerId2", timerId);
       if (timerId) {
         clearInterval(timerId);
       }
@@ -157,6 +163,7 @@ function Register() {
                 scrollToFirstError
               >
                 <Form.Item
+                  hasFeedback
                   name="name"
                   label="姓名"
                   rules={[
@@ -170,6 +177,7 @@ function Register() {
                   <Input />
                 </Form.Item>
                 <Form.Item
+                  hasFeedback
                   name="sex"
                   label="性別"
                   rules={[
@@ -186,6 +194,7 @@ function Register() {
                   </Select>
                 </Form.Item>
                 <Form.Item
+                  hasFeedback
                   name="birthday"
                   label="出生年月日"
                   rules={[{ required: true, message: "請選擇生日" }]}
@@ -193,12 +202,17 @@ function Register() {
                   <DatePicker onChange={dateTimeOnChange} />
                 </Form.Item>
                 <Form.Item
+                  hasFeedback
                   name="phone"
                   label="手機號碼"
                   rules={[
                     {
                       required: true,
                       message: "請輸入手機號碼",
+                    },
+                    {
+                      len: 10,
+                      message: "請輸入10碼手機號碼",
                     },
                   ]}
                 >
@@ -210,10 +224,11 @@ function Register() {
                     value={phone}
                   />
                 </Form.Item>
-                <Form.Item label="驗證碼">
+                <Form.Item hasFeedback label="驗證碼">
                   <Row gutter={8}>
                     <Col span={12}>
                       <Form.Item
+                        hasFeedback
                         name="verify_code"
                         noStyle
                         rules={[{ required: true, message: "請輸入驗證碼" }]}
@@ -225,7 +240,7 @@ function Register() {
                       <Button
                         type="primary"
                         onClick={getVerifyCode}
-                        disabled={countdown > 0}
+                        disabled={isVerifyCodeDisabled()}
                       >
                         {countdown > 0
                           ? `${countdown}秒後重新獲取`
@@ -235,6 +250,7 @@ function Register() {
                   </Row>
                 </Form.Item>
                 <Form.Item
+                  hasFeedback
                   name="email"
                   label="電子郵件"
                   rules={[
@@ -252,6 +268,7 @@ function Register() {
                 </Form.Item>
 
                 <Form.Item
+                  hasFeedback
                   name="password"
                   label="密碼"
                   rules={[
@@ -259,17 +276,20 @@ function Register() {
                       required: true,
                       message: "請輸入密碼",
                     },
+                    {
+                      min: 8,
+                      message: "密碼至少8個字以上",
+                    },
                   ]}
-                  hasFeedback
                 >
                   <Input.Password placeholder="建議混合8個字以上的英文字母、數字和符號" />
                 </Form.Item>
 
                 <Form.Item
+                  hasFeedback
                   name="password_confirm"
                   label="再次確認密碼"
                   dependencies={["password"]}
-                  hasFeedback
                   rules={[
                     {
                       required: true,
@@ -288,6 +308,7 @@ function Register() {
                   <Input.Password />
                 </Form.Item>
                 <Form.Item
+                  hasFeedback
                   name="agreement"
                   valuePropName="checked"
                   rules={[
@@ -319,7 +340,7 @@ function Register() {
                     </NavLink>
                   </Checkbox>
                 </Form.Item>
-                <Form.Item {...tailFormItemLayout}>
+                <Form.Item hasFeedback {...tailFormItemLayout}>
                   <Button type="primary" htmlType="submit" size="large">
                     建立帳號
                   </Button>
