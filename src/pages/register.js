@@ -133,10 +133,7 @@ function Register() {
   };
 
   return (
-    <Layout className="reg-layout">
-      <Header className="reg-header">Header</Header>
-      <Content className="reg-content ">
-        <Row className="reg-row">
+        <Row className="reg-container">
           <Col xs={0} sm={0} md={0} lg={8} xl={8} xxl={8}>
             <div className="item1">
               <img
@@ -169,8 +166,13 @@ function Register() {
                   rules={[
                     {
                       required: true,
+                      min: 2,
                       message: "請輸入最少兩個字",
                       whitespace: true,
+                    },
+                    {
+                      max: 20,
+                      message: "已達最大字數!",
                     },
                   ]}
                 >
@@ -277,8 +279,8 @@ function Register() {
                       message: "請輸入密碼",
                     },
                     {
-                      min: 8,
-                      message: "密碼至少8個字以上",
+                      min: 6,
+                      message: "密碼至少6個字以上",
                     },
                   ]}
                 >
@@ -349,9 +351,6 @@ function Register() {
             </div>
           </Col>
         </Row>
-      </Content>
-      <Footer className="reg-footer">Footer</Footer>
-    </Layout>
   );
 }
 

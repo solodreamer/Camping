@@ -27,6 +27,13 @@
     background-color: #4096ff;
 }
 
+.reg-container{
+    flex-direction: row;
+    align-items: stretch;
+    height: 100%;
+    overflow: hidden;
+}
+
 .reg-row {
     display: flex;
     flex-direction: row;
@@ -42,8 +49,10 @@
 }
 
 .item2 {
-    margin: 10px;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0%;
+    overflow: hidden;
     background-color: #948e93;
 }
 
