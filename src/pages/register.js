@@ -58,7 +58,6 @@ function Register() {
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
     console.log("生日:", date, dateString);
-    // form.setFieldsValue({ birthday: dateString });
   };
 
   /**輸入手機號碼事件 */
@@ -99,7 +98,7 @@ function Register() {
       );
       console.log("getVerifyCodeApi:", res);
       if (res.data.success === true) {
-        setCountdown(20);
+        setCountdown(60);
       }
     } catch (err) {
       console.log("getVerifyCodeApiErr:", err);
@@ -112,8 +111,8 @@ function Register() {
       ...values,
       birthday: values["birthday"].format("YYYY-MM-DD"),
     };
-    console.log("Received values of form: ", inputValues);
-    saveRegister(inputValues);
+    console.log("註冊存檔前param: ", inputValues);
+    saveRegister(inputValues)
   };
 
   /** 呼叫存檔api */
@@ -122,13 +121,18 @@ function Register() {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`,
         params
-      );
-      console.log("saveRegisterApi:", res);
+      )
+      console.log("註冊存檔成功:", res);
+      if (res.data.token) {
+        window.location.href = '/build';
+      } else {
+        console.error('註冊存檔失敗:', res)
+      }
       // console.log(restostring);
-      const { token } = res.data;
+      // const { token } = res.data;
       // setRestostring(token);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error('註冊存檔失敗:', error.response.data);
     }
   };
 
@@ -284,7 +288,7 @@ function Register() {
                     },
                   ]}
                 >
-                  <Input.Password placeholder="建議混合8個字以上的英文字母、數字和符號" />
+                  <Input.Password placeholder="建議混合6個字以上的英文字母、數字和符號" />
                 </Form.Item>
 
                 <Form.Item

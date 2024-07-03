@@ -47,7 +47,7 @@ const layoutStyle = {
 const items = [
     { key: '1', label: '會員登入', icon: <LoginOutlined />, path: '/login' },
     { key: '2', label: '註冊', icon: <UserAddOutlined />, path: '/register' },
-    { key: '3', label: '首頁', icon: <HomeOutlined />, path: '/' }
+    { key: '3', label: '首頁', icon: <HomeOutlined />, path: '/build' }
 ]
 
 function HomePage() {
