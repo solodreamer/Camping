@@ -54,6 +54,7 @@ function Register() {
   const [countdown, setCountdown] = useState(0);
   //手機號碼
   const [phone, setPhone] = useState('');
+  const [checkEmail, setCheckEmail] = useState(false);
 
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
@@ -126,13 +127,17 @@ function Register() {
       if (res.data.token) {
         window.location.href = '/build';
       } else {
-        console.error('註冊存檔失敗:', res)
+        console.error('註冊存檔失敗:', res);
       }
       // console.log(restostring);
       // const { token } = res.data;
       // setRestostring(token);
     } catch (error) {
-      console.error('註冊存檔失敗:', error.response.data);
+      if (error.response.data.errors.email) {
+        setCheckEmail(true);
+        console.log('checkEmail:',checkEmail)
+      }
+      console.error('註冊存檔失敗:',error.response.data.errors);
     }
   };
 
@@ -268,6 +273,10 @@ function Register() {
                       required: true,
                       message: "請輸入電子郵件",
                     },
+                    {
+                      required: checkEmail,
+                      message: "請輸入123",
+                    }
                   ]}
                 >
                   <Input placeholder="name@example.com" />
