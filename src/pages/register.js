@@ -55,6 +55,7 @@ function Register() {
   //手機號碼
   const [phone, setPhone] = useState('');
   const [checkEmail, setCheckEmail] = useState(false);
+  const [validateStatus, setValidateStatus] = useState("");
 
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
@@ -135,11 +136,27 @@ function Register() {
     } catch (error) {
       if (error.response.data.errors.email) {
         setCheckEmail(true);
+        validateId('',error.response.data.errors);
         console.log('checkEmail:',checkEmail)
       }
       console.error('註冊存檔失敗:',error.response.data.errors);
     }
   };
+
+  const validateId = (rule, value) => {
+    if (checkEmail) {
+      // value return from API call.
+      setValidateStatus("error");
+      return Promise.reject(value);
+    } else {
+      setValidateStatus("success");
+      return Promise.resolve();
+    }
+    };
+
+  useEffect( () => {
+    form.validateFields(['email']);
+  }, [checkEmail]);
 
   return (
         <Row className="reg-container">
@@ -264,6 +281,7 @@ function Register() {
                   hasFeedback
                   name="email"
                   label="電子郵件"
+                  validateStatus={validateStatus}
                   rules={[
                     {
                       type: "email",
@@ -274,8 +292,7 @@ function Register() {
                       message: "請輸入電子郵件",
                     },
                     {
-                      required: checkEmail,
-                      message: "請輸入123",
+                      validator: validateId
                     }
                   ]}
                 >
