@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
-    Button, Modal, Layout, Menu, theme,
-    Flex
+    Button, Modal, Layout, Menu, theme, Flex, Col, Row
 } from "antd";
 import { LoginOutlined, UserAddOutlined, HomeOutlined } from "@ant-design/icons"
 
 import Login from "./login.js"
 import Register from "./register.js"
+import axios from "axios";
 
 const { Header, Content, Footer, Sider } = Layout;
 const headerStyle = {
@@ -37,12 +37,9 @@ const footerStyle = {
     color: '#fff',
     backgroundColor: '#4096ff',
 };
-const layoutStyle = {
-    borderRadius: 8,
-    overflow: 'hidden',
-    width: 'calc(50% - 8px)',
-    maxWidth: 'calc(50% - 8px)',
-};
+const item2 = {
+    backgroundcolor: '#0e1680'
+}
 
 const items = [
     { key: '1', label: '會員登入', icon: <LoginOutlined />, path: '/login' },
@@ -51,6 +48,24 @@ const items = [
 ]
 
 function HomePage() {
+
+    const [camps, setCamps] = useState([]);
+    const getCampList = async () => {
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
+            if (res.data.sucess === true) {
+                setCamps(res.data.data);
+            }
+            console.log("getCampList取得成功:", res);
+        } catch (err) {
+            console.log("getCampList取得異常:", err);
+        }
+    };
+
+    useEffect(() => {
+        getCampList();
+    }, [])
+
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -83,7 +98,7 @@ function HomePage() {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        內容
+                        {/* 內容
                         {
                             // indicates very long content
                             Array.from(
@@ -97,7 +112,21 @@ function HomePage() {
                                     </React.Fragment>
                                 ),
                             )
-                        }
+                        } */}
+                        <Row >
+                            {camps?.map((camp) => {
+                                return (
+                                    <Col xs={24} sm={12} md={8} lg={4} xl={4}>
+                                        <img
+                                            src={camp.CoverImage}
+                                            className='card-img-top rounded-0 object-cover'
+                                            height={300}
+                                        />
+                                        <h4 className='mb-0 mt-2'>{camp.Name}</h4>
+                                    </Col>
+                                );
+                            })}
+                        </Row>
                     </div>
                 </Content>
                 <Footer style={footerStyle}>
