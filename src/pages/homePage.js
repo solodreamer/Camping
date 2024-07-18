@@ -96,21 +96,6 @@ function HomePage() {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        {/* 內容
-                        {
-                            // indicates very long content
-                            Array.from(
-                                {
-                                    length: 10,
-                                },
-                                (_, index) => (
-                                    <React.Fragment key={index}>
-                                        {index % 20 === 0 && index ? 'more' : '...'}
-                                        <br />
-                                    </React.Fragment>
-                                ),
-                            )
-                        } */}
                         <Row gutter={{
                             xs: 8,
                             sm: 16,
@@ -119,14 +104,16 @@ function HomePage() {
                         }}>
                             {camps?.map((camp) => {
                                 return (
-                                    <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-                                        <img
-                                            src={camp.CoverImage}
-                                            alt={camp.Name}
-                                            className='card-img-top rounded-0 object-cover'
-                                            height={300}
-                                        />
-                                        <h4 className='mb-0 mt-2'>{camp.Name}</h4>
+                                    <Col xs={24} sm={12} md={8} lg={6} xl={6}>.
+                                        <div key={camp.id}>
+                                            <img
+                                                src={camp.coverImage}
+                                                alt={camp.name}
+                                                className='card-img-top rounded-0 object-cover'
+                                                height={300}
+                                            />
+                                            <h4 className='mb-0 mt-2'>{camp.name}</h4>
+                                        </div>
                                     </Col>
                                 );
                             })}

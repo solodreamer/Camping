@@ -149,7 +149,7 @@ function Register() {
 
       if (error.response.data.errors.email) {
         setCheckEmail(true);
-        setErrmessage(error.response.data.errors.email[0]);
+        setErrmessage(error.response.data.errors.email);
       }
       // if (error.response.data.errors.name) {
       //   setCheckName(true);
