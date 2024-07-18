@@ -6,8 +6,6 @@ import {
 } from "antd";
 import { LoginOutlined, UserAddOutlined, HomeOutlined } from "@ant-design/icons"
 
-import Login from "./login.js"
-import Register from "./register.js"
 import axios from "axios";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -53,10 +51,10 @@ function HomePage() {
     const getCampList = async () => {
         try {
             const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
-            if (res.data.sucess === true) {
+            if (res.data.success === true) {
                 setCamps(res.data.data);
             }
-            console.log("getCampList取得成功:", res);
+            console.log("getCampList取得成功:", camps);
         } catch (err) {
             console.log("getCampList取得異常:", err);
         }
@@ -87,13 +85,13 @@ function HomePage() {
             </Sider>
             <Layout>
                 <Header style={headerStyle}>
-                    頂部
+                    Go露營
                 </Header>
                 <Content style={contentStyle}>
                     <div
                         style={{
                             padding: 24,
-                            minHeight: 360,
+                            minHeight: 800,
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
                         }}
@@ -113,12 +111,18 @@ function HomePage() {
                                 ),
                             )
                         } */}
-                        <Row >
+                        <Row gutter={{
+                            xs: 8,
+                            sm: 16,
+                            md: 24,
+                            lg: 32,
+                        }}>
                             {camps?.map((camp) => {
                                 return (
-                                    <Col xs={24} sm={12} md={8} lg={4} xl={4}>
+                                    <Col xs={24} sm={12} md={8} lg={6} xl={6}>
                                         <img
                                             src={camp.CoverImage}
+                                            alt={camp.Name}
                                             className='card-img-top rounded-0 object-cover'
                                             height={300}
                                         />
