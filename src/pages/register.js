@@ -10,12 +10,11 @@ import {
   Row,
   Select,
   DatePicker,
-  Layout,
 } from "antd";
 import "./register.css";
 
-const { Header, Content, Footer } = Layout;
 const { Option } = Select;
+const dateFormat = 'YYYY-MM-DD'
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -122,7 +121,7 @@ function Register() {
   const onFinish = (values) => {
     const inputValues = {
       ...values,
-      birthday: values["birthday"].format("YYYY-MM-DD"),
+      // birthday: values["birthday"].format("YYYY-MM-DD"),
     };
     console.log("註冊存檔前param: ", inputValues);
     saveRegister(inputValues);
@@ -289,7 +288,7 @@ function Register() {
               label="出生年月日"
               rules={[{ required: true, message: "請選擇生日" }]}
             >
-              <DatePicker onChange={dateTimeOnChange} />
+              <DatePicker onChange={dateTimeOnChange} format={dateFormat}/>
             </Form.Item>
             <Form.Item
               hasFeedback
