@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  Row,
-  Select,
-  DatePicker,
-} from "antd";
+
+import { Button, Checkbox, Col, Form, Input, Row, Select, DatePicker,} from "antd";
+
 import "./register.css";
 
 const { Option } = Select;

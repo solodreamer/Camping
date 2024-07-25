@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import {Layout, Menu, theme, Col, Row, Divider, Typography, Select, DatePicker,} from "antd";
-import { LoginOutlined, UserAddOutlined, HomeOutlined,} from "@ant-design/icons";
-
 import dayjs from "dayjs";
 import axios from "axios";
+
+import { Layout, Menu, theme, Col, Row, Divider, Typography,} from "antd";
+import { LoginOutlined, UserAddOutlined, HomeOutlined,} from "@ant-design/icons";
+import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker} from '@ant-design/pro-components';
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title } = Typography;
-const { RangePicker } = DatePicker;
 
 // 日期格式
 const dateFormat = "YYYY-MM-DD";
@@ -24,7 +24,6 @@ const headerStyle = {
   lineHeight: "64px",
   backgroundColor: "#4096ff",
   top: 0,
-  position: "sticky",
 };
 const contentStyle = {
   textAlign: "center",
@@ -46,14 +45,16 @@ const footerStyle = {
 const menuItems = [
   { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
   { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
-  { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/build" },
+  { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
 ];
 
 //地區選單
 const locations = [
-  { value: "north", label: "北部" },
-  { value: "central", label: "中部" },
-  { value: "south", label: "南部" },
+  { value: 1, label: "北部" },
+  { value: 2, label: "中部" },
+  { value: 3, label: "南部" },
+  { value: 4, label: "東部" },
+  { value: 5, label: "離島" },
 ];
 
 
@@ -79,9 +80,6 @@ function HomePage() {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const onChange = (value) => {
-    console.log(value);
-  };
 
   return (
     <Layout>
@@ -98,21 +96,11 @@ function HomePage() {
         <Header style={headerStyle}>Go露營</Header>
         <Content style={contentStyle}>
           <div>
-            <Row>
-              <Col>
-                <Select options={locations} placeholder="選擇地區"></Select>
-              </Col>
-              <Col>
-                <RangePicker
-                  defaultValue={[
-                    dayjs("2015-01-01", dateFormat),
-                    dayjs("2015-01-01", dateFormat),
-                  ]}
-                  format={dateFormat}
-                />
-              </Col>
-              <Col></Col>
-            </Row>
+             <QueryFilter defaultCollapsed submitter>
+                <ProFormSelect name="select" label="選擇地區" options={locations}  placeholder="請選擇地區"/>
+                <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]}/>
+                <ProFormText name="status" label="營區名稱" placeholder="搜索..."/>
+             </QueryFilter>
           </div>
           <Typography>
             <div
