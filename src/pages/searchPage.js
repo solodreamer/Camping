@@ -4,16 +4,13 @@ import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import axios from "axios";
 
-import { Layout, Menu, theme, Col, Row, Divider, Typography,} from "antd";
+import { Layout, Menu, theme, Table} from "antd";
 import { LoginOutlined, UserAddOutlined, HomeOutlined,} from "@ant-design/icons";
 import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker} from '@ant-design/pro-components';
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
-const { Title } = Typography;
 
-// 日期格式
-const dateFormat = "YYYY-MM-DD";
 
 //style設定
 const headerStyle = {
@@ -58,7 +55,7 @@ const locations = [
 ];
 
 
-function HomePage() {
+function SearchPage() {
   const [camps, setCamps] = useState([]);
   const getCampList = async () => {
     try {
@@ -84,7 +81,7 @@ function HomePage() {
   const onSearch = async (values) => {
     await waitTime(2000);
     console.log(values);
-    window.location.href = "#/searchPage";
+    window.location.href = "#/login";
   };
 
   const waitTime = (time) => {
@@ -118,51 +115,7 @@ function HomePage() {
                 <ProFormText name="status" label="營區名稱" placeholder="搜索..."/>
              </QueryFilter>
           </div>
-          <Typography>
-            <div
-              style={{
-                padding: 24,
-                minHeight: 800, 
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-              }}
-            >
-              <Divider orientation="left" orientationMargin="0">
-                <Title level={2}>熱門營地</Title>
-              </Divider>
-              <Row
-                gutter={{
-                  xs: 8,
-                  sm: 16,
-                  md: 24,
-                  lg: 32,
-                }}
-              >
-                {camps?.map((camp) => {
-                  return (
-                    <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-                      .
-                      <div key={camp.id}>
-                        <img
-                          src={camp.coverImage}
-                          alt={camp.name}
-                          className="card-img-top rounded-0 object-cover"
-                          height={300}
-                        />
-                        <h4 className="mb-0 mt-2">{camp.name}</h4>
-                        <Link
-                          // to={`/product/${product.id}`}
-                          className="btn btn-outline-dark rounded-0 text-nowrap mt-2"
-                        >
-                          詳細資訊
-                        </Link>
-                      </div>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </div>
-          </Typography>
+          
         </Content>
         <Footer style={footerStyle}>
           Copyright ©{new Date().getFullYear()} Created by Go露營
@@ -172,4 +125,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default SearchPage;

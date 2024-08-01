@@ -6,6 +6,7 @@ import Register from "./pages/register";
 import HomePage from "./pages/homePage";
 import PrivacyPolicy from "./pages/privacyPolicy";
 import TermService from "./pages/termService";
+import SearchPage from "./pages/searchPage";
 
 function App() {
   // useEffect(() => {
@@ -47,6 +48,7 @@ function App() {
         <Route path="/register" element={<Register />}></Route>
         <Route path="/privacyPolicy" element={<PrivacyPolicy />}></Route>
         <Route path="/termService" element={<TermService />}></Route>
+        <Route path="/searchPage" element={<SearchPage />}></Route>
       </Routes>
     </div>
   );
