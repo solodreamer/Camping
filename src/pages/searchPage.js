@@ -4,13 +4,12 @@ import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import axios from "axios";
 
-import { Layout, Menu, theme, Table} from "antd";
+import { Layout, Menu, Table, Space, Tag, List} from "antd";
 import { LoginOutlined, UserAddOutlined, HomeOutlined,} from "@ant-design/icons";
-import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker} from '@ant-design/pro-components';
+import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker, ProList } from '@ant-design/pro-components';
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
-
 
 //style設定
 const headerStyle = {
@@ -56,7 +55,16 @@ const locations = [
 
 
 function SearchPage() {
+
+  /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
+
+  /** 初始化取得營地清單 */
+  useEffect(() => {
+    getCampList();
+  }, []);
+
+  /** 取得營地清單 */
   const getCampList = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
@@ -69,21 +77,13 @@ function SearchPage() {
     }
   };
 
-  useEffect(() => {
-    getCampList();
-  }, []);
-
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
   /** 特定條件查詢營區 */
   const onSearch = async (values) => {
     await waitTime(2000);
     console.log(values);
-    window.location.href = "#/login";
   };
 
+  /** settimeout */
   const waitTime = (time) => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -91,7 +91,6 @@ function SearchPage() {
       }, time);
     });
   };
-  
 
 
   return (
@@ -115,7 +114,53 @@ function SearchPage() {
                 <ProFormText name="status" label="營區名稱" placeholder="搜索..."/>
              </QueryFilter>
           </div>
-          
+          <ProList
+      rowKey="id"
+      headerTitle="基础列表"
+      dataSource={camps}
+      showActions="hover"
+      editable={{
+        onSave: async (key, record, originRow) => {
+          console.log(key, record, originRow);
+          return true;
+        },
+      }}
+      onDataSourceChange={setCamps}
+      metas={{
+        title: {
+          dataIndex: 'name',
+        },
+        avatar: {
+          dataIndex: 'coverImage',
+          editable: false,
+        },
+        description: {
+          dataIndex: 'desc',
+        },
+        subTitle: {
+          render: () => {
+            return (
+              <Space size={0}>
+                <Tag color="blue">Ant Design</Tag>
+                <Tag color="#5BD8A6">TechUI</Tag>
+              </Space>
+            );
+          },
+        },
+        actions: {
+          render: (text, row, index, action) => [
+            <a
+              onClick={() => {
+                action?.startEditable(row.id);
+              }}
+              key="link"
+            >
+              编辑
+            </a>,
+          ],
+        },
+      }}
+    />
         </Content>
         <Footer style={footerStyle}>
           Copyright ©{new Date().getFullYear()} Created by Go露營

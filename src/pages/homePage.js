@@ -59,7 +59,19 @@ const locations = [
 
 
 function HomePage() {
+
+  /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+
+  /** 初始化取得營地清單 */
+  useEffect(() => {
+    getCampList();
+  }, []);
+
+  /** 取得營地清單 */
   const getCampList = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
@@ -72,17 +84,10 @@ function HomePage() {
     }
   };
 
-  useEffect(() => {
-    getCampList();
-  }, []);
-
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
 
   /** 特定條件查詢營區 */
   const onSearch = async (values) => {
-    await waitTime(2000);
+    await waitTime(1000);
     console.log(values);
     window.location.href = "#/searchPage";
   };
@@ -95,8 +100,6 @@ function HomePage() {
     });
   };
   
-
-
   return (
     <Layout>
       <Sider style={siderStyle} breakpoint="md" collapsedWidth="0">
