@@ -4,12 +4,23 @@ import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import axios from "axios";
 
-import { Layout, Menu, Table, Space, Tag, List} from "antd";
-import { LoginOutlined, UserAddOutlined, HomeOutlined,} from "@ant-design/icons";
-import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker, ProList } from '@ant-design/pro-components';
+import { Layout, Menu, Table, Space, Tag, List, Card } from "antd";
+import {
+  LoginOutlined,
+  UserAddOutlined,
+  HomeOutlined,
+} from "@ant-design/icons";
+import {
+  QueryFilter,
+  ProFormSelect,
+  ProFormText,
+  ProFormDateRangePicker,
+  ProList,
+} from "@ant-design/pro-components";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
+const { Meta } = Card;
 
 //style設定
 const headerStyle = {
@@ -53,9 +64,7 @@ const locations = [
   { value: 5, label: "離島" },
 ];
 
-
 function SearchPage() {
-
   /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
 
@@ -92,7 +101,6 @@ function SearchPage() {
     });
   };
 
-
   return (
     <Layout>
       <Sider style={siderStyle} breakpoint="md" collapsedWidth="0">
@@ -108,59 +116,95 @@ function SearchPage() {
         <Header style={headerStyle}>Go露營</Header>
         <Content style={contentStyle}>
           <div>
-             <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
-                <ProFormSelect name="select" label="選擇地區" options={locations}  placeholder="請選擇地區"/>
-                <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]}/>
-                <ProFormText name="status" label="營區名稱" placeholder="搜索..."/>
-             </QueryFilter>
+            <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
+              <ProFormSelect
+                name="select"
+                label="選擇地區"
+                options={locations}
+                placeholder="請選擇地區"
+              />
+              <ProFormDateRangePicker
+                name="dateRange"
+                label="日期"
+                initialValue={[dayjs(), dayjs()]}
+              />
+              <ProFormText
+                name="status"
+                label="營區名稱"
+                placeholder="搜索..."
+              />
+            </QueryFilter>
           </div>
+            {/* <List
+              grid={{gutter:16,
+                xs: 1,
+                sm: 2,
+                md: 2,
+                lg: 3,
+                xl: 4,
+                xxl: 4}}
+              dataSource={camps}
+              renderItem={(item) => (
+                <List.Item>
+                  <Card hoverable cover={<img alt="營區圖片" src= {item.coverImage}/> }>
+                    <Meta title={<a href="https://ant.design">{item.name}</a>} description={item.desc} />
+                  </Card>
+                  </List.Item>
+              )}
+              /> */}
           <ProList
-      rowKey="id"
-      headerTitle="基础列表"
-      dataSource={camps}
-      showActions="hover"
-      editable={{
-        onSave: async (key, record, originRow) => {
-          console.log(key, record, originRow);
-          return true;
-        },
-      }}
-      onDataSourceChange={setCamps}
-      metas={{
-        title: {
-          dataIndex: 'name',
-        },
-        avatar: {
-          dataIndex: 'coverImage',
-          editable: false,
-        },
-        description: {
-          dataIndex: 'desc',
-        },
-        subTitle: {
-          render: () => {
-            return (
-              <Space size={0}>
-                <Tag color="blue">Ant Design</Tag>
-                <Tag color="#5BD8A6">TechUI</Tag>
-              </Space>
-            );
-          },
-        },
-        actions: {
-          render: (text, row, index, action) => [
-            <a
-              onClick={() => {
-                action?.startEditable(row.id);
-              }}
-              key="link"
-            >
-              编辑
-            </a>,
-          ],
-        },
-      }}
-    />
+            rowKey="id"
+            headerTitle="搜尋結果"
+            dataSource={camps}
+            showActions="hover"
+            editable={{
+              onSave: async (key, record, originRow) => {
+                console.log(key, record, originRow);
+                return true;
+              },
+            }}
+            onDataSourceChange={setCamps}
+            metas={{
+              title: {
+                dataIndex: "name",
+              },
+              description: {
+                dataIndex: "desc",
+              },
+              subTitle: {
+                render: () => {
+                  return (
+                    <Space size={0}>
+                      <Tag color="blue">Ant Design</Tag>
+                      <Tag color="#5BD8A6">TechUI</Tag>
+                    </Space>
+                  );
+                },
+              },
+              actions: {
+                render: (text, row, index, action) => [
+                  <a
+                    onClick={() => {
+                      action?.startEditable(row.id);
+                    }}
+                    key="link"
+                  >
+                    線上訂位
+                  </a>,
+                ],
+              },
+              extra: {
+                render: (text, row, index, action) => (
+                  <img
+                    width={272}
+                    alt="logo"
+                    src={row.coverImage}
+                    // src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+                  />
+                ),
+              },
+            }}
+          />
         </Content>
         <Footer style={footerStyle}>
           Copyright ©{new Date().getFullYear()} Created by Go露營

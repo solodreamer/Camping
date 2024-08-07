@@ -148,7 +148,7 @@ function HomePage() {
                       <div key={camp.id}>
                         <img
                           src={camp.coverImage}
-                          alt={camp.name}
+                          alt="營區圖片"
                           className="card-img-top rounded-0 object-cover"
                           height={300}
                         />
