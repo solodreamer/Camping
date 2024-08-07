@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import dayjs from "dayjs";
 import axios from "axios";
@@ -65,18 +65,26 @@ const locations = [
 ];
 
 function SearchPage() {
+  const location = useLocation();
+  const { region,dateRange,name } = location.state || {}; // 確保 location.state 存在
   /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
 
   /** 初始化取得營地清單 */
   useEffect(() => {
-    getCampList();
+    // const params = new URLSearchParams(location.search);
+    searchCampList();
   }, []);
 
-  /** 取得營地清單 */
-  const getCampList = async () => {
+  /** 依條件查詢營地 */
+  const searchCampList = async () => {
+    // const region = params.get("region");
+    // const dateRange = params.get("dateRange");
+    // const name = params.get("name");
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
+      // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?region=${region}&name=${name}`);
+      // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?`, {params: { region,name }});
       if (res.data.success === true) {
         setCamps(res.data.data);
       }
@@ -113,12 +121,13 @@ function SearchPage() {
         </Menu>
       </Sider>
       <Layout>
-        <Header style={headerStyle}>Go露營</Header>
+        <Header style={headerStyle}>Go露營
+        </Header>
         <Content style={contentStyle}>
           <div>
             <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
               <ProFormSelect
-                name="select"
+                name="region"
                 label="選擇地區"
                 options={locations}
                 placeholder="請選擇地區"
@@ -129,13 +138,13 @@ function SearchPage() {
                 initialValue={[dayjs(), dayjs()]}
               />
               <ProFormText
-                name="status"
-                label="營區名稱"
+                name="name"
+                label="關鍵字"
                 placeholder="搜索..."
               />
             </QueryFilter>
           </div>
-            {/* <List
+            <List
               grid={{gutter:16,
                 xs: 1,
                 sm: 2,
@@ -151,60 +160,7 @@ function SearchPage() {
                   </Card>
                   </List.Item>
               )}
-              /> */}
-          <ProList
-            rowKey="id"
-            headerTitle="搜尋結果"
-            dataSource={camps}
-            showActions="hover"
-            editable={{
-              onSave: async (key, record, originRow) => {
-                console.log(key, record, originRow);
-                return true;
-              },
-            }}
-            onDataSourceChange={setCamps}
-            metas={{
-              title: {
-                dataIndex: "name",
-              },
-              description: {
-                dataIndex: "desc",
-              },
-              subTitle: {
-                render: () => {
-                  return (
-                    <Space size={0}>
-                      <Tag color="blue">Ant Design</Tag>
-                      <Tag color="#5BD8A6">TechUI</Tag>
-                    </Space>
-                  );
-                },
-              },
-              actions: {
-                render: (text, row, index, action) => [
-                  <a
-                    onClick={() => {
-                      action?.startEditable(row.id);
-                    }}
-                    key="link"
-                  >
-                    線上訂位
-                  </a>,
-                ],
-              },
-              extra: {
-                render: (text, row, index, action) => (
-                  <img
-                    width={272}
-                    alt="logo"
-                    src={row.coverImage}
-                    // src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                  />
-                ),
-              },
-            }}
-          />
+              />
         </Content>
         <Footer style={footerStyle}>
           Copyright ©{new Date().getFullYear()} Created by Go露營

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import dayjs from "dayjs";
 import axios from "axios";
@@ -60,6 +60,7 @@ const locations = [
 
 function HomePage() {
 
+  const navigate = useNavigate();
   /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
   const {
@@ -88,8 +89,9 @@ function HomePage() {
   /** 特定條件查詢營區 */
   const onSearch = async (values) => {
     await waitTime(1000);
-    console.log(values);
-    window.location.href = "#/searchPage";
+    const queryString = new URLSearchParams(values).toString();
+    console.log("homepage準備要傳的資料",queryString);
+    navigate(`/searchPage?${queryString}`);
   };
 
   const waitTime = (time) => {
@@ -116,9 +118,9 @@ function HomePage() {
         <Content style={contentStyle}>
           <div>
              <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
-                <ProFormSelect name="select" label="選擇地區" options={locations}  placeholder="請選擇地區"/>
+                <ProFormSelect name="region" label="選擇地區" options={locations}  placeholder="請選擇地區"/>
                 <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]}/>
-                <ProFormText name="status" label="營區名稱" placeholder="搜索..."/>
+                <ProFormText name="name" label="關鍵字" placeholder="搜索..."/>
              </QueryFilter>
           </div>
           <Typography>
