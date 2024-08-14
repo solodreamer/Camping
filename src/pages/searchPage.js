@@ -66,9 +66,12 @@ const locations = [
 
 function SearchPage() {
   const location = useLocation();
-  const { region,dateRange,name } = location.state || {}; // 確保 location.state 存在
+  const locationState = location.state || {}; // 確保 location.state 存在
   /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
+  const [region, setRegion] = useState(locationState.region || []);
+  const [dateRange, setDateRange] = useState(locationState.dateRange || []);
+  const [name, setName] = useState(locationState.name || []);
 
   /** 初始化取得營地清單 */
   useEffect(() => {
@@ -131,6 +134,7 @@ function SearchPage() {
                 label="選擇地區"
                 options={locations}
                 placeholder="請選擇地區"
+                initialValue={region}
               />
               <ProFormDateRangePicker
                 name="dateRange"
