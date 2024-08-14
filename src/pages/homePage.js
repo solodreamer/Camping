@@ -118,9 +118,9 @@ function HomePage() {
         <Content style={contentStyle}>
           <div>
              <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
-                <ProFormSelect name="region" label="選擇地區" options={locations}  placeholder="請選擇地區"/>
+                <ProFormSelect name="region" label="選擇地區" options={locations}  placeholder="請選擇地區" defaultValue={2}/>
                 <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]}/>
-                <ProFormText name="name" label="關鍵字" placeholder="搜索..."/>
+                <ProFormText name="name" label="關鍵字" placeholder="搜索..." defaultValue="123"/>
              </QueryFilter>
           </div>
           <Typography>

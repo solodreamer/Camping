@@ -134,7 +134,7 @@ function SearchPage() {
                 label="選擇地區"
                 options={locations}
                 placeholder="請選擇地區"
-                initialValue={region}
+                defaultValue={region}
               />
               <ProFormDateRangePicker
                 name="dateRange"
