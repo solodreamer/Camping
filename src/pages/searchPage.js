@@ -66,24 +66,36 @@ const locations = [
 
 function SearchPage() {
   const location = useLocation();
-  const locationState = location.state || {}; // 確保 location.state 存在
   /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
-  const [region, setRegion] = useState(locationState.region || []);
-  const [dateRange, setDateRange] = useState(locationState.dateRange || []);
-  const [name, setName] = useState(locationState.name || []);
+  /** 查詢條件設定 */
+  const [region, setRegion] = useState([]);
+  const [startDate, setStartDate] = useState([]);
+  const [endDate, setEndDate] = useState([]);
+  const [name, setName] = useState([]);
 
   /** 初始化取得營地清單 */
   useEffect(() => {
-    // const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(location.search);
+    initSearchParams(params);
     searchCampList();
-  }, []);
+  }, [location.search]);
+
+  /** 初始化查詢條件 */
+  const initSearchParams = (values) => {
+    setRegion(Number(values.get("region")));
+    const dateRange = values.get("dateRange");
+    if (dateRange) {
+      const [start, end] =dateRange.split(",");
+      setStartDate(dayjs(start));
+      setEndDate(dayjs(end));
+    }
+    setName(values.get("name"));
+  }
 
   /** 依條件查詢營地 */
   const searchCampList = async () => {
-    // const region = params.get("region");
-    // const dateRange = params.get("dateRange");
-    // const name = params.get("name");
+
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
       // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?region=${region}&name=${name}`);
@@ -134,17 +146,18 @@ function SearchPage() {
                 label="選擇地區"
                 options={locations}
                 placeholder="請選擇地區"
-                defaultValue={region}
+                value={region}
               />
               <ProFormDateRangePicker
                 name="dateRange"
                 label="日期"
-                initialValue={[dayjs(), dayjs()]}
+                value={[dayjs(startDate), dayjs(endDate)]}
               />
               <ProFormText
                 name="name"
                 label="關鍵字"
                 placeholder="搜索..."
+                value={name}
               />
             </QueryFilter>
           </div>

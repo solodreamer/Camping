@@ -60,17 +60,23 @@ const locations = [
 
 function HomePage() {
 
+  /** 未釐清變數 */
   const navigate = useNavigate();
-  /** 營地清單設定 */
-  const [camps, setCamps] = useState([]);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  /** 營地清單設定 */
+  const [camps, setCamps] = useState([]);
 
   /** 初始化取得營地清單 */
   useEffect(() => {
     getCampList();
   }, []);
+
+  /** 營區清單log */
+  useEffect(() => {
+    console.log("getCampList 更新了:", camps);
+  }, [camps]);
 
   /** 取得營地清單 */
   const getCampList = async () => {
@@ -79,12 +85,10 @@ function HomePage() {
       if (res.data.success === true) {
         setCamps(res.data.data);
       }
-      console.log("getCampList取得成功:", camps);
     } catch (err) {
       console.log("getCampList取得異常:", err);
     }
   };
-
 
   /** 特定條件查詢營區 */
   const onSearch = async (values) => {
@@ -94,6 +98,7 @@ function HomePage() {
     navigate(`/searchPage?${queryString}`);
   };
 
+  /** 等待時間 */
   const waitTime = (time) => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -101,6 +106,11 @@ function HomePage() {
       }, time);
     });
   };
+
+  const disabledDate = (current) => {
+    return current && current < dayjs().endOf("day");
+  }
+  
   
   return (
     <Layout>
@@ -118,9 +128,9 @@ function HomePage() {
         <Content style={contentStyle}>
           <div>
              <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
-                <ProFormSelect name="region" label="選擇地區" options={locations}  placeholder="請選擇地區" defaultValue={2}/>
-                <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]}/>
-                <ProFormText name="name" label="關鍵字" placeholder="搜索..." defaultValue="123"/>
+                <ProFormSelect name="region" label="選擇地區" options={locations}  placeholder="請選擇地區"/>
+                <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]} fieldProps={{disabledDate}}/>
+                <ProFormText name="name" label="關鍵字" placeholder="搜索..."/>
              </QueryFilter>
           </div>
           <Typography>
@@ -145,7 +155,7 @@ function HomePage() {
               >
                 {camps?.map((camp) => {
                   return (
-                    <Col xs={24} sm={12} md={8} lg={6} xl={6}>
+                    <Col key={camp.id} xs={24} sm={12} md={8} lg={6} xl={6}>
                       .
                       <div key={camp.id}>
                         <img
