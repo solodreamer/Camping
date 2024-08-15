@@ -78,7 +78,6 @@ function SearchPage() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     initSearchParams(params);
-    searchCampList();
   }, [location.search]);
 
   /** 初始化查詢條件 */
@@ -93,12 +92,19 @@ function SearchPage() {
     setName(values.get("name"));
   }
 
+    /** 依條件查詢營地 */
+    useEffect(() => {
+      if (region && name) {
+        searchCampList();
+      }
+    }, [region, name]);
+
   /** 依條件查詢營地 */
   const searchCampList = async () => {
 
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
-      // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?region=${region}&name=${name}`);
+      // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?region=${region}&name=${name}`);
       // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?`, {params: { region,name }});
       if (res.data.success === true) {
         setCamps(res.data.data);
@@ -123,6 +129,12 @@ function SearchPage() {
       }, time);
     });
   };
+
+  /** 是否禁用日期 */
+  const disabledDate = (current) => {
+    return current && current < dayjs().endOf("day");
+  }
+    
 
   return (
     <Layout>
@@ -152,6 +164,7 @@ function SearchPage() {
                 name="dateRange"
                 label="日期"
                 value={[dayjs(startDate), dayjs(endDate)]}
+                fieldProps={{disabledDate, inputReadOnly: true}}
               />
               <ProFormText
                 name="name"

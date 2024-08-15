@@ -107,6 +107,7 @@ function HomePage() {
     });
   };
 
+  /** 是否禁用日期 */
   const disabledDate = (current) => {
     return current && current < dayjs().endOf("day");
   }
@@ -129,7 +130,7 @@ function HomePage() {
           <div>
              <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
                 <ProFormSelect name="region" label="選擇地區" options={locations}  placeholder="請選擇地區"/>
-                <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]} fieldProps={{disabledDate}}/>
+                <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]} fieldProps={{disabledDate, inputReadOnly: true}} />
                 <ProFormText name="name" label="關鍵字" placeholder="搜索..."/>
              </QueryFilter>
           </div>
