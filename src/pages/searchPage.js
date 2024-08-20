@@ -82,14 +82,22 @@ function SearchPage() {
 
   /** 初始化查詢條件 */
   const initSearchParams = (values) => {
-    setRegion(Number(values.get("region")));
+    console.log('[search初始化查詢條件-地區]',Number(values.get("region")));
+    console.log('[search初始化查詢條件-日期]',values.get("dateRange"));
+    console.log('[search初始化查詢條件-關鍵字]',values.get("name"));
+
+    if (values.get("region")){
+      setRegion(Number(values.get("region")));
+    }
     const dateRange = values.get("dateRange");
     if (dateRange) {
       const [start, end] =dateRange.split(",");
       setStartDate(dayjs(start));
       setEndDate(dayjs(end));
     }
-    setName(values.get("name"));
+    if (values.get("name")){
+      setName(values.get("name"));
+    }
   }
 
     /** 依條件查詢營地 */
@@ -108,6 +116,8 @@ function SearchPage() {
       // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?`, {params: { region,name }});
       if (res.data.success === true) {
         setCamps(res.data.data);
+      } else {
+        setCamps([]);
       }
       console.log("getCampList取得成功:", camps);
     } catch (err) {
