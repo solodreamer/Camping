@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import axios from "axios";
 
-import { Layout, Menu, Table, Space, Tag, List, Card } from "antd";
+import { Layout, Menu, List, Card, Empty } from "antd";
 import {
   LoginOutlined,
   UserAddOutlined,
@@ -100,35 +100,60 @@ function SearchPage() {
     }
   }
 
-    /** 依條件查詢營地 */
-    useEffect(() => {
-      if (region && name) {
-        searchCampList();
-      }
-    }, [region, name]);
+  /** 初始化依條件查詢營地 */
+  useEffect(() => {
+    if (region && name) {
+      searchCampList({region, name});
+    }
+  }, [region, name]);
 
   /** 依條件查詢營地 */
-  const searchCampList = async () => {
+  const searchCampList = async (param) => {
 
     try {
-      // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?region=${region}&name=${name}`);
+      setCamps([]);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?region=${param.region}&name=${param.name}`);
       // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?`, {params: { region,name }});
-      if (res.data.success === true) {
+      if (res.data.success === true && res.data.data) {
         setCamps(res.data.data);
       } else {
         setCamps([]);
       }
-      console.log("getCampList取得成功:", camps);
     } catch (err) {
-      console.log("getCampList取得異常:", err);
+      console.log("[營區清單取得異常]:", err);
     }
   };
 
+  /** 營區清單hooks */
+  useEffect(() => {
+    console.log('[營區清單變化]',camps);
+  }, [camps]);
+
+  /** 地區 hooks */
+  useEffect(() => {
+    console.log('[地區變化]',region);
+  }, [region]);
+
+  /** 關鍵字 hooks */
+  useEffect(() => {
+    console.log('[關鍵字變化]',name);
+  }, [name]);  
+
+  /** startDate hooks */
+  useEffect(() => {
+    console.log('[開始日期變化]',startDate);
+  }, [startDate]);
+
+  /** endDate hooks */
+  useEffect(() => {
+    console.log('[結束日期變化]',endDate);
+  }, [endDate]);
+
   /** 特定條件查詢營區 */
   const onSearch = async (values) => {
-    await waitTime(2000);
-    console.log(values);
+    await waitTime(1000);
+    searchCampList({region ,name});
+    console.log("[查詢條件]",region, startDate, endDate, name);
   };
 
   /** settimeout */
@@ -193,6 +218,7 @@ function SearchPage() {
                 xl: 4,
                 xxl: 4}}
               dataSource={camps}
+              locale={{emptyText: "查無資料"}}
               renderItem={(item) => (
                 <List.Item>
                   <Card hoverable cover={<img alt="營區圖片" src= {item.coverImage}/> }>
