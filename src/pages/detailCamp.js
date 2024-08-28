@@ -105,7 +105,7 @@ function DetailCamp() {
                   items={blockContent.data.campPhotos.map(item => {return {src: item.img}})}
                 >
                   <Image
-                    width={200}
+                    width={400}
                     src={blockContent.data.campPhotos[0].img}
                     fallback={Empty.PRESENTED_IMAGE_DEFAULT}
                   />
