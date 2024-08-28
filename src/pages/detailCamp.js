@@ -1,46 +1,49 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate, NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
-import { Layout, Menu, theme, Col, Row, Divider, Typography, } from "antd";
-import { LoginOutlined, UserAddOutlined, HomeOutlined, } from "@ant-design/icons";
+import { Layout, Menu, Col, Row, Divider, Typography, Image, Empty } from "antd";
+import {
+  LoginOutlined,
+  UserAddOutlined,
+  HomeOutlined,
+} from "@ant-design/icons";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
 const blockContent = {
-  "data": {
-    "campPhotos": [
+  data: {
+    campPhotos: [
       {
         "img": "https://fakeimg.pl/350x350/?text=Hello"
       },
       {
         "img": "https://fakeimg.pl/350x350/?text=abs"
-      }
+      },
     ],
-    "campsite": [
+    campsite: [
       {
-        "areaName": "A區",
-        "campId": 1,
-        "holidayPrice": 1500,
-        "surfaceType": 1,
-        "weekdayPrice": 800
+        areaName: "A區",
+        campId: 1,
+        holidayPrice: 1500,
+        surfaceType: 1,
+        weekdayPrice: 800,
       },
       {
-        "areaName": "B區",
-        "campId": 1,
-        "holidayPrice": 1200,
-        "surfaceType": 2,
-        "weekdayPrice": 700
-      }
+        areaName: "B區",
+        campId: 1,
+        holidayPrice: 1200,
+        surfaceType: 2,
+        weekdayPrice: 700,
+      },
     ],
-    "coverImage": "mountain.jpg",
-    "desc": "Explore the mountains",
-    "fullAddress": "台中市南區福興街600號",
-    "id": 1,
-    "name": "Mountain Adventure Camp",
-    "ownerId": 1
+    coverImage: "mountain.jpg",
+    desc: "Explore the mountains",
+    fullAddress: "台中市南區福興街600號",
+    id: 1,
+    name: "Mountain Adventure Camp",
+    ownerId: 1,
   },
-  "success": true
+  success: true,
 };
 
 // 日期格式
@@ -79,11 +82,7 @@ const menuItems = [
   { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
 ];
 
-
-
 function DetailCamp() {
-
-
   return (
     <Layout>
       <Sider style={siderStyle} breakpoint="md" collapsedWidth="0">
@@ -99,51 +98,34 @@ function DetailCamp() {
         <Header style={headerStyle}>Go露營</Header>
         <Content style={contentStyle}>
           <Typography>
-            <Title>{blockContent.data.name}</Title>
-
-            <Paragraph>
-              {blockContent.data.desc}
-            </Paragraph>
-
-            <Paragraph>
-              <Text strong underline>
-              <NavLink to="https://www.google.com/maps">
-              {blockContent.data.fullAddress}
-              </NavLink>
-              </Text>
-            </Paragraph>
-
             <Divider />
+            <Row>
+              <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                <Image.PreviewGroup
+                  items={blockContent.data.campPhotos.map(item => {return {src: item.img}})}
+                >
+                  <Image
+                    width={200}
+                    src={blockContent.data.campPhotos[0].img}
+                    fallback={Empty.PRESENTED_IMAGE_DEFAULT}
+                  />
+                </Image.PreviewGroup>
+              </Col>
+              <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                <Title>{blockContent.data.name}</Title>
 
-            <Title level={2}>Guidelines and Resources</Title>
+                <Paragraph>{blockContent.data.desc}</Paragraph>
 
-            <Paragraph>
-              We supply a series of design principles, practical patterns and high quality design resources
-              (<Text code>Sketch</Text> and <Text code>Axure</Text>), to help people create their product
-              prototypes beautifully and efficiently.
-            </Paragraph>
-
-            <Paragraph>
-              <ul>
-                <li>
-                  <Link href="/docs/spec/proximity">Principles</Link>
-                </li>
-                <li>
-                  <Link href="/docs/spec/overview">Patterns</Link>
-                </li>
-                <li>
-                  <Link href="/docs/resources">Resource Download</Link>
-                </li>
-              </ul>
-            </Paragraph>
-
-            <Paragraph>
-              Press <Text keyboard>Esc</Text> to exit...
-            </Paragraph>
-
+                <Paragraph>
+                  <Text strong underline>
+                    <NavLink to="https://www.google.com/maps">
+                      {blockContent.data.fullAddress}
+                    </NavLink>
+                  </Text>
+                </Paragraph>
+              </Col>
+            </Row>
             <Divider />
-
-
           </Typography>
         </Content>
         <Footer style={footerStyle}>
