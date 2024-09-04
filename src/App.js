@@ -7,7 +7,7 @@ import HomePage from "./pages/homePage";
 import PrivacyPolicy from "./pages/privacyPolicy";
 import TermService from "./pages/termService";
 import SearchPage from "./pages/searchPage";
-import DetailCamp from "./pages/detailCamp";
+import CampDetail from "./pages/campDetail";
 
 function App() {
 
@@ -21,7 +21,7 @@ function App() {
         <Route path="/privacyPolicy" element={<PrivacyPolicy />}></Route>
         <Route path="/termService" element={<TermService />}></Route>
         <Route path="/searchPage" element={<SearchPage />}></Route>
-        <Route path="/detailCamp" element={<DetailCamp />}></Route>
+        <Route path="/campDetail/:id" element={<CampDetail />}></Route>
       </Routes>
     </div>
   );

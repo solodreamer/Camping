@@ -157,7 +157,6 @@ function HomePage() {
                 {camps?.map((camp) => {
                   return (
                     <Col key={camp.id} xs={24} sm={12} md={8} lg={6} xl={6}>
-                      .
                       <div key={camp.id}>
                         <img
                           src={camp.coverImage}
@@ -167,7 +166,7 @@ function HomePage() {
                         />
                         <h4 className="mb-0 mt-2">{camp.name}</h4>
                         <Link
-                          // to={`/product/${product.id}`}
+                          to={`/campDetail/${camp.id}`}
                           className="btn btn-outline-dark rounded-0 text-nowrap mt-2"
                         >
                           詳細資訊

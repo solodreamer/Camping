@@ -15,8 +15,9 @@ import {
   ProFormSelect,
   ProFormText,
   ProFormDateRangePicker,
-  ProList,
 } from "@ant-design/pro-components";
+
+import "./searchPage.css";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
@@ -82,37 +83,38 @@ function SearchPage() {
 
   /** 初始化查詢條件 */
   const initSearchParams = (values) => {
-    console.log('[search初始化查詢條件-地區]',Number(values.get("region")));
-    console.log('[search初始化查詢條件-日期]',values.get("dateRange"));
-    console.log('[search初始化查詢條件-關鍵字]',values.get("name"));
+    console.log("[search初始化查詢條件-地區]", Number(values.get("region")));
+    console.log("[search初始化查詢條件-日期]", values.get("dateRange"));
+    console.log("[search初始化查詢條件-關鍵字]", values.get("name"));
 
-    if (values.get("region")){
+    if (values.get("region")) {
       setRegion(Number(values.get("region")));
     }
     const dateRange = values.get("dateRange");
     if (dateRange) {
-      const [start, end] =dateRange.split(",");
+      const [start, end] = dateRange.split(",");
       setStartDate(dayjs(start));
       setEndDate(dayjs(end));
     }
-    if (values.get("name")){
+    if (values.get("name")) {
       setName(values.get("name"));
     }
-  }
+  };
 
   /** 初始化依條件查詢營地 */
   useEffect(() => {
     if (region && name) {
-      searchCampList({region, name});
+      searchCampList({ region, name });
     }
   }, [region, name]);
 
   /** 依條件查詢營地 */
   const searchCampList = async (param) => {
-
     try {
       setCamps([]);
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?region=${param.region}&name=${param.name}`);
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/v1/camps?region=${param.region}&name=${param.name}`
+      );
       // const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps?`, {params: { region,name }});
       if (res.data.success === true && res.data.data) {
         setCamps(res.data.data);
@@ -126,34 +128,34 @@ function SearchPage() {
 
   /** 營區清單hooks */
   useEffect(() => {
-    console.log('[營區清單變化]',camps);
+    console.log("[營區清單變化]", camps);
   }, [camps]);
 
   /** 地區 hooks */
   useEffect(() => {
-    console.log('[地區變化]',region);
+    console.log("[地區變化]", region);
   }, [region]);
 
   /** 關鍵字 hooks */
   useEffect(() => {
-    console.log('[關鍵字變化]',name);
-  }, [name]);  
+    console.log("[關鍵字變化]", name);
+  }, [name]);
 
   /** startDate hooks */
   useEffect(() => {
-    console.log('[開始日期變化]',startDate);
+    console.log("[開始日期變化]", startDate);
   }, [startDate]);
 
   /** endDate hooks */
   useEffect(() => {
-    console.log('[結束日期變化]',endDate);
+    console.log("[結束日期變化]", endDate);
   }, [endDate]);
 
   /** 特定條件查詢營區 */
   const onSearch = async (values) => {
     await waitTime(1000);
-    searchCampList({region ,name});
-    console.log("[查詢條件]",region, startDate, endDate, name);
+    searchCampList({ region, name });
+    console.log("[查詢條件]", region, startDate, endDate, name);
   };
 
   /** settimeout */
@@ -168,8 +170,7 @@ function SearchPage() {
   /** 是否禁用日期 */
   const disabledDate = (current) => {
     return current && current < dayjs().endOf("day");
-  }
-    
+  };
 
   return (
     <Layout>
@@ -183,8 +184,7 @@ function SearchPage() {
         </Menu>
       </Sider>
       <Layout>
-        <Header style={headerStyle}>Go露營
-        </Header>
+        <Header style={headerStyle}>Go露營</Header>
         <Content style={contentStyle}>
           <div>
             <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
@@ -199,7 +199,7 @@ function SearchPage() {
                 name="dateRange"
                 label="日期"
                 value={[dayjs(startDate), dayjs(endDate)]}
-                fieldProps={{disabledDate, inputReadOnly: true}}
+                fieldProps={{ disabledDate, inputReadOnly: true }}
               />
               <ProFormText
                 name="name"
@@ -209,24 +209,25 @@ function SearchPage() {
               />
             </QueryFilter>
           </div>
-            <List
-              grid={{gutter:16,
-                xs: 1,
-                sm: 2,
-                md: 2,
-                lg: 3,
-                xl: 4,
-                xxl: 4}}
-              dataSource={camps}
-              locale={{emptyText: "查無資料"}}
-              renderItem={(item) => (
-                <List.Item>
-                  <Card hoverable cover={<img alt="營區圖片" src= {item.coverImage}/> }>
-                    <Meta title={<a href="https://ant.design">{item.name}</a>} description={item.desc} />
-                  </Card>
-                  </List.Item>
-              )}
-              />
+          <List
+            grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 4 }}
+            dataSource={camps}
+            locale={{ emptyText: "查無資料" }}
+            renderItem={(item) => (
+              <List.Item>
+                <Card
+                  hoverable
+                  cover={
+                    <Link to={`/campDetail/${item.id}`}>
+                      <img alt="營區圖片" src={item.coverImage} />
+                    </Link>
+                  }
+                >
+                  <Meta title={item.name} description={item.desc} />
+                </Card>
+              </List.Item>
+            )}
+          />
         </Content>
         <Footer style={footerStyle}>
           Copyright ©{new Date().getFullYear()} Created by Go露營
