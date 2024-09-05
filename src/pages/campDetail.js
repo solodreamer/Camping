@@ -1,4 +1,5 @@
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { Link, NavLink, useParams } from "react-router-dom";
 
 import {
   Layout,
@@ -17,63 +18,54 @@ import {
   HomeOutlined,
 } from "@ant-design/icons";
 import "./campDetail.css";
+import axios from 'axios';
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
-const blockContent = {
+const productRes = {
   data: {
     campPhotos: [
       {
-        img: "https://images.unsplash.com/photo-1455496231601-e6195da1f841?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Y2FtcHxlbnwwfHwwfHx8MA%3D%3D",
+        "img": "https://fakeimg.pl/350x350/?text=Hello"
       },
       {
-        img: "https://fakeimg.pl/350x350/?text=abs",
+        "img": "https://fakeimg.pl/350x350/?text=abs"
       },
     ],
     campsite: [
       {
-        img: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D",
+        campsitePhotos: [
+          {
+            img: "https://plus.unsplash.com/premium_photo-1697778136943-88184ee17aba?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          },
+          {
+             img: "https://fakeimg.pl/350x350/?text=campsite2"
+          }
+      ],
         areaName: "A區",
         campId: 1,
         holidayPrice: 1500,
-        surfaceType: 1,
+        surfaceType: "草地",
         weekdayPrice: 800,
       },
       {
-        img: "https://images.unsplash.com/photo-1458668383970-8ddd3927deed?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D",
+        campsitePhotos: [
+                    {
+                      img: "https://fakeimg.pl/350x350/?text=campsite1"
+                    },
+                    {
+                      img: "https://fakeimg.pl/350x350/?text=campsite2"
+                    }
+                ],
         areaName: "B區",
         campId: 1,
         holidayPrice: 1200,
-        surfaceType: 2,
+        surfaceType: "碎石",
         weekdayPrice: 700,
-      },
-      {
-        img: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjJ8fG5hdHVyZXxlbnwwfHwwfHx8MA%3D%3D",
-        areaName: "C區",
-        campId: 1,
-        holidayPrice: 1200,
-        surfaceType: 2,
-        weekdayPrice: 700,
-      },
-      {
-        img: "https://fakeimg.pl/350x350/?text=abs",
-        areaName: "D區",
-        campId: 1,
-        holidayPrice: 1200,
-        surfaceType: 2,
-        weekdayPrice: 700,
-      },
-      {
-        img: "https://fakeimg.pl/350x350/?text=Hello",
-        areaName: "E區",
-        campId: 1,
-        holidayPrice: 1200,
-        surfaceType: 2,
-        weekdayPrice: 700,
-      },
+      }
     ],
-    coverImage: "mountain.jpg",
+    coverImage: "https://plus.unsplash.com/premium_photo-1669058790122-bb99e0c94cdc?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     desc: "Explore the mountains",
     fullAddress: "台中市南區福興街600號",
     id: 1,
@@ -120,6 +112,20 @@ const menuItems = [
 ];
 
 function CampDetail() {
+  const [product, setProduct] = useState({});
+  const { id } = useParams();
+
+  const getCampDetail = async (id) => {
+    const productRes = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps/${id}`);
+    console.log(productRes.data);
+    setProduct(productRes.data);
+  }
+
+  useEffect(() => {
+    getCampDetail(id);
+  },[id]);
+
+
   return (
     <Layout>
       <Sider style={siderStyle} breakpoint="md" collapsedWidth="0">
@@ -140,40 +146,40 @@ function CampDetail() {
               <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                 {/* <Row> */}
                   <Image.PreviewGroup
-                    items={blockContent?.data.campPhotos.map((item) => {
+                    items={productRes?.data.campPhotos.map((item) => {
                       return { src: item.img };
                     })}
                   >
                     <Image
                       width={400}
-                      src={blockContent.data.campPhotos[0].img}
+                      src={productRes.data.campPhotos[0].img}
                       fallback={Empty.PRESENTED_IMAGE_DEFAULT}
                     />
                   </Image.PreviewGroup>
                 {/* </Row> */}
                 {/* <Row>
                   <Image.PreviewGroup
-                    items={blockContent?.data.campPhotos.map((item) => {
+                    items={productRes?.data.campPhotos.map((item) => {
                       return { src: item.img };
                     })}
                   >
                     <Image
                       width={400}
-                      src={blockContent.data.campPhotos[0].img}
+                      src={productRes.data.campPhotos[0].img}
                       fallback={Empty.PRESENTED_IMAGE_DEFAULT}
                     />
                   </Image.PreviewGroup>
                 </Row> */}
               </Col>
               <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                <Title>{blockContent.data.name}</Title>
+                <Title>{productRes.data.name}</Title>
 
-                <Paragraph>{blockContent.data.desc}</Paragraph>
+                <Paragraph>{productRes.data.desc}</Paragraph>
 
                 <Paragraph>
                   <Text strong underline>
                     <NavLink to="https://www.google.com/maps">
-                      {blockContent.data.fullAddress}
+                      {productRes.data.fullAddress}
                     </NavLink>
                   </Text>
                 </Paragraph>
@@ -191,7 +197,7 @@ function CampDetail() {
                 lg: 32,
               }}
             >
-              {blockContent?.data.campsite.map((campsite) => {
+              {productRes?.data.campsite.map((campsite) => {
                 return (
                   <Col
                     key={campsite.areaName}
@@ -203,7 +209,7 @@ function CampDetail() {
                   >
                     <div key={campsite.areaName}>
                       <img
-                        src={campsite.img}
+                        src={campsite.campsitePhotos[0].img}
                         alt="營區圖片"
                         className="card-img-top rounded-0 object-cover"
                         height={300}
