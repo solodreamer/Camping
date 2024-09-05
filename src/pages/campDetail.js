@@ -1,7 +1,21 @@
 import { Link, NavLink } from "react-router-dom";
 
-import { Layout, Menu, Col, Row, Divider, Typography, Image, Empty, } from "antd";
-import { LoginOutlined, UserAddOutlined, HomeOutlined, } from "@ant-design/icons";
+import {
+  Layout,
+  Menu,
+  Col,
+  Row,
+  Divider,
+  Typography,
+  Image,
+  Empty,
+  Tag,
+} from "antd";
+import {
+  LoginOutlined,
+  UserAddOutlined,
+  HomeOutlined,
+} from "@ant-design/icons";
 import "./campDetail.css";
 
 //Antd元件屬性設定
@@ -11,7 +25,7 @@ const blockContent = {
   data: {
     campPhotos: [
       {
-        img: "https://fakeimg.pl/350x350/?text=Hello",
+        img: "https://images.unsplash.com/photo-1455496231601-e6195da1f841?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Y2FtcHxlbnwwfHwwfHx8MA%3D%3D",
       },
       {
         img: "https://fakeimg.pl/350x350/?text=abs",
@@ -124,17 +138,32 @@ function CampDetail() {
             <Divider />
             <Row>
               <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                <Image.PreviewGroup
-                  items={blockContent?.data.campPhotos.map((item) => {
-                    return { src: item.img };
-                  })}
-                >
-                  <Image
-                    width={400}
-                    src={blockContent.data.campPhotos[0].img}
-                    fallback={Empty.PRESENTED_IMAGE_DEFAULT}
-                  />
-                </Image.PreviewGroup>
+                {/* <Row> */}
+                  <Image.PreviewGroup
+                    items={blockContent?.data.campPhotos.map((item) => {
+                      return { src: item.img };
+                    })}
+                  >
+                    <Image
+                      width={400}
+                      src={blockContent.data.campPhotos[0].img}
+                      fallback={Empty.PRESENTED_IMAGE_DEFAULT}
+                    />
+                  </Image.PreviewGroup>
+                {/* </Row> */}
+                {/* <Row>
+                  <Image.PreviewGroup
+                    items={blockContent?.data.campPhotos.map((item) => {
+                      return { src: item.img };
+                    })}
+                  >
+                    <Image
+                      width={400}
+                      src={blockContent.data.campPhotos[0].img}
+                      fallback={Empty.PRESENTED_IMAGE_DEFAULT}
+                    />
+                  </Image.PreviewGroup>
+                </Row> */}
               </Col>
               <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                 <Title>{blockContent.data.name}</Title>
@@ -154,40 +183,46 @@ function CampDetail() {
             <Divider orientation="left">
               <Title level={2}>營區選擇</Title>
             </Divider>
-              <Row
-                gutter={{
-                  xs: 8,
-                  sm: 16,
-                  md: 24,
-                  lg: 32,
-                }}
-              >
-                {blockContent?.data.campsite.map((campsite) => {
-                  return (
-                    <Col
-                      key={campsite.areaName}
-                      xs={24}
-                      sm={12}
-                      md={12}
-                      lg={8}
-                      xl={6}
-                    >
-                      <div key={campsite.areaName}>
-                        <img
-                          src={campsite.img}
-                          alt="營區圖片"
-                          className="card-img-top rounded-0 object-cover"
-                          height={300}
-                        />
-                        <h2 className="mb-0 mt-2">{campsite.areaName}</h2>
-                        <p className='price-font'>平日價格: ${campsite.weekdayPrice}</p>
-                        <p className='price-font'>假日價格: ${campsite.holidayPrice}</p>
-                        <p>surfaceType: {campsite.surfaceType}</p>
-                      </div>
-                    </Col>
-                  );
-                })}
-              </Row>
+            <Row
+              gutter={{
+                xs: 8,
+                sm: 16,
+                md: 24,
+                lg: 32,
+              }}
+            >
+              {blockContent?.data.campsite.map((campsite) => {
+                return (
+                  <Col
+                    key={campsite.areaName}
+                    xs={24}
+                    sm={12}
+                    md={12}
+                    lg={8}
+                    xl={6}
+                  >
+                    <div key={campsite.areaName}>
+                      <img
+                        src={campsite.img}
+                        alt="營區圖片"
+                        className="card-img-top rounded-0 object-cover"
+                        height={300}
+                      />
+                      <h2 className="mb-0 mt-2">{campsite.areaName}</h2>
+                      <p className="price-font">
+                        平日價格: ${campsite.weekdayPrice}
+                      </p>
+                      <p className="price-font">
+                        假日價格: ${campsite.holidayPrice}
+                      </p>
+                      <Tag color="magenta">
+                        surfaceType: {campsite.surfaceType}
+                      </Tag>
+                    </div>
+                  </Col>
+                );
+              })}
+            </Row>
           </Typography>
         </Content>
         <Footer style={footerStyle}>
