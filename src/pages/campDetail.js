@@ -75,9 +75,6 @@ const productRes = {
   success: true,
 };
 
-// 日期格式
-const dateFormat = "YYYY-MM-DD";
-
 //style設定
 const headerStyle = {
   textAlign: "center",
@@ -117,7 +114,7 @@ function CampDetail() {
 
   const getCampDetail = async (id) => {
     const productRes = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps/${id}`);
-    console.log(productRes.data);
+    console.log("[營地資訊]",productRes.data);
     setProduct(productRes.data);
   }
 
