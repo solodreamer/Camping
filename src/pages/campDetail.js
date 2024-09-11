@@ -40,7 +40,7 @@ const productRes = {
             img: "https://plus.unsplash.com/premium_photo-1697778136943-88184ee17aba?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           },
           {
-             img: "https://fakeimg.pl/350x350/?text=campsite2"
+             img: "https://plus.unsplash.com/premium_photo-1680788452823-49bb63651490?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           }
       ],
         areaName: "A區",
@@ -52,10 +52,10 @@ const productRes = {
       {
         campsitePhotos: [
                     {
-                      img: "https://fakeimg.pl/350x350/?text=campsite1"
+                      img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                     },
                     {
-                      img: "https://fakeimg.pl/350x350/?text=campsite2"
+                      img: "https://images.unsplash.com/photo-1445308394109-4ec2920981b1?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                     }
                 ],
         areaName: "B區",
@@ -101,14 +101,15 @@ const footerStyle = {
   backgroundColor: "#4096ff",
 };
 
-//選單項目
-const menuItems = [
-  { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
-  { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
-  { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
-];
 
 function CampDetail() {
+  //選單項目
+  const menuItems = [
+    { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
+    { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
+    { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
+   ];
+
   const [product, setProduct] = useState({});
   const { id } = useParams();
 
@@ -116,11 +117,18 @@ function CampDetail() {
     const productRes = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps/${id}`);
     console.log("[營地資訊]",productRes.data);
     setProduct(productRes.data);
+    
   }
 
   useEffect(() => {
     getCampDetail(id);
+    console.log("[id]",id);
+    console.log("[營地資訊2]",product);
   },[id]);
+
+  useEffect(() => {
+    console.log("[營地資訊3]",product);
+  },[product]);
 
 
   return (
@@ -149,7 +157,7 @@ function CampDetail() {
                   >
                     <Image
                       width={400}
-                      src={productRes.data.campPhotos[0].img}
+                      src={productRes?.data.campPhotos[0].img}
                       fallback={Empty.PRESENTED_IMAGE_DEFAULT}
                     />
                   </Image.PreviewGroup>
@@ -169,14 +177,14 @@ function CampDetail() {
                 </Row> */}
               </Col>
               <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                <Title>{productRes.data.name}</Title>
+                <Title>{productRes?.data.name}</Title>
 
-                <Paragraph>{productRes.data.desc}</Paragraph>
+                <Paragraph>{productRes?.data.desc}</Paragraph>
 
                 <Paragraph>
                   <Text strong underline>
                     <NavLink to="https://www.google.com/maps">
-                      {productRes.data.fullAddress}
+                      {productRes?.data.fullAddress}
                     </NavLink>
                   </Text>
                 </Paragraph>
