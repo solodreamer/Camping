@@ -10,7 +10,7 @@ import {
   Typography,
   Image,
   Empty,
-  Tag,
+  Tag, Spin
 } from "antd";
 import {
   LoginOutlined,
@@ -23,57 +23,6 @@ import axios from 'axios';
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
-const productRes = {
-  data: {
-    campPhotos: [
-      {
-        "img": "https://fakeimg.pl/350x350/?text=Hello"
-      },
-      {
-        "img": "https://fakeimg.pl/350x350/?text=abs"
-      },
-    ],
-    campsite: [
-      {
-        campsitePhotos: [
-          {
-            img: "https://plus.unsplash.com/premium_photo-1697778136943-88184ee17aba?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          },
-          {
-             img: "https://plus.unsplash.com/premium_photo-1680788452823-49bb63651490?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          }
-      ],
-        areaName: "A區",
-        campId: 1,
-        holidayPrice: 1500,
-        surfaceType: "草地",
-        weekdayPrice: 800,
-      },
-      {
-        campsitePhotos: [
-                    {
-                      img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    },
-                    {
-                      img: "https://images.unsplash.com/photo-1445308394109-4ec2920981b1?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    }
-                ],
-        areaName: "B區",
-        campId: 1,
-        holidayPrice: 1200,
-        surfaceType: "碎石",
-        weekdayPrice: 700,
-      }
-    ],
-    coverImage: "https://plus.unsplash.com/premium_photo-1669058790122-bb99e0c94cdc?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    desc: "Explore the mountains",
-    fullAddress: "台中市南區福興街600號",
-    id: 1,
-    name: "Mountain Adventure Camp",
-    ownerId: 1,
-  },
-  success: true,
-};
 
 //style設定
 const headerStyle = {
@@ -108,27 +57,27 @@ function CampDetail() {
     { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
     { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
-   ];
+  ];
 
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState(null);
   const { id } = useParams();
 
   const getCampDetail = async (id) => {
     const productRes = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps/${id}`);
-    console.log("[營地資訊]",productRes.data);
-    setProduct(productRes.data);
-    
+    if (productRes && productRes.data.success === true) {
+      setProduct(productRes.data.data);
+    }
+
   }
 
   useEffect(() => {
     getCampDetail(id);
-    console.log("[id]",id);
-    console.log("[營地資訊2]",product);
-  },[id]);
+    console.log("[id]", id);
+  }, [id]);
 
   useEffect(() => {
-    console.log("[營地資訊3]",product);
-  },[product]);
+    console.log("[營地資訊]", product);
+  }, [product]);
 
 
   return (
@@ -145,96 +94,103 @@ function CampDetail() {
       <Layout>
         <Header style={headerStyle}>Go露營</Header>
         <Content style={contentStyle}>
-          <Typography>
-            <Divider />
-            <Row>
-              <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                {/* <Row> */}
-                  <Image.PreviewGroup
-                    items={productRes?.data.campPhotos.map((item) => {
-                      return { src: item.img };
-                    })}
-                  >
-                    <Image
-                      width={400}
-                      src={productRes?.data.campPhotos[0].img}
-                      fallback={Empty.PRESENTED_IMAGE_DEFAULT}
-                    />
-                  </Image.PreviewGroup>
-                {/* </Row> */}
-                {/* <Row>
-                  <Image.PreviewGroup
-                    items={productRes?.data.campPhotos.map((item) => {
-                      return { src: item.img };
-                    })}
-                  >
-                    <Image
-                      width={400}
-                      src={productRes.data.campPhotos[0].img}
-                      fallback={Empty.PRESENTED_IMAGE_DEFAULT}
-                    />
-                  </Image.PreviewGroup>
-                </Row> */}
-              </Col>
-              <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                <Title>{productRes?.data.name}</Title>
-
-                <Paragraph>{productRes?.data.desc}</Paragraph>
-
-                <Paragraph>
-                  <Text strong underline>
-                    <NavLink to="https://www.google.com/maps">
-                      {productRes?.data.fullAddress}
-                    </NavLink>
-                  </Text>
-                </Paragraph>
-              </Col>
-            </Row>
-            <Divider />
-            <Divider orientation="left">
-              <Title level={2}>營區選擇</Title>
-            </Divider>
-            <Row
-              gutter={{
-                xs: 8,
-                sm: 16,
-                md: 24,
-                lg: 32,
-              }}
-            >
-              {productRes?.data.campsite.map((campsite) => {
-                return (
-                  <Col
-                    key={campsite.areaName}
-                    xs={24}
-                    sm={12}
-                    md={12}
-                    lg={8}
-                    xl={6}
-                  >
-                    <div key={campsite.areaName}>
-                      <img
-                        src={campsite.campsitePhotos[0].img}
-                        alt="營區圖片"
-                        className="card-img-top rounded-0 object-cover"
-                        height={300}
+          {product ? (
+            <Typography>
+              <Divider />
+              <Row>
+                <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                  {/* <Row> */}
+                  {product.campPhotos?.length > 0 ? (
+                    <Image.PreviewGroup
+                      items={product.campPhotos.map((item) => {
+                        return { src: item.img };
+                      })}
+                    >
+                      <Image
+                        width={400}
+                        src={product.campPhotos[0].img}
+                        fallback={Empty.PRESENTED_IMAGE_DEFAULT}
                       />
-                      <h2 className="mb-0 mt-2">{campsite.areaName}</h2>
-                      <p className="price-font">
-                        平日價格: ${campsite.weekdayPrice}
-                      </p>
-                      <p className="price-font">
-                        假日價格: ${campsite.holidayPrice}
-                      </p>
-                      <Tag color="magenta">
-                        surfaceType: {campsite.surfaceType}
-                      </Tag>
-                    </div>
-                  </Col>
-                );
-              })}
-            </Row>
-          </Typography>
+                    </Image.PreviewGroup>
+                  ) : (<p>無營地照片</p>)}
+                  {/* </Row> */}
+                  {/* <Row>
+                            <Image.PreviewGroup
+                              items={product.campPhotos.map((item) => {
+                                return { src: item.img };
+                              })}
+                            >
+                              <Image
+                                width={400}
+                                src={product.campPhotos[0].img}
+                                fallback={Empty.PRESENTED_IMAGE_DEFAULT}
+                              />
+                            </Image.PreviewGroup>
+                          </Row> */}
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                  <Title>{product.name}</Title>
+
+                  <Paragraph>{product.desc}</Paragraph>
+
+                  <Paragraph>
+                    <Text strong underline>
+                      <NavLink to="https://www.google.com/maps">
+                        {product.fullAddress}
+                      </NavLink>
+                    </Text>
+                  </Paragraph>
+                </Col>
+              </Row>
+              <Divider />
+              <Divider orientation="left">
+                <Title level={2}>營區選擇</Title>
+              </Divider>
+              <Row
+                gutter={{
+                  xs: 8,
+                  sm: 16,
+                  md: 24,
+                  lg: 32,
+                }}
+              >
+                {product.campsite?.length > 0 ? (
+                  product.campsite.map((campsite) => {
+                    return (
+                      <Col
+                        key={campsite.areaName}
+                        xs={24}
+                        sm={12}
+                        md={12}
+                        lg={8}
+                        xl={6}
+                      >
+                        <div key={campsite.areaName}>
+                          <img
+                            src={campsite.campsitePhotos[0].img}
+                            alt="營區圖片"
+                            className="card-img-top rounded-0 object-cover"
+                            height={300}
+                          />
+                          <h2 className="mb-0 mt-2">{campsite.areaName}</h2>
+                          <p className="price-font">
+                            平日價格: ${campsite.weekdayPrice}
+                          </p>
+                          <p className="price-font">
+                            假日價格: ${campsite.holidayPrice}
+                          </p>
+                          <Tag color="magenta">
+                            surfaceType: {campsite.surfaceType}
+                          </Tag>
+                        </div>
+                      </Col>
+                    );
+                  })
+                ) : (<p>無營地資料</p>)}
+
+              </Row>
+            </Typography>
+          ) : (<Spin tip="Loading" size="large" />)}
         </Content>
         <Footer style={footerStyle}>
           Copyright ©{new Date().getFullYear()} Created by Go露營
