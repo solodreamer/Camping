@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useParams } from "react-router-dom";
 
-import {
-  Layout,
-  Menu,
-  Col,
-  Row,
-  Divider,
-  Typography,
-  Image,
-  Empty,
-  Tag, Spin
-} from "antd";
+import { Layout, Menu, Col, Row, Divider, Typography, Image, Empty, Tag, Spin } from "antd";
 import {
   LoginOutlined,
   UserAddOutlined,
@@ -112,7 +102,7 @@ function CampDetail() {
                         fallback={Empty.PRESENTED_IMAGE_DEFAULT}
                       />
                     </Image.PreviewGroup>
-                  ) : (<p>無營地照片</p>)}
+                  ) : (<p>無營地照片 <Empty /></p>)}
                   {/* </Row> */}
                   {/* <Row>
                             <Image.PreviewGroup
@@ -186,7 +176,7 @@ function CampDetail() {
                       </Col>
                     );
                   })
-                ) : (<p>無營地資料</p>)}
+                ) : (<p>無營地資料 <Empty /></p>)}
 
               </Row>
             </Typography>

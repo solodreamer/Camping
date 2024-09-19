@@ -1,0 +1,32 @@
+.headerStyle {
+ text-align: center;
+ color: #fff;
+ height: 64;
+ padding-Inline: 48;
+ line-Height: 64px;
+ background-color: #4096ff;
+ top: 0;
+}
+
+.contentStyle {
+ text-align: center;
+ min-height: 120;
+ line-height: 120px;
+}
+
+.siderStyle {
+ text-align: center;
+ line-height: 120px;
+ color: #fff;
+}
+
+.footerStyle {
+ text-align: center;
+ color: #fff;
+ background-color: #4096ff;
+}
+
+.imgStyle {
+ height: 350px;
+ width: 350px;
+}

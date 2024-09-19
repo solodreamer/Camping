@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import axios from "axios";
 
-import { Layout, Menu, List, Card, Empty } from "antd";
+import { Layout, Menu, List, Card, Typography } from "antd";
 import {
   LoginOutlined,
   UserAddOutlined,
@@ -22,32 +22,7 @@ import "./searchPage.css";
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Meta } = Card;
-
-//style設定
-const headerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  height: 64,
-  paddingInline: 48,
-  lineHeight: "64px",
-  backgroundColor: "#4096ff",
-  top: 0,
-};
-const contentStyle = {
-  textAlign: "center",
-  minHeight: 120,
-  lineHeight: "120px",
-};
-const siderStyle = {
-  textAlign: "center",
-  lineHeight: "120px",
-  color: "#fff",
-};
-const footerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  backgroundColor: "#4096ff",
-};
+const { Title, Paragraph, Text } = Typography;
 
 //選單項目
 const menuItems = [
@@ -174,7 +149,7 @@ function SearchPage() {
 
   return (
     <Layout>
-      <Sider style={siderStyle} breakpoint="md" collapsedWidth="0">
+      <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
         <Menu mode="inline" theme="dark">
           {menuItems.map((item) => (
             <Menu.Item key={item.key} icon={item.icon}>
@@ -184,8 +159,8 @@ function SearchPage() {
         </Menu>
       </Sider>
       <Layout>
-        <Header style={headerStyle}>Go露營</Header>
-        <Content style={contentStyle}>
+        <Header className="headerStyle">Go露營</Header>
+        <Content className="contentStyle">
           <div>
             <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
               <ProFormSelect
@@ -219,7 +194,7 @@ function SearchPage() {
                   hoverable
                   cover={
                     <Link to={`/campDetail/${item.id}`}>
-                      <img alt="營區圖片" src={item.coverImage} />
+                      <img alt="營區圖片" src={item.coverImage} className="imgStyle"/>
                     </Link>
                   }
                 >
@@ -229,7 +204,7 @@ function SearchPage() {
             )}
           />
         </Content>
-        <Footer style={footerStyle}>
+        <Footer className="footerStyle">
           Copyright ©{new Date().getFullYear()} Created by Go露營
         </Footer>
       </Layout>
