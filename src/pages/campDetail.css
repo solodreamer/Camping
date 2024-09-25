@@ -1,5 +1,73 @@
+.headerStyle {
+ text-align: center;
+ color: #fff;
+ height: 64;
+ padding-Inline: 48;
+ line-Height: 64px;
+ background-color: #4096ff;
+ top: 0;
+}
+
+.contentStyle {
+ text-align: center;
+ min-height: 120;
+ line-height: 120px;
+}
+
+.siderStyle {
+ text-align: center;
+ line-height: 120px;
+ color: #fff;
+}
+
+.footerStyle {
+ text-align: center;
+ color: #fff;
+ background-color: #4096ff;
+}
+
 .price-font {
  font-weight: bold;
  font-size: 16px;
  color: #888
+}
+
+.campPhoto-prevButton {
+ position: absolute;
+ top: 50%;
+ transform: translateY(-50%);
+ left: 0;
+}
+
+.campPhoto-nextButton {
+ position: absolute;
+ top: 50%;
+ transform: translateY(-50%);
+ right: 0;
+}
+
+.campsite-carousel {
+ position: relative;
+ display: inline-block;
+}
+
+.campsite-prevButton {
+ position: absolute;
+ top: 50%;
+ transform: translateY(-50%);
+ left: 0;
+}
+
+.campsite-nextButton {
+ position: absolute;
+ top: 50%;
+ transform: translateY(-50%);
+ right: 0;
+}
+
+.campsite-row {
+ display: flex;
+ flex-wrap: wrap;
+ justify-content: start;
+ padding-left: 16px;
 }

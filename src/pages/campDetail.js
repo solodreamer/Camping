@@ -1,45 +1,34 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { Link, NavLink, useParams } from "react-router-dom";
 
-import { Layout, Menu, Col, Row, Divider, Typography, Image, Empty, Tag, Spin } from "antd";
+import {
+  Layout,
+  Menu,
+  Col,
+  Row,
+  Divider,
+  Typography,
+  Image,
+  Empty,
+  Tag,
+  Spin,
+  Button,
+} from "antd";
 import {
   LoginOutlined,
   UserAddOutlined,
   HomeOutlined,
+  CaretLeftOutlined,
+  CaretRightOutlined,
+  LeftOutlined,
+  RightOutlined
 } from "@ant-design/icons";
 import "./campDetail.css";
-import axios from 'axios';
+import axios from "axios";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
-
-//style設定
-const headerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  height: 64,
-  paddingInline: 48,
-  lineHeight: "64px",
-  backgroundColor: "#4096ff",
-  top: 0,
-};
-const contentStyle = {
-  textAlign: "center",
-  minHeight: 120,
-  lineHeight: "120px",
-};
-const siderStyle = {
-  textAlign: "center",
-  lineHeight: "120px",
-  color: "#fff",
-};
-const footerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  backgroundColor: "#4096ff",
-};
-
 
 function CampDetail() {
   //選單項目
@@ -50,15 +39,44 @@ function CampDetail() {
   ];
 
   const [product, setProduct] = useState(null);
+  const [campPhotosIndex, setCampPhotosIndex] = useState(0);
+  const [campsitePhotosIndex, setCampsitePhotosIndex] = useState(0);
   const { id } = useParams();
 
   const getCampDetail = async (id) => {
-    const productRes = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps/${id}`);
+    const productRes = await axios.get(
+      `${process.env.REACT_APP_API_URL}/v1/camps/${id}`
+    );
     if (productRes && productRes.data.success === true) {
       setProduct(productRes.data.data);
     }
+  };
 
-  }
+  const handleCampPhotoPrevClick = () => {
+    setCampPhotosIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + product.campPhotos.length) % product.campPhotos.length
+    );
+  };
+
+  const handleCampPhotoNextClick = () => {
+    setCampPhotosIndex(
+      (prevIndex) => (prevIndex + 1) % product.campPhotos.length
+    );
+  };
+
+  const handleCampsitePhotoPrevClick = () => {
+    setCampsitePhotosIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + product.campsite.length) % product.campsite.length
+    );
+  };
+
+  const handleCampsitePhotoNextClick = () => {
+    setCampsitePhotosIndex(
+      (prevIndex) => (prevIndex + 1) % product.campsite.length
+    );
+  };
 
   useEffect(() => {
     getCampDetail(id);
@@ -69,10 +87,9 @@ function CampDetail() {
     console.log("[營地資訊]", product);
   }, [product]);
 
-
   return (
     <Layout>
-      <Sider style={siderStyle} breakpoint="md" collapsedWidth="0">
+      <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
         <Menu mode="inline" theme="dark">
           {menuItems.map((item) => (
             <Menu.Item key={item.key} icon={item.icon}>
@@ -82,41 +99,43 @@ function CampDetail() {
         </Menu>
       </Sider>
       <Layout>
-        <Header style={headerStyle}>Go露營</Header>
-        <Content style={contentStyle}>
+        <Header className="headerStyle">Go露營</Header>
+        <Content className="contentStyle">
           {product ? (
             <Typography>
               <Divider />
               <Row>
                 <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                  {/* <Row> */}
                   {product.campPhotos?.length > 0 ? (
                     <Image.PreviewGroup
                       items={product.campPhotos.map((item) => {
                         return { src: item.img };
                       })}
                     >
+                      <Button
+                        className="campPhoto-prevButton"
+                        onClick={handleCampPhotoPrevClick}
+                        shape="circle"
+                        icon={<CaretLeftOutlined />}
+                      />
                       <Image
-                        width={400}
-                        src={product.campPhotos[0].img}
+                        style={{ width: "400px" }}
+                        src={product.campPhotos[campPhotosIndex].img}
                         fallback={Empty.PRESENTED_IMAGE_DEFAULT}
                       />
+                      <Button
+                        className="campPhoto-nextButton"
+                        onClick={handleCampPhotoNextClick}
+                        shape="circle"
+                        icon={<CaretRightOutlined />}
+                      />
                     </Image.PreviewGroup>
-                  ) : (<p>無營地照片 <Empty /></p>)}
-                  {/* </Row> */}
-                  {/* <Row>
-                            <Image.PreviewGroup
-                              items={product.campPhotos.map((item) => {
-                                return { src: item.img };
-                              })}
-                            >
-                              <Image
-                                width={400}
-                                src={product.campPhotos[0].img}
-                                fallback={Empty.PRESENTED_IMAGE_DEFAULT}
-                              />
-                            </Image.PreviewGroup>
-                          </Row> */}
+                  ) : (
+                    <p>
+                      無營地照片 <Empty />
+                    </p>
+                  )}
+                  <br />
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                   <Title>{product.name}</Title>
@@ -137,6 +156,7 @@ function CampDetail() {
                 <Title level={2}>營區選擇</Title>
               </Divider>
               <Row
+                className="campsite-row"
                 gutter={{
                   xs: 8,
                   sm: 16,
@@ -156,12 +176,28 @@ function CampDetail() {
                         xl={6}
                       >
                         <div key={campsite.areaName}>
-                          <img
-                            src={campsite.campsitePhotos[0].img}
-                            alt="營區圖片"
-                            className="card-img-top rounded-0 object-cover"
-                            height={300}
-                          />
+                          <div className="campsite-carousel">
+                            <Button
+                              className="campsite-prevButton"
+                              onClick={handleCampsitePhotoPrevClick}
+                              shape="circle"
+                              icon={<CaretLeftOutlined />}
+                            />
+                            <img
+                              src={
+                                campsite.campsitePhotos[campsitePhotosIndex].img
+                              }
+                              alt="營區圖片"
+                              className="card-img-top rounded-0 object-cover"
+                              height={300}
+                            />
+                            <Button
+                              className="campsite-nextButton"
+                              onClick={handleCampsitePhotoNextClick}
+                              shape="circle"
+                              icon={<CaretRightOutlined />}
+                            />
+                          </div>
                           <h2 className="mb-0 mt-2">{campsite.areaName}</h2>
                           <p className="price-font">
                             平日價格: ${campsite.weekdayPrice}
@@ -176,13 +212,18 @@ function CampDetail() {
                       </Col>
                     );
                   })
-                ) : (<p>無營地資料 <Empty /></p>)}
-
+                ) : (
+                  <p>
+                    無營地資料 <Empty />
+                  </p>
+                )}
               </Row>
             </Typography>
-          ) : (<Spin tip="Loading" size="large" />)}
+          ) : (
+            <Spin tip="Loading" size="large" />
+          )}
         </Content>
-        <Footer style={footerStyle}>
+        <Footer className="footerStyle">
           Copyright ©{new Date().getFullYear()} Created by Go露營
         </Footer>
       </Layout>
