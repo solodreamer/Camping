@@ -185,7 +185,7 @@ function SearchPage() {
             </QueryFilter>
           </div>
           <List
-            grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 4 }}
+            grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 2, xl: 2, xxl: 3 }}
             dataSource={camps}
             locale={{ emptyText: "查無資料" }}
             renderItem={(item) => (
