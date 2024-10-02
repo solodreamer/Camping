@@ -20,9 +20,8 @@ import {
   HomeOutlined,
   CaretLeftOutlined,
   CaretRightOutlined,
-  LeftOutlined,
-  RightOutlined
 } from "@ant-design/icons";
+
 import "./campDetail.css";
 import axios from "axios";
 
@@ -40,7 +39,7 @@ function CampDetail() {
 
   const [product, setProduct] = useState(null);
   const [campPhotosIndex, setCampPhotosIndex] = useState(0);
-  const [campsitePhotosIndex, setCampsitePhotosIndex] = useState(0);
+  const [campsitePhotosIndex, setCampsitePhotosIndex] = useState({});
   const { id } = useParams();
 
   const getCampDetail = async (id) => {
@@ -65,17 +64,26 @@ function CampDetail() {
     );
   };
 
-  const handleCampsitePhotoPrevClick = () => {
-    setCampsitePhotosIndex(
-      (prevIndex) =>
-        (prevIndex - 1 + product.campsite.length) % product.campsite.length
-    );
+  const handleCampsitePhotoPrevClick = (areaName) => {
+    setCampsitePhotosIndex((prevState) => {
+      const currentIndex = prevState[areaName] || 0;
+      console.log(`Current prevState:`, prevState); // 輸出目前的照片索引
+      console.log(`Current index for ${areaName}:`, currentIndex); // 輸出目前的照片索引
+      const campsite = product.campsite.find((c) => c.areaName === areaName);
+      const newIndex = (currentIndex - 1 + campsite.campsitePhotos.length) % campsite.campsitePhotos.length;
+      console.log(`newIndex:`, newIndex); // 輸出目前的照片索引
+      return { ...prevState, [areaName]: newIndex };
+    });
   };
 
-  const handleCampsitePhotoNextClick = () => {
-    setCampsitePhotosIndex(
-      (prevIndex) => (prevIndex + 1) % product.campsite.length
-    );
+  const handleCampsitePhotoNextClick = (areaName) => {
+    setCampsitePhotosIndex((prevState) => {
+      const currentIndex = prevState[areaName] || 0;
+      console.log(`Current index for ${areaName}:`, currentIndex); // 輸出目前的照片索引
+      const campsite = product.campsite.find((c) => c.areaName === areaName);
+      const newIndex = (currentIndex + 1) % campsite.campsitePhotos.length;
+      return { ...prevState, [areaName]: newIndex };
+    });
   };
 
   useEffect(() => {
@@ -166,6 +174,7 @@ function CampDetail() {
               >
                 {product.campsite?.length > 0 ? (
                   product.campsite.map((campsite) => {
+                    const currentIndex = campsitePhotosIndex[campsite.areaName] || 0;
                     return (
                       <Col
                         key={campsite.areaName}
@@ -179,13 +188,13 @@ function CampDetail() {
                           <div className="campsite-carousel">
                             <Button
                               className="campsite-prevButton"
-                              onClick={handleCampsitePhotoPrevClick}
+                              onClick={ () => handleCampsitePhotoPrevClick(campsite.areaName)}
                               shape="circle"
                               icon={<CaretLeftOutlined />}
                             />
                             <img
                               src={
-                                campsite.campsitePhotos[campsitePhotosIndex].img
+                                campsite.campsitePhotos[currentIndex].img
                               }
                               alt="營區圖片"
                               className="card-img-top rounded-0 object-cover"
@@ -193,7 +202,7 @@ function CampDetail() {
                             />
                             <Button
                               className="campsite-nextButton"
-                              onClick={handleCampsitePhotoNextClick}
+                              onClick={() => handleCampsitePhotoNextClick(campsite.areaName)}
                               shape="circle"
                               icon={<CaretRightOutlined />}
                             />
