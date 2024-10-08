@@ -13,6 +13,7 @@ import {
   Tag,
   Spin,
   Button,
+  Calendar 
 } from "antd";
 import {
   LoginOutlined,
@@ -51,6 +52,9 @@ function CampDetail() {
     }
   };
 
+  /**
+   * 營地照片上一張
+   */
   const handleCampPhotoPrevClick = () => {
     setCampPhotosIndex(
       (prevIndex) =>
@@ -58,12 +62,19 @@ function CampDetail() {
     );
   };
 
+  /**
+   * 營地照片下一張
+   */
   const handleCampPhotoNextClick = () => {
     setCampPhotosIndex(
       (prevIndex) => (prevIndex + 1) % product.campPhotos.length
     );
   };
 
+  /**
+   * 營區照片上一張
+   * @param {*} areaName 
+   */
   const handleCampsitePhotoPrevClick = (areaName) => {
     setCampsitePhotosIndex((prevState) => {
       const currentIndex = prevState[areaName] || 0;
@@ -76,6 +87,10 @@ function CampDetail() {
     });
   };
 
+  /**
+   * 營區照片下一張
+   * @param {*} areaName 
+   */
   const handleCampsitePhotoNextClick = (areaName) => {
     setCampsitePhotosIndex((prevState) => {
       const currentIndex = prevState[areaName] || 0;
@@ -84,6 +99,10 @@ function CampDetail() {
       const newIndex = (currentIndex + 1) % campsite.campsitePhotos.length;
       return { ...prevState, [areaName]: newIndex };
     });
+  };
+
+  const onPanelChange = (value, mode) => {
+    console.log(value.format('YYYY-MM-DD'), mode);
   };
 
   useEffect(() => {
@@ -160,6 +179,10 @@ function CampDetail() {
                 </Col>
               </Row>
               <Divider />
+              <Divider orientation="left">
+              <Title level={2}>選擇入住時間</Title>
+              </Divider>
+               <Calendar onPanelChange={onPanelChange} />;
               <Divider orientation="left">
                 <Title level={2}>營區選擇</Title>
               </Divider>
