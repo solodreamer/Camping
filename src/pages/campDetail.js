@@ -41,8 +41,13 @@ function CampDetail() {
   const [product, setProduct] = useState(null);
   const [campPhotosIndex, setCampPhotosIndex] = useState(0);
   const [campsitePhotosIndex, setCampsitePhotosIndex] = useState({});
+  const [availableCampsite, setAvailableCampsite] = useState([]);
   const { id } = useParams();
 
+  /**
+   * 取得營地資訊
+   * @param {*} id 
+   */
   const getCampDetail = async (id) => {
     const productRes = await axios.get(
       `${process.env.REACT_APP_API_URL}/v1/camps/${id}`
@@ -101,6 +106,13 @@ function CampDetail() {
     });
   };
 
+  const getAvailableCampsite = async (param) => {
+    const availableRes = await axios.post(`${process.env.REACT_APP_API_URL}/v1/camps/available`, param);
+    if (availableRes.success === true && availableRes.data.length > 0) {
+      setAvailableCampsite(availableRes.data);
+    }
+  }
+
   const onPanelChange = (value, mode) => {
     console.log(value.format('YYYY-MM-DD'), mode);
   };
@@ -113,6 +125,11 @@ function CampDetail() {
   useEffect(() => {
     console.log("[營地資訊]", product);
   }, [product]);
+
+  useEffect(() => {
+    getAvailableCampsite({ camp_id: id, year: '2024', month: '10' });
+    console.log("[可預約營區數量]", availableCampsite);
+  },[availableCampsite]);
 
   return (
     <Layout>
