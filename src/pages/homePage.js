@@ -12,9 +12,6 @@ import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker} from '
 const { Header, Content, Footer, Sider } = Layout;
 const { Title } = Typography;
 
-// 日期格式
-const dateFormat = "YYYY-MM-DD";
-
 //style設定
 const headerStyle = {
   textAlign: "center",

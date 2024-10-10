@@ -114,7 +114,6 @@ function Register() {
   const onFinish = (values) => {
     const inputValues = {
       ...values,
-      // birthday: values["birthday"].format("YYYY-MM-DD"),
     };
     console.log("註冊存檔前param: ", inputValues);
     saveRegister(inputValues);

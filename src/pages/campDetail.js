@@ -13,7 +13,7 @@ import {
   Tag,
   Spin,
   Button,
-  Calendar 
+  Calendar
 } from "antd";
 import {
   LoginOutlined,
@@ -25,10 +25,12 @@ import {
 
 import "./campDetail.css";
 import axios from "axios";
+import dayjs from "dayjs";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
+
 
 function CampDetail() {
   //選單項目
@@ -46,7 +48,7 @@ function CampDetail() {
 
   /**
    * 取得營地資訊
-   * @param {*} id 
+   * @param {*} id 營地ID
    */
   const getCampDetail = async (id) => {
     const productRes = await axios.get(
@@ -78,7 +80,7 @@ function CampDetail() {
 
   /**
    * 營區照片上一張
-   * @param {*} areaName 
+   * @param {*} areaName //營區名稱
    */
   const handleCampsitePhotoPrevClick = (areaName) => {
     setCampsitePhotosIndex((prevState) => {
@@ -94,7 +96,7 @@ function CampDetail() {
 
   /**
    * 營區照片下一張
-   * @param {*} areaName 
+   * @param {*} areaName //營區名稱
    */
   const handleCampsitePhotoNextClick = (areaName) => {
     setCampsitePhotosIndex((prevState) => {
@@ -106,16 +108,45 @@ function CampDetail() {
     });
   };
 
+  /**
+   * 取得可預約營區
+   * @param {*} param 
+   */
   const getAvailableCampsite = async (param) => {
     const availableRes = await axios.post(`${process.env.REACT_APP_API_URL}/v1/camps/available`, param);
-    if (availableRes.success === true && availableRes.data.length > 0) {
-      setAvailableCampsite(availableRes.data);
+    if (availableRes.data.success === true && availableRes.data.data.length > 0) {
+      console.log("[availableRes]", availableRes.data);
+      setAvailableCampsite(availableRes.data.data);
     }
+    return [];
   }
 
   const onPanelChange = (value, mode) => {
     console.log(value.format('YYYY-MM-DD'), mode);
+    const year = value.format('YYYY');
+    const month = value.format('MM');
+    getAvailableCampsite({ camp_id: id, year: year, month: month });
   };
+
+
+  const dateCellRender = (value) => {
+    // console.log("[current]", dayjs(value).format('YYYY-MM-DD'));
+    const available = availableCampsite.find((item) => item.date === dayjs(value).format('YYYY-MM-DD').toString());
+    console.log("[available]",dayjs(value).format('YYYY-MM-DD') ,available);
+    return (
+      <ul className="events">
+        <div>{available? available.available: 0}</div>
+      </ul>
+    );
+  };
+
+  const cellRender = (current, info) => {
+    if (availableCampsite.length > 0) {
+      return dateCellRender(current);
+    }
+    return '未取得';
+    // return dateCellRender(current);
+  }
 
   useEffect(() => {
     getCampDetail(id);
@@ -127,9 +158,15 @@ function CampDetail() {
   }, [product]);
 
   useEffect(() => {
-    getAvailableCampsite({ camp_id: id, year: '2024', month: '10' });
     console.log("[可預約營區數量]", availableCampsite);
-  },[availableCampsite]);
+  }, [availableCampsite]);
+
+  useEffect(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    getAvailableCampsite({ camp_id: id, year: year.toString(), month: month.toString() });
+  },[]);
 
   return (
     <Layout>
@@ -183,9 +220,7 @@ function CampDetail() {
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                   <Title>{product.name}</Title>
-
                   <Paragraph>{product.desc}</Paragraph>
-
                   <Paragraph>
                     <Text strong underline>
                       <NavLink to="https://www.google.com/maps">
@@ -199,7 +234,14 @@ function CampDetail() {
               <Divider orientation="left">
               <Title level={2}>選擇入住時間</Title>
               </Divider>
-               <Calendar onPanelChange={onPanelChange} />;
+               <Row>
+                 <Col className="calendr-outer-frame">
+                  <Calendar 
+                    cellRender={cellRender}
+                    onPanelChange={onPanelChange} />
+                 </Col>
+                 <Col></Col>
+               </Row>
               <Divider orientation="left">
                 <Title level={2}>營區選擇</Title>
               </Divider>
