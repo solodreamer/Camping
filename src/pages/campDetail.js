@@ -40,11 +40,12 @@ function CampDetail() {
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
   ];
 
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [campPhotosIndex, setCampPhotosIndex] = useState(0);
   const [campsitePhotosIndex, setCampsitePhotosIndex] = useState({});
   const [availableCampsite, setAvailableCampsite] = useState([]);
-  const { id } = useParams();
+  const [campsiteCountInfo, setCampsiteCountInfo] = useState([]);
 
   /**
    * 取得營地資訊
@@ -109,7 +110,7 @@ function CampDetail() {
   };
 
   /**
-   * 取得可預約營區
+   * 取得單一營位可訂位日期
    * @param {*} param 
    */
   const getAvailableCampsite = async (param) => {
@@ -121,18 +122,39 @@ function CampDetail() {
     return [];
   }
 
+  /**
+   * 日曆切換月份變更事件
+   * @param {*} value 
+   * @param {*} mode 
+   */
   const onPanelChange = (value, mode) => {
-    console.log(value.format('YYYY-MM-DD'), mode);
     const year = value.format('YYYY');
     const month = value.format('MM');
     getAvailableCampsite({ camp_id: id, year: year, month: month });
   };
 
+  /**
+   * 自訂義日曆格內容
+   * @param {*} current 
+   * @param {*} info 
+   * @returns 
+   */
+  const cellRender = (current, info) => {
+    if (availableCampsite.length > 0) {
+      return dateCellRender(current);
+    }
+    return '未取得';
+    // return dateCellRender(current);
+  };
 
+  /**
+   * 自訂義日曆格html
+   * @param {*} value 
+   * @returns 
+   */
   const dateCellRender = (value) => {
-    // console.log("[current]", dayjs(value).format('YYYY-MM-DD'));
     const available = availableCampsite.find((item) => item.date === dayjs(value).format('YYYY-MM-DD').toString());
-    console.log("[available]",dayjs(value).format('YYYY-MM-DD') ,available);
+    // console.log("[available]",dayjs(value).format('YYYY-MM-DD') ,available);
     return (
       <ul className="events">
         <div>{available? available.available: 0}</div>
@@ -140,18 +162,44 @@ function CampDetail() {
     );
   };
 
-  const cellRender = (current, info) => {
-    if (availableCampsite.length > 0) {
-      return dateCellRender(current);
+  /**
+   * 取得單一營位可訂位數量
+   * @param {*} param 
+   */
+  const getCampsite_available = async (param) => {
+    const campsiteCountInfo = await axios.post(`${process.env.REACT_APP_API_URL}/v1/camps/campsite_available`, param);
+    if (campsiteCountInfo.data.success === true && campsiteCountInfo.data.length > 0) {
+      console.log("[campsiteCountInfo]", campsiteCountInfo.data);
+      setCampsiteCountInfo(campsiteCountInfo.data.data);
     }
-    return '未取得';
-    // return dateCellRender(current);
-  }
+  };
 
+
+  /**
+   * 初始化取得營地資訊
+   */
   useEffect(() => {
     getCampDetail(id);
     console.log("[id]", id);
   }, [id]);
+
+  /**
+   * 初始化取得當月可預約營區
+   */
+  useEffect(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    getAvailableCampsite({ camp_id: id, year: year.toString(), month: month.toString() });
+  },[]);
+
+  /**
+   * 初始化取得當日可預約營位數量
+   */
+  useEffect(() => {
+    const today = dayjs(new Date()).format('YYYY-MM-DD');
+    getCampsite_available({camp_id: id, date: today});
+  },[]);
 
   useEffect(() => {
     console.log("[營地資訊]", product);
@@ -161,12 +209,6 @@ function CampDetail() {
     console.log("[可預約營區數量]", availableCampsite);
   }, [availableCampsite]);
 
-  useEffect(() => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    getAvailableCampsite({ camp_id: id, year: year.toString(), month: month.toString() });
-  },[]);
 
   return (
     <Layout>
