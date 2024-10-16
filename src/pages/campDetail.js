@@ -13,7 +13,8 @@ import {
   Tag,
   Spin,
   Button,
-  Calendar
+  Calendar,
+  Table
 } from "antd";
 import {
   LoginOutlined,
@@ -30,7 +31,23 @@ import dayjs from "dayjs";
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
-
+const columns = [
+  {
+    title: 'campsiteId',
+    dataIndex: 'campsiteId',
+    key: 'campsiteId'
+  },
+  {
+    title: '營地名稱',
+    dataIndex: 'areaName',
+    key: 'areaName'
+  },
+  {
+    title: '剩餘數量',
+    dataIndex: 'availableCount',
+    key: 'availableCount'
+  },
+];
 
 function CampDetail() {
   //選單項目
@@ -46,6 +63,7 @@ function CampDetail() {
   const [campsitePhotosIndex, setCampsitePhotosIndex] = useState({});
   const [availableCampsite, setAvailableCampsite] = useState([]);
   const [campsiteCountInfo, setCampsiteCountInfo] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(() => dayjs());
 
   /**
    * 取得營地資訊
@@ -163,13 +181,23 @@ function CampDetail() {
   };
 
   /**
+   * 日期選擇事件
+   * @param {*} value 
+   */
+  const onSelect = (value) => {
+    console.log("[日期選擇]", dayjs(value).format('YYYY-MM-DD').toString());
+    getCampsite_available({camp_id: id, date: dayjs(value).format('YYYY-MM-DD').toString()});
+    setSelectedDate(value)
+  }
+
+  /**
    * 取得單一營位可訂位數量
    * @param {*} param 
    */
   const getCampsite_available = async (param) => {
     const campsiteCountInfo = await axios.post(`${process.env.REACT_APP_API_URL}/v1/camps/campsite_available`, param);
-    if (campsiteCountInfo.data.success === true && campsiteCountInfo.data.length > 0) {
-      console.log("[campsiteCountInfo]", campsiteCountInfo.data);
+
+    if (campsiteCountInfo.data.success === true ) {
       setCampsiteCountInfo(campsiteCountInfo.data.data);
     }
   };
@@ -196,18 +224,22 @@ function CampDetail() {
   /**
    * 初始化取得當日可預約營位數量
    */
-  useEffect(() => {
-    const today = dayjs(new Date()).format('YYYY-MM-DD');
-    getCampsite_available({camp_id: id, date: today});
-  },[]);
+  // useEffect(() => {
+  //   const today = dayjs(new Date()).format('YYYY-MM-DD');
+  //   getCampsite_available({camp_id: id, date: today});
+  // },[]);
 
   useEffect(() => {
     console.log("[營地資訊]", product);
   }, [product]);
 
   useEffect(() => {
-    console.log("[可預約營區數量]", availableCampsite);
+    console.log("[可訂位日期]", availableCampsite);
   }, [availableCampsite]);
+
+  useEffect(() => {
+    console.log("[可預約營區數量]", campsiteCountInfo);
+  }, [campsiteCountInfo]);
 
 
   return (
@@ -280,9 +312,14 @@ function CampDetail() {
                  <Col className="calendr-outer-frame">
                   <Calendar 
                     cellRender={cellRender}
-                    onPanelChange={onPanelChange} />
+                    onPanelChange={onPanelChange} 
+                    onSelect = {onSelect}
+                    />
                  </Col>
-                 <Col></Col>
+                 <Col>
+                 <Title level={2}>{`${selectedDate?.format('YYYY-MM-DD')} 空位狀況`}</Title>
+                  <Table columns = {columns} dataSource={campsiteCountInfo} pagination={false}/>
+                 </Col>
                </Row>
               <Divider orientation="left">
                 <Title level={2}>營區選擇</Title>
