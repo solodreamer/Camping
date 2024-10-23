@@ -78,6 +78,12 @@
     border-radius: 5px;
 }
 
+.calendr-select-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 0;
+}
+
 .events{
     margin: 0;
     padding: 0;
