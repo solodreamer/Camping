@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Link, NavLink, useParams } from "react-router-dom";
 
 import {
@@ -16,7 +16,8 @@ import {
   Calendar,
   Table,
   Select,
-  Radio
+  Form,
+  InputNumber
 } from "antd";
 import {
   LoginOutlined,
@@ -33,25 +34,84 @@ import dayjs from "dayjs";
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
-const columns = [
-  {
-    title: '營地名稱',
-    dataIndex: 'areaName',
-    key: 'areaName',
-    editable: true,
-  },
-  {
-    title: '剩餘數量',
-    dataIndex: 'availableCount',
-    key: 'availableCount',
-    sorter: (a,b) => a.availableCount - b.availableCount,
-  },
-  {
-    title: '訂位數量',
-    dataIndex: 'availableCount',
-    key: 'availableCount'
-  },
-];
+const EditableContext = React.createContext(null);
+const EditableRow = ({ index, ...props }) => {
+  const [form] = Form.useForm();
+  return (
+    <Form form={form} component={false}> 
+      <EditableContext.Provider value={form}>
+        <tr {...props} />
+      </EditableContext.Provider>
+      </Form>
+  );
+};
+const EditableCell = ({
+  title,
+  editable,
+  children,
+  dataIndex,
+  record,
+  handleSave,
+  ...restProps
+}) => {
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef(null);
+  const form = useContext(EditableContext);
+  useEffect(() => {
+    if (editing) {
+      inputRef.current?.focus();
+    }
+  }, [editing]);
+  const toggleEdit = () => {
+    setEditing(!editing);
+    form.setFieldsValue({
+      [dataIndex]: record[dataIndex],
+    });
+  };
+  const save = async () => {
+    try {
+      const values = await form.validateFields();
+      toggleEdit();
+      handleSave({
+        ...record,
+        ...values,
+      });
+    } catch (errInfo) {
+      console.log('Save failed:', errInfo);
+    }
+  };
+  let childNode = children;
+  if (editable) {
+    childNode = editing ? (
+      <Form.Item
+        style={{
+          margin: 0,
+        }}
+        name={dataIndex}
+        rules={[
+          {
+            required: true,
+            message: `${title} is required.`,
+          },
+        ]}
+      >
+        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
+      </Form.Item>
+    ) : (
+      <div
+        className="editable-cell-value-wrap"
+        style={{
+          paddingInlineEnd: 24,
+        }}
+        onClick={toggleEdit}
+      >
+        {children}
+      </div>
+    );
+  }
+  return <td {...restProps}>{childNode}</td>;
+};
+
 
 function CampDetail() {
   //選單項目
@@ -59,6 +119,27 @@ function CampDetail() {
     { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
     { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
+  ];
+
+  // 定義營位數量表格欄位
+  const defaultColumns = [
+    {
+      title: '營地名稱',
+      dataIndex: 'areaName',
+      key: 'areaName',
+    },
+    {
+      title: '剩餘數量',
+      dataIndex: 'availableCount',
+      key: 'availableCount',
+      sorter: (a,b) => a.availableCount - b.availableCount,
+    },
+    {
+      title: '訂位數量',
+      dataIndex: 'availableCount',
+      key: 'availableCount',
+      editable: true,
+    },
   ];
 
   const { id } = useParams();
@@ -206,6 +287,44 @@ function CampDetail() {
     }
   };
 
+  /**
+   *  設定營位數量表格欄位
+   *  @param {*} record
+   */
+  const columns = defaultColumns.map((col) => {
+    if (col.editable === false) {
+      return col;
+    }
+    return {
+      ...col,
+      oncell: (record) => ({
+        record,
+        editable: col.editable,
+        inputType: 'number',
+        dataIndex: col.dataIndex,
+        title: col.title,
+        onHandleSave,
+      }),
+    };
+  });
+
+  const onHandleSave = (row) => {
+    const newData = [...campsiteCountInfo];
+    const index = newData.findIndex((item) => row.key === item.key);
+    const item = newData[index];
+    newData.splice(index, 1, {
+      ...item,
+      ...row,
+    });
+    setCampsiteCountInfo(newData);
+  };
+
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    }
+  }
 
   /**
    * 初始化取得營地資訊
@@ -389,7 +508,8 @@ function CampDetail() {
                  </Col>
                  <Col>
                  <Title level={2}>{`${selectedDate?.format('YYYY-MM-DD')} 空位狀況`}</Title>
-                  <Table columns = {columns} dataSource={campsiteCountInfo} pagination={false}/>
+                  <Table bordered components={components} columns={columns} dataSource={campsiteCountInfo} 
+                       pagination={false} rowClassName={() => 'editable-row'}/>
                  </Col>
                </Row>
               <Divider orientation="left">
