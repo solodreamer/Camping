@@ -14,10 +14,9 @@ import {
   Spin,
   Button,
   Calendar,
-  Table,
   Select,
-  Form,
-  InputNumber
+  List,
+  InputNumber,
 } from "antd";
 import {
   LoginOutlined,
@@ -26,6 +25,7 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined,
 } from "@ant-design/icons";
+import { QueryFilter, ProFormDateRangePicker } from '@ant-design/pro-components';
 
 import "./campDetail.css";
 import axios from "axios";
@@ -34,84 +34,6 @@ import dayjs from "dayjs";
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
-const EditableContext = React.createContext(null);
-const EditableRow = ({ index, ...props }) => {
-  const [form] = Form.useForm();
-  return (
-    <Form form={form} component={false}> 
-      <EditableContext.Provider value={form}>
-        <tr {...props} />
-      </EditableContext.Provider>
-      </Form>
-  );
-};
-const EditableCell = ({
-  title,
-  editable,
-  children,
-  dataIndex,
-  record,
-  handleSave,
-  ...restProps
-}) => {
-  const [editing, setEditing] = useState(false);
-  const inputRef = useRef(null);
-  const form = useContext(EditableContext);
-  useEffect(() => {
-    if (editing) {
-      inputRef.current?.focus();
-    }
-  }, [editing]);
-  const toggleEdit = () => {
-    setEditing(!editing);
-    form.setFieldsValue({
-      [dataIndex]: record[dataIndex],
-    });
-  };
-  const save = async () => {
-    try {
-      const values = await form.validateFields();
-      toggleEdit();
-      handleSave({
-        ...record,
-        ...values,
-      });
-    } catch (errInfo) {
-      console.log('Save failed:', errInfo);
-    }
-  };
-  let childNode = children;
-  if (editable) {
-    childNode = editing ? (
-      <Form.Item
-        style={{
-          margin: 0,
-        }}
-        name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `${title} is required.`,
-          },
-        ]}
-      >
-        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
-      </Form.Item>
-    ) : (
-      <div
-        className="editable-cell-value-wrap"
-        style={{
-          paddingInlineEnd: 24,
-        }}
-        onClick={toggleEdit}
-      >
-        {children}
-      </div>
-    );
-  }
-  return <td {...restProps}>{childNode}</td>;
-};
-
 
 function CampDetail() {
   //選單項目
@@ -121,27 +43,6 @@ function CampDetail() {
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
   ];
 
-  // 定義營位數量表格欄位
-  const defaultColumns = [
-    {
-      title: '營地名稱',
-      dataIndex: 'areaName',
-      key: 'areaName',
-    },
-    {
-      title: '剩餘數量',
-      dataIndex: 'availableCount',
-      key: 'availableCount',
-      sorter: (a,b) => a.availableCount - b.availableCount,
-    },
-    {
-      title: '訂位數量',
-      dataIndex: 'availableCount',
-      key: 'availableCount',
-      editable: true,
-    },
-  ];
-
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [campPhotosIndex, setCampPhotosIndex] = useState(0);
@@ -149,6 +50,10 @@ function CampDetail() {
   const [availableCampsite, setAvailableCampsite] = useState([]);
   const [campsiteCountInfo, setCampsiteCountInfo] = useState([]);
   const [selectedDate, setSelectedDate] = useState(() => dayjs());
+  // 定義狀態來存儲日期範圍
+  const [dateRange, setDateRange] = useState([dayjs(), dayjs().add(1,'day')]);
+  // 定義狀態來存儲訂位數量
+  const [quantities, setQuantities] = useState({});
 
   /**
    * 取得營地資訊
@@ -257,22 +162,22 @@ function CampDetail() {
    */
   const dateCellRender = (value) => {
     const available = availableCampsite.find((item) => item.date === dayjs(value).format('YYYY-MM-DD').toString());
-    // console.log("[available]",dayjs(value).format('YYYY-MM-DD') ,available);
     return (
       <ul className="events">
-        <div>{available? available.available: 0}</div>
+        <div>{available ? available.available : 0}</div>
       </ul>
     );
   };
 
   /**
    * 日期選擇事件
-   * @param {*} value 
+   * @param {*} date 
    */
-  const onSelect = (value) => {
-    console.log("[日期選擇]", dayjs(value).format('YYYY-MM-DD').toString());
-    getCampsite_available({camp_id: id, date: dayjs(value).format('YYYY-MM-DD').toString()});
-    setSelectedDate(value)
+  const onSelect = (date) => {
+    console.log("[日期選擇]", dayjs(date));
+    setSelectedDate(date);
+    setDateRange([date, date.add(1,'day')]);
+    onFilterSearch();
   }
 
   /**
@@ -282,49 +187,44 @@ function CampDetail() {
   const getCampsite_available = async (param) => {
     const campsiteCountInfo = await axios.post(`${process.env.REACT_APP_API_URL}/v1/camps/campsite_available`, param);
 
-    if (campsiteCountInfo.data.success === true ) {
+    if (campsiteCountInfo.data.success === true) {
       setCampsiteCountInfo(campsiteCountInfo.data.data);
     }
   };
 
   /**
-   *  設定營位數量表格欄位
-   *  @param {*} record
+   * 特定條件查詢單一營位可訂位數量
    */
-  const columns = defaultColumns.map((col) => {
-    if (col.editable === false) {
-      return col;
-    }
-    return {
-      ...col,
-      oncell: (record) => ({
-        record,
-        editable: col.editable,
-        inputType: 'number',
-        dataIndex: col.dataIndex,
-        title: col.title,
-        onHandleSave,
-      }),
-    };
-  });
-
-  const onHandleSave = (row) => {
-    const newData = [...campsiteCountInfo];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setCampsiteCountInfo(newData);
+  const onFilterSearch = async () => {
+    await waitTime(1000);
+    getCampsite_available({ camp_id: id, date: dayjs(dateRange[0]).format('YYYY-MM-DD').toString() });
   };
 
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    }
-  }
+  /** 等待時間 */
+  const waitTime = (time) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true);
+      }, time);
+    });
+  };
+
+  /**
+   * 是否禁用日期
+   * @param {*} current 
+   * @returns 
+   */
+  const disabledDate = (current) => {
+    return current && current < dayjs().endOf("day");
+  };
+
+  /**
+   * 日期範圍變更事件
+   * @param {*} dates 
+   */
+  const onDateChange = (dates) => {
+    setDateRange(dates);
+  };
 
   /**
    * 初始化取得營地資訊
@@ -342,15 +242,7 @@ function CampDetail() {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     getAvailableCampsite({ camp_id: id, year: year.toString(), month: month.toString() });
-  },[]);
-
-  /**
-   * 初始化取得當日可預約營位數量
-   */
-  // useEffect(() => {
-  //   const today = dayjs(new Date()).format('YYYY-MM-DD');
-  //   getCampsite_available({camp_id: id, date: today});
-  // },[]);
+  }, []);
 
   useEffect(() => {
     console.log("[營地資訊]", product);
@@ -363,6 +255,14 @@ function CampDetail() {
   useEffect(() => {
     console.log("[可預約營區數量]", campsiteCountInfo);
   }, [campsiteCountInfo]);
+
+  useEffect(() => {
+    console.log("[選擇入住時間]", dateRange[0].format('YYYY-MM-DD'),"-", dateRange[1].format('YYYY-MM-DD'));
+  }, [dateRange]);
+
+  const handleQuantityChange = (id, value) => {
+    setQuantities({ ...quantities, [id]: value });
+  };
 
 
   return (
@@ -382,7 +282,7 @@ function CampDetail() {
           {product ? (
             <Typography>
               <Divider />
-              <Row>
+              <Row >
                 <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                   {product.campPhotos?.length > 0 ? (
                     <Image.PreviewGroup
@@ -429,11 +329,17 @@ function CampDetail() {
               </Row>
               <Divider />
               <Divider orientation="left">
-              <Title level={2}>選擇入住時間</Title>
+                <Title level={2}>選擇入住時間</Title>
               </Divider>
-               <Row>
-                 <Col className="calendr-outer-frame">
-                  <Calendar 
+              <Row>
+                <Col  className="queryFilterStyle">
+                  <QueryFilter defaultCollapsed submitter onFinish={onFilterSearch}>
+                    <ProFormDateRangePicker name="dateRange" label="日期" value={dateRange}
+                      fieldProps={{ disabledDate, inputReadOnly: true }} onChange={onDateChange}/>
+                  </QueryFilter>
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={12} xl={12} className="calendr-outer-frame">
+                  <Calendar
                     headerRender={({ value, type, onChange, onTypeChange }) => {
                       const start = 0;
                       const end = 12;
@@ -502,16 +408,27 @@ function CampDetail() {
                       );
                     }}
                     cellRender={cellRender}
-                    onPanelChange={onPanelChange} 
-                    onSelect = {onSelect}
-                    />
-                 </Col>
-                 <Col>
-                 <Title level={2}>{`${selectedDate?.format('YYYY-MM-DD')} 空位狀況`}</Title>
-                  <Table bordered components={components} columns={columns} dataSource={campsiteCountInfo} 
-                       pagination={false} rowClassName={() => 'editable-row'}/>
-                 </Col>
-               </Row>
+                    onPanelChange={onPanelChange}
+                    onSelect={onSelect}
+                    //disabledDate={disabledDate}
+                  />
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={12} xl={12} className="tableStyle">
+                  <Title level={2}>{`${selectedDate?.format('YYYY-MM-DD')} 空位狀況`}</Title>
+                  <List itemLayout="horizontal" dataSource={campsiteCountInfo}
+                    renderItem={item => (
+                      <List.Item
+                        actions={[
+                          <InputNumber min={0} defaultValue={0} max={item.availableCount}  onChange={value => handleQuantityChange(item.id, value)}/>,
+                        ]}
+                      >
+                        <List.Item.Meta title={item.areaName} >
+                        </List.Item.Meta>
+                        <div>剩餘幾{item.availableCount}間</div>
+                      </List.Item>
+                    )}/>
+                </Col>
+              </Row>
               <Divider orientation="left">
                 <Title level={2}>營區選擇</Title>
               </Divider>
@@ -540,7 +457,7 @@ function CampDetail() {
                           <div className="campsite-carousel">
                             <Button
                               className="campsite-prevButton"
-                              onClick={ () => handleCampsitePhotoPrevClick(campsite.areaName)}
+                              onClick={() => handleCampsitePhotoPrevClick(campsite.areaName)}
                               shape="circle"
                               icon={<CaretLeftOutlined />}
                             />
