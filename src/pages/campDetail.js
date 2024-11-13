@@ -52,8 +52,8 @@ function CampDetail() {
   const [selectedDate, setSelectedDate] = useState(() => dayjs());
   //定義狀態來儲存日期範圍
   const [dateRange, setDateRange] = useState([dayjs(), dayjs().add(1,'day')]);
-  //定義狀態來儲存各自campsiteId選取數量
-  const [quantities, setQuantities] = useState([]);
+  //定義狀態來儲存已選取的campsite
+  const [selectedCampsites, setSelectedCampsites] = useState([]);
   //定義狀態儲存campsiteId清單是否載入中
   const [isLoading, setLoading] = useState(false);
   //定義狀態儲存總訂位數量
@@ -244,9 +244,8 @@ function CampDetail() {
    * @param {*} value 
    */
   const handleQuantityChange = (id, value) => {
-    // setQuantities([...quantities, { campsiteId: id, quantity: value }]);
-    setQuantities((prevQuantities) => {
-      const updatedQuantites = prevQuantities.filter(item => item.campsiteId !== id);
+    setSelectedCampsites((prevSelectedCampsites) => {
+      const updatedQuantites = prevSelectedCampsites.filter(item => item.campsiteId !== id);
       if(value > 0) {
         updatedQuantites.push({ campsiteId: id, quantity: value });
       }
@@ -260,12 +259,33 @@ function CampDetail() {
    */
   const booking_camp_confirm = async(params)=> {
     try {
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMjYiLCJ1c2VyX25hbWUiOiLmiJHlvojluKXkuIAiLCJleHBpcmVfdGltZSI6MTczNDk1ODY3NywiZXhwIjoxNzM0OTU4Njc3LCJpYXQiOjE3Mjk3NzQ2NzcsImlzcyI6IkdvaHViIiwibmJmIjoxNzI5Nzc0Njc3fQ.30_wXTttwqwtc9ehhuGab6D8-S-_HLGBgURMknpe7UU'
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/booking_camp/confirm`,
-        params
+        params,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
       );
+      if (res.data.data === 'success') {
+        console.log("訂位成功", res);
+      } else {
+        console.log("訂位失敗", res);
+      }
     }catch(error) {
 
     }
+  }
+
+  const onSaveBooking = () => {
+    const params = {
+      campsite_id:selectedCampsites[0].campsiteId,
+      count : selectedCampsites[0].quantity,
+      start_date: dayjs(dateRange[0]).format('YYYY-MM-DD').toString(),
+      end_date: dayjs(dateRange[1]).format('YYYY-MM-DD').toString()
+    };
+    booking_camp_confirm(params);
   }
 
   /**
@@ -310,14 +330,14 @@ function CampDetail() {
   }, [dateRange]);
 
   useEffect(() => {
-    console.log("[已選擇數量]", quantities);
-    if(quantities.length > 0) {
-      const total = quantities.reduce((sum, item) => sum + item.quantity,0);
+    console.log("[已選擇數量]", selectedCampsites);
+    if(selectedCampsites.length > 0) {
+      const total = selectedCampsites.reduce((sum, item) => sum + item.quantity,0);
       setCount(total);
     } else {
       setCount(0);
     }
-  }, [quantities]);
+  }, [selectedCampsites]);
 
   useEffect(() => {
     console.log("[總訂位數量]", count);
@@ -500,7 +520,7 @@ function CampDetail() {
                           <Divider type="vertical" orientation="left" style={{ borderColor:'#3b444f' }}/>
                         </Col>
                         <Col xs={12} sm={12} md={12} lg={12} xl={10} className="book-button">
-                          <Button type="primary" disabled={isbookDisable}>現在預定</Button>
+                          <Button type="primary" disabled={isbookDisable} onClick={onSaveBooking}>現在預定</Button>
                         </Col>
                       </Row>
                     </div>
