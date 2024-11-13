@@ -50,10 +50,16 @@ function CampDetail() {
   const [availableCampsite, setAvailableCampsite] = useState([]);
   const [campsiteCountInfo, setCampsiteCountInfo] = useState([]);
   const [selectedDate, setSelectedDate] = useState(() => dayjs());
-  // 定義狀態來存儲日期範圍
+  //定義狀態來儲存日期範圍
   const [dateRange, setDateRange] = useState([dayjs(), dayjs().add(1,'day')]);
-  // 定義狀態來存儲訂位數量
-  const [quantities, setQuantities] = useState({});
+  //定義狀態來儲存各自campsiteId選取數量
+  const [quantities, setQuantities] = useState([]);
+  //定義狀態儲存campsiteId清單是否載入中
+  const [isLoading, setLoading] = useState(false);
+  //定義狀態儲存總訂位數量
+  const [count, setCount] = useState(0);
+  //定義狀態儲存是否禁用預定button
+  const [isbookDisable, setBookDisable] = useState(true);
 
   /**
    * 取得營地資訊
@@ -189,6 +195,7 @@ function CampDetail() {
 
     if (campsiteCountInfo.data.success === true) {
       setCampsiteCountInfo(campsiteCountInfo.data.data);
+      setLoading(false);
     }
   };
 
@@ -197,7 +204,12 @@ function CampDetail() {
    */
   const onFilterSearch = async () => {
     await waitTime(1000);
-    getCampsite_available({ camp_id: id, date: dayjs(dateRange[0]).format('YYYY-MM-DD').toString() });
+    setLoading(true);
+    getCampsite_available({ 
+      camp_id: id, 
+      start_date: dayjs(dateRange[0]).format('YYYY-MM-DD').toString(),
+      end_date: dayjs(dateRange[1]).format('YYYY-MM-DD').toString() 
+    });
   };
 
   /** 等待時間 */
@@ -227,6 +239,36 @@ function CampDetail() {
   };
 
   /**
+   * 計算總訂位數量
+   * @param {*} id 
+   * @param {*} value 
+   */
+  const handleQuantityChange = (id, value) => {
+    // setQuantities([...quantities, { campsiteId: id, quantity: value }]);
+    setQuantities((prevQuantities) => {
+      const updatedQuantites = prevQuantities.filter(item => item.campsiteId !== id);
+      if(value > 0) {
+        updatedQuantites.push({ campsiteId: id, quantity: value });
+      }
+      return updatedQuantites;
+    });
+  };
+
+  /**
+   * 呼叫存檔訂位api
+   * @param {*} param 
+   */
+  const booking_camp_confirm = async(params)=> {
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/booking_camp/confirm`,
+        params
+      );
+    }catch(error) {
+
+    }
+  }
+
+  /**
    * 初始化取得營地資訊
    */
   useEffect(() => {
@@ -242,6 +284,13 @@ function CampDetail() {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     getAvailableCampsite({ camp_id: id, year: year.toString(), month: month.toString() });
+  }, []);
+
+  /**
+   *  初始化查詢單一營位可訂位數量
+   */
+  useEffect(() => {
+    onFilterSearch();
   }, []);
 
   useEffect(() => {
@@ -260,9 +309,24 @@ function CampDetail() {
     console.log("[選擇入住時間]", dateRange[0].format('YYYY-MM-DD'),"-", dateRange[1].format('YYYY-MM-DD'));
   }, [dateRange]);
 
-  const handleQuantityChange = (id, value) => {
-    setQuantities({ ...quantities, [id]: value });
-  };
+  useEffect(() => {
+    console.log("[已選擇數量]", quantities);
+    if(quantities.length > 0) {
+      const total = quantities.reduce((sum, item) => sum + item.quantity,0);
+      setCount(total);
+    } else {
+      setCount(0);
+    }
+  }, [quantities]);
+
+  useEffect(() => {
+    console.log("[總訂位數量]", count);
+    if(count > 0) {
+      setBookDisable(false);
+    } else {
+      setBookDisable(true);
+    }
+  }, [count]);
 
 
   return (
@@ -415,18 +479,31 @@ function CampDetail() {
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={12} xl={12} className="tableStyle">
                   <Title level={2}>{`${selectedDate?.format('YYYY-MM-DD')} 空位狀況`}</Title>
-                  <List itemLayout="horizontal" dataSource={campsiteCountInfo}
+                  <Spin tip="Loading..." spinning={isLoading}>
+                  <List itemLayout="horizontal" dataSource={campsiteCountInfo} bordered={true}
                     renderItem={item => (
                       <List.Item
                         actions={[
-                          <InputNumber min={0} defaultValue={0} max={item.availableCount}  onChange={value => handleQuantityChange(item.id, value)}/>,
+                          <InputNumber min={0} defaultValue={0} max={item.availableCount}  onChange={value => handleQuantityChange(item.campsiteId, value)}/>,
                         ]}
                       >
                         <List.Item.Meta title={item.areaName} >
                         </List.Item.Meta>
-                        <div>剩餘幾{item.availableCount}間</div>
+                        <div>剩餘{item.availableCount}間</div>
                       </List.Item>
                     )}/>
+                    </Spin>
+                    <div className="room-book-status">
+                      <Row className="row-total-price">
+                        <Col xs={12} sm={12} md={12} lg={12} xl={10}>總帳數:{count}</Col>
+                        <Col  xs={12} sm={12} md={12} lg={12} xl={2}>
+                          <Divider type="vertical" orientation="left" style={{ borderColor:'#3b444f' }}/>
+                        </Col>
+                        <Col xs={12} sm={12} md={12} lg={12} xl={10} className="book-button">
+                          <Button type="primary" disabled={isbookDisable}>現在預定</Button>
+                        </Col>
+                      </Row>
+                    </div>
                 </Col>
               </Row>
               <Divider orientation="left">

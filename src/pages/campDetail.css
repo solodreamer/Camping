@@ -110,4 +110,26 @@
     margin-bottom: 25px;
 }
 
-  
+.room-book-status {
+    border: 3px solid #d7dce3;
+    margin-top: 20px;
+    padding: 15px;
+    position: relative;
+}
+
+.row-total-price{
+    font-size: 15px;
+    font-weight: bold;
+    color: #3b444f;
+    text-align: left;
+    justify-content: space-between;
+}
+
+.ant-divider-vertical {
+    height: 1.9em;
+}
+
+.book-button {
+    position: relative;
+    text-align: right;
+}
