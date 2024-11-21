@@ -7,36 +7,11 @@ import axios from "axios";
 import { Layout, Menu, theme, Col, Row, Divider, Typography,} from "antd";
 import { LoginOutlined, UserAddOutlined, HomeOutlined,} from "@ant-design/icons";
 import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker} from '@ant-design/pro-components';
+import "./homePage.css";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title } = Typography;
-
-//style設定
-const headerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  height: 64,
-  paddingInline: 48,
-  lineHeight: "64px",
-  backgroundColor: "#4096ff",
-  top: 0,
-};
-const contentStyle = {
-  textAlign: "center",
-  minHeight: 120,
-  lineHeight: "120px",
-};
-const siderStyle = {
-  textAlign: "center",
-  lineHeight: "120px",
-  color: "#fff",
-};
-const footerStyle = {
-  textAlign: "center",
-  color: "#fff",
-  backgroundColor: "#4096ff",
-};
 
 //選單項目
 const menuItems = [
@@ -112,7 +87,7 @@ function HomePage() {
   
   return (
     <Layout>
-      <Sider style={siderStyle} breakpoint="md" collapsedWidth="0">
+      <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
         <Menu mode="inline" theme="dark">
           {menuItems.map((item) => (
             <Menu.Item key={item.key} icon={item.icon}>
@@ -122,8 +97,8 @@ function HomePage() {
         </Menu>
       </Sider>
       <Layout>
-        <Header style={headerStyle}>Go露營</Header>
-        <Content style={contentStyle}>
+        <Header className="home-headerStyle">Go露營</Header>
+        <Content className="home-contentStyle">
           <div>
              <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
                 <ProFormSelect name="region" label="選擇地區" options={locations}  placeholder="請選擇地區"/>
@@ -176,7 +151,7 @@ function HomePage() {
             </div>
           </Typography>
         </Content>
-        <Footer style={footerStyle}>
+        <Footer className="home-footerStyle">
           Copyright ©{new Date().getFullYear()} Created by Go露營
         </Footer>
       </Layout>

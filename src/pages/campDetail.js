@@ -17,14 +17,18 @@ import {
   Select,
   List,
   InputNumber,
+  Card,
 } from "antd";
+
 import {
   LoginOutlined,
   UserAddOutlined,
   HomeOutlined,
   CaretLeftOutlined,
   CaretRightOutlined,
+  EditFilled,
 } from "@ant-design/icons";
+
 import { QueryFilter, ProFormDateRangePicker } from '@ant-design/pro-components';
 
 import "./campDetail.css";
@@ -34,6 +38,7 @@ import dayjs from "dayjs";
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
+const { Meta } = Card;
 
 function CampDetail() {
   //選單項目
@@ -183,6 +188,7 @@ function CampDetail() {
     console.log("[日期選擇]", dayjs(date));
     setSelectedDate(date);
     setDateRange([date, date.add(1,'day')]);
+    setSelectedCampsites([]);
     onFilterSearch();
   }
 
@@ -278,6 +284,9 @@ function CampDetail() {
     }
   }
 
+  /**
+   * 儲存訂位事件
+   */
   const onSaveBooking = () => {
     const params = {
       campsite_id:selectedCampsites[0].campsiteId,
@@ -361,14 +370,15 @@ function CampDetail() {
         </Menu>
       </Sider>
       <Layout>
-        <Header className="headerStyle">Go露營</Header>
-        <Content className="contentStyle">
+        <Header className="campdetail-headerStyle">Go露營</Header>
+        <Content className="campdetail-contentStyle">
           {product ? (
             <Typography>
               <Divider />
               <Row >
                 <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                   {product.campPhotos?.length > 0 ? (
+                    
                     <Image.PreviewGroup
                       items={product.campPhotos.map((item) => {
                         return { src: item.img };
@@ -415,13 +425,13 @@ function CampDetail() {
               <Divider orientation="left">
                 <Title level={2}>選擇入住時間</Title>
               </Divider>
-              <Row>
-                <Col  className="queryFilterStyle">
+              <Row gutter={[16,{ xs: 16, sm: 16}]}>
+                <div  className="queryFilterStyle">
                   <QueryFilter defaultCollapsed submitter onFinish={onFilterSearch}>
                     <ProFormDateRangePicker name="dateRange" label="日期" value={dateRange}
                       fieldProps={{ disabledDate, inputReadOnly: true }} onChange={onDateChange}/>
                   </QueryFilter>
-                </Col>
+                </div>
                 <Col xs={24} sm={24} md={24} lg={12} xl={12} className="calendr-outer-frame">
                   <Calendar
                     headerRender={({ value, type, onChange, onTypeChange }) => {
@@ -494,32 +504,43 @@ function CampDetail() {
                     cellRender={cellRender}
                     onPanelChange={onPanelChange}
                     onSelect={onSelect}
-                    //disabledDate={disabledDate}
+                    disabledDate={disabledDate}
+                    fullscreen={true}
                   />
                 </Col>
-                <Col xs={24} sm={24} md={24} lg={12} xl={12} className="tableStyle">
-                  <Title level={2}>{`${selectedDate?.format('YYYY-MM-DD')} 空位狀況`}</Title>
+                <Col xs={24} sm={24} md={24} lg={12} xl={12} className="list-style">
                   <Spin tip="Loading..." spinning={isLoading}>
-                  <List itemLayout="horizontal" dataSource={campsiteCountInfo} bordered={true}
+                  <List 
+                    itemLayout="vertical" 
+                    dataSource={campsiteCountInfo} 
+                    bordered={true}
                     renderItem={item => (
                       <List.Item
                         actions={[
-                          <InputNumber min={0} defaultValue={0} max={item.availableCount}  onChange={value => handleQuantityChange(item.campsiteId, value)}/>,
+                          <InputNumber
+                            size="large"
+                            min={0} 
+                            defaultValue={0} 
+                            max={item.availableCount}
+                            value={selectedCampsites.find(c => item.campsiteId === c.campsiteId)?.quantity || 0}
+                            onChange={value => handleQuantityChange(item.campsiteId, value)}/>,
+                          <EditFilled />,
                         ]}
                       >
-                        <List.Item.Meta title={item.areaName} >
-                        </List.Item.Meta>
-                        <div>剩餘{item.availableCount}間</div>
+                        <List.Item.Meta title={item.areaName} ></List.Item.Meta>
+                        {item.availableCount > 0 ? 
+                        (<div className="available-count">剩餘 {item.availableCount} 間 !</div>) : 
+                        (<div className="non-available-count"> 目前無空房 </div>)}
                       </List.Item>
                     )}/>
                     </Spin>
                     <div className="room-book-status">
                       <Row className="row-total-price">
-                        <Col xs={12} sm={12} md={12} lg={12} xl={10}>總帳數:{count}</Col>
-                        <Col  xs={12} sm={12} md={12} lg={12} xl={2}>
+                        <Col xs={12} sm={10} md={10} lg={10} xl={10}>總帳數:{count}</Col>
+                        <Col xs={0} sm={2} md={2} lg={2} xl={2}>
                           <Divider type="vertical" orientation="left" style={{ borderColor:'#3b444f' }}/>
                         </Col>
-                        <Col xs={12} sm={12} md={12} lg={12} xl={10} className="book-button">
+                        <Col xs={12} sm={10} md={10} lg={10} xl={10} className="book-button">
                           <Button type="primary" disabled={isbookDisable} onClick={onSaveBooking}>現在預定</Button>
                         </Col>
                       </Row>
@@ -598,7 +619,7 @@ function CampDetail() {
             <Spin tip="Loading" size="large" />
           )}
         </Content>
-        <Footer className="footerStyle">
+        <Footer className="campdetail-footerStyle">
           Copyright ©{new Date().getFullYear()} Created by Go露營
         </Footer>
       </Layout>

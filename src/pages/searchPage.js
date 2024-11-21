@@ -159,8 +159,8 @@ function SearchPage() {
         </Menu>
       </Sider>
       <Layout>
-        <Header className="headerStyle">Go露營</Header>
-        <Content className="contentStyle">
+        <Header className="seach-headerStyle">Go露營</Header>
+        <Content className="seach-contentStyle">
           <div>
             <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
               <ProFormSelect
@@ -195,16 +195,14 @@ function SearchPage() {
                   cover={
                     <Link to={`/campDetail/${item.id}`}>
                       <img alt="營區圖片" src={item.coverImage} className="imgStyle"/>
-                    </Link>
-                  }
-                >
+                    </Link>}>
                   <Meta title={item.name} description={item.desc} />
                 </Card>
               </List.Item>
             )}
           />
         </Content>
-        <Footer className="footerStyle">
+        <Footer className="seach-footerStyle">
           Copyright ©{new Date().getFullYear()} Created by Go露營
         </Footer>
       </Layout>
