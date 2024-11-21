@@ -119,12 +119,7 @@ function HomePage() {
                 <Title level={2}>熱門營地</Title>
               </Divider>
               <Row
-                gutter={{
-                  xs: 8,
-                  sm: 16,
-                  md: 24,
-                  lg: 32,
-                }}
+                gutter={[{xs: 8,sm: 16,md: 24,lg: 32},16]}
               >
                 {camps?.map((camp) => {
                   return (
