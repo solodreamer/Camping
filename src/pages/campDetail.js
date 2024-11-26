@@ -251,9 +251,9 @@ function CampDetail() {
    */
   const handleQuantityChange = (id, value) => {
     setSelectedCampsites((prevSelectedCampsites) => {
-      const updatedQuantites = prevSelectedCampsites.filter(item => item.campsiteId !== id);
+      const updatedQuantites = prevSelectedCampsites.filter(item => item.camp_id !== id);
       if(value > 0) {
-        updatedQuantites.push({ campsiteId: id, quantity: value });
+        updatedQuantites.push({ camp_id: id, count: value });
       }
       return updatedQuantites;
     });
@@ -274,10 +274,10 @@ function CampDetail() {
           }
         }
       );
-      if (res.data.data === 'success') {
+      if (res.data.success === true) {
         console.log("訂位成功", res);
       } else {
-        console.log("訂位失敗", res);
+        console.log("訂位失敗", res.data.success);
       }
     }catch(error) {
 
@@ -289,11 +289,11 @@ function CampDetail() {
    */
   const onSaveBooking = () => {
     const params = {
-      campsite_id:selectedCampsites[0].campsiteId,
-      count : selectedCampsites[0].quantity,
       start_date: dayjs(dateRange[0]).format('YYYY-MM-DD').toString(),
-      end_date: dayjs(dateRange[1]).format('YYYY-MM-DD').toString()
+      end_date: dayjs(dateRange[1]).format('YYYY-MM-DD').toString(),
+      booking_item: selectedCampsites
     };
+    console.log("[儲存訂位參數]", params);
     booking_camp_confirm(params);
   }
 
@@ -341,7 +341,7 @@ function CampDetail() {
   useEffect(() => {
     console.log("[已選擇數量]", selectedCampsites);
     if(selectedCampsites.length > 0) {
-      const total = selectedCampsites.reduce((sum, item) => sum + item.quantity,0);
+      const total = selectedCampsites.reduce((sum, item) => sum + item.count,0);
       setCount(total);
     } else {
       setCount(0);
@@ -376,7 +376,7 @@ function CampDetail() {
             <Typography>
               <Divider />
               <Row >
-                <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                <Col xs={24} sm={24} md={24} lg={12} xl={12} className="campPhoto-carousel">
                   {product.campPhotos?.length > 0 ? (
                     
                     <Image.PreviewGroup
@@ -391,7 +391,7 @@ function CampDetail() {
                         icon={<CaretLeftOutlined />}
                       />
                       <Image
-                        style={{ width: "400px" }}
+                        className="card-img-top rounded-0 object-cover"
                         src={product.campPhotos[campPhotosIndex].img}
                         fallback={Empty.PRESENTED_IMAGE_DEFAULT}
                       />
@@ -522,7 +522,7 @@ function CampDetail() {
                             min={0} 
                             defaultValue={0} 
                             max={item.availableCount}
-                            value={selectedCampsites.find(c => item.campsiteId === c.campsiteId)?.quantity || 0}
+                            value={selectedCampsites.find(c => item.campsiteId === c.camp_id)?.count || 0}
                             onChange={value => handleQuantityChange(item.campsiteId, value)}/>,
                           <EditFilled />,
                         ]}

@@ -34,23 +34,27 @@
  color: #888
 }
 
+.campPhoto-nextButton,
 .campPhoto-prevButton {
  position: absolute;
  top: 50%;
  transform: translateY(-50%);
- left: 0;
+ background-color: rgba(255, 255, 255, 0.5); /* 半透明背景 */
+}
+
+.campPhoto-prevButton {
+left: 0;
 }
 
 .campPhoto-nextButton {
- position: absolute;
- top: 50%;
- transform: translateY(-50%);
  right: 0;
 }
 
 .campPhoto-carousel {
- position: relative;
- /* display: inline-block; */
+    /* display: flex; */
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
 }
 
 .campsite-carousel {
@@ -58,17 +62,19 @@
  display: inline-block;
 }
 
+.campsite-nextButton,
 .campsite-prevButton {
- position: absolute;
- top: 50%;
- transform: translateY(-50%);
+position: absolute;
+top: 50%;
+transform: translateY(-50%);
+background-color: rgba(255, 255, 255, 0.5); /* 半透明背景 */
+}
+
+.campsite-prevButton {
  left: 0;
 }
 
 .campsite-nextButton {
- position: absolute;
- top: 50%;
- transform: translateY(-50%);
  right: 0;
 }
 
