@@ -46,26 +46,22 @@ function Register() {
   //手機號碼
   const [phone, setPhoneNo] = useState("");
   //form驗證狀態
-  const [validateStatus, setValidateStatus] = useState("");
-  const [checkEmail, setCheckEmail] = useState(false);
-  // const [checkName, setCheckName] = useState(false);
-  // const [checkSex, setCheckSex] = useState(false);
-  // const [checkBirthday, setCheckBirthday] = useState(false);
-  // const [checkPhone, setCheckPhone] = useState(false);
-  // const [checkVerify_code, setCheckVerify_code] = useState(false);
-  // const [checkPassword, setCheckPassword] = useState(false);
-  // const [checkPassword_confirm, setCheckPassword_confirm] = useState(false);
-  const [errmessage, setErrmessage] = useState("");
+   //email驗證狀態
+  const [emailValidStatus, setEmailValidStatus] = useState("");
+   //手機驗證狀態
+  const [phoneValidStatus, setPhoneValidStatus] = useState("");
+  const [failEmail, setFailEmail] = useState(false);
+  const [failPhone, setFailPhone] = useState(false);
+  //錯誤訊息
+   //email欄位錯誤訊息
+  const [mailErrmessage, setMailErrmessage] = useState("");
+   //手機欄位錯誤訊息
+  const [phoneErrmessage, setPhoneErrmessage] = useState("");
+
 
   /**出生日期改變事件 */
   const dateTimeOnChange = (date, dateString) => {
     console.log("生日:", date, dateString);
-  };
-
-  /**輸入手機號碼事件 */
-  const handleChange = (e) => {
-    const { value } = e.target;
-    setPhoneNo({ phone: value });
   };
 
   const isVerifyCodeDisabled = () => {
@@ -110,10 +106,38 @@ function Register() {
     }
   };
 
+  /**
+   * 電子郵件欄位改變事件
+   */
+  const onEmailChange = (e) => {
+    const value = e.target.value;
+    if (!value) {
+      setEmailValidStatus("error");
+      setFailEmail(true);
+    } else {
+      setEmailValidStatus("success");
+      setFailEmail(false);
+    }
+  }
+
+  /**手機號碼改變事件 */
+  const onPhoneChange = (e) => {
+    const { value } = e.target;
+    if (!value) {
+      setPhoneValidStatus("error");
+      setFailPhone(true);
+    } else {
+      setPhoneNo({ phone: value });
+      setPhoneValidStatus("success");
+      setFailPhone(false);
+    }
+  };
+
   /** 存檔 */
   const onFinish = (values) => {
     const inputValues = {
       ...values,
+      'birthday': values['birthday'].format('YYYY-MM-DD')
     };
     console.log("註冊存檔前param: ", inputValues);
     saveRegister(inputValues);
@@ -136,80 +160,47 @@ function Register() {
       // const { token } = res.data;
       // setRestostring(token);
     } catch (error) {
-      const errorArray = Object.keys(error.response.data.errors);
-
+      console.log("[進入存檔catch error]");
       if (error.response.data.errors.email) {
-        setCheckEmail(true);
-        setErrmessage(error.response.data.errors.email);
+        setFailEmail(true);
+        setMailErrmessage(error.response.data.errors.email);
+      } if (error.response.data.errors.phone) {
+        setFailPhone(true);
+        setPhoneErrmessage(error.response.data.errors.phone);
       }
-      // if (error.response.data.errors.name) {
-      //   setCheckName(true);
-      //   setErrmessage(error.response.data.errors.name[0]);
-      // }
-      // if (error.response.data.errors.sex) {
-      //   setCheckSex(true);
-      //   setErrmessage(error.response.data.errors.sex[0]);
-      // }
-      // if (error.response.data.errors.birthday) {
-      //   setCheckBirthday(true);
-      //   setErrmessage(error.response.data.errors.birthday[0]);
-      // }
-      // if (error.response.data.errors.phone) {
-      //   setCheckPhone(true);
-      //   setErrmessage(error.response.data.errors.phone[0]);
-      // }
-      // if (error.response.data.errors.verify_code) {
-      //   setCheckVerify_code(true);
-      //   setErrmessage(error.response.data.errors.verify_code[0]);
-      // }
-      // if (error.response.data.errors.password) {
-      //   setCheckPassword(true);
-      //   setErrmessage(error.response.data.errors.password[0]);
-      // }
-      // if (error.response.data.errors.password_confirm) {
-      //   setCheckPassword_confirm(true);
-      //   setErrmessage(error.response.data.errors.password_confirm[0]);
-      // }
       console.error("註冊存檔失敗:", error.response.data.errors);
     }
   };
 
   const validateId = (rule, value) => {
-    if (checkEmail) {
-      setValidateStatus("error");
-      return Promise.reject(errmessage);
+    if (failEmail) {
+      setEmailValidStatus("error");
+      return Promise.reject(new Error(mailErrmessage));
     } 
-    // else if (checkName) {
-    //   setValidateStatus("error");
-    //   return Promise.reject(errmessage);
-    // } else if (checkSex) {
-    //   setValidateStatus("error");
-    //   return Promise.reject(errmessage);
-    // } else if (checkBirthday) {
-    //   setValidateStatus("error");
-    //   return Promise.reject(errmessage);
-    // } else if (checkPhone) {
-    //   setValidateStatus("error");
-    //   return Promise.reject(errmessage);
-    // } else if (checkVerify_code) {
-    //   setValidateStatus("error");
-    //   return Promise.reject(errmessage);
-    // } else if (checkPassword) {
-    //   setValidateStatus("error");
-    //   return Promise.reject(errmessage);
-    // } else if (checkPassword_confirm) {
-    //   setValidateStatus("error");
-    //   return Promise.reject(errmessage);
-    // } 
-    else {
-      setValidateStatus("success");
       return Promise.resolve();
-    }
+  };
+  
+  const validateId2 = (rule, value) => {
+    if (failPhone) {
+      setPhoneValidStatus("error");
+      return Promise.reject(new Error(phoneErrmessage));
+    } 
+      return Promise.resolve();
   };
 
   useEffect(() => {
     form.validateFields(["email"]);
-  }, [checkEmail]);
+    console.log("[failEmail-status]", failEmail);
+  }, [failEmail]);
+
+  useEffect(() => {
+    form.validateFields(["phone"]);
+    console.log("[failPhone-status]", failPhone);
+  }, [failPhone]);
+
+  // useEffect(() => {
+  //   console.log("[Email-status]", emailValidStatus);
+  // }, [emailValidStatus]);
 
   return (
     <Row className="reg-container">
@@ -286,6 +277,7 @@ function Register() {
               hasFeedback
               name="phone"
               label="手機號碼"
+              validateStatus={phoneValidStatus}
               rules={[
                 {
                   required: true,
@@ -295,13 +287,16 @@ function Register() {
                   len: 10,
                   message: "請輸入10碼手機號碼",
                 },
+                {
+                  validator: validateId2
+                },
               ]}
             >
               <Input
                 style={{
                   width: "100%",
                 }}
-                onChange={handleChange}
+                onChange={onPhoneChange}
                 value={phone}
               />
             </Form.Item>
@@ -332,22 +327,22 @@ function Register() {
               hasFeedback
               name="email"
               label="電子郵件"
-              validateStatus={validateStatus}
+              validateStatus={emailValidStatus}
               rules={[
-                {
-                  type: "email",
-                  message: "這不是有效的電子郵件",
-                },
                 {
                   required: true,
                   message: "請輸入電子郵件",
+                },
+                {
+                  type: "email",
+                  message: "這不是有效的電子郵件",
                 },
                 {
                   validator: validateId,
                 },
               ]}
             >
-              <Input placeholder="name@example.com" />
+              <Input placeholder="name@example.com" onChange={onEmailChange}/>
             </Form.Item>
 
             <Form.Item
@@ -399,7 +394,7 @@ function Register() {
                   validator: (_, value) =>
                     value
                       ? Promise.resolve()
-                      : Promise.reject(new Error("Should accept agreement")),
+                      : Promise.reject(new Error("如已閱讀，請點選同意")),
                 },
               ]}
               {...tailFormItemLayout}
