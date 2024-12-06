@@ -21,19 +21,23 @@ function Login() {
 
   const login = async (e) => {
 
-    // try {
-      console.log('reqdata:',data);
-      const res = axios.post(`${process.env.REACT_APP_API_URL}/v1/auth/login/using-password`, data).then(response => {console.log('過程:'+response);})
-      .catch(error => {console.error('Error:', error);});
-      console.log('結果:'+res);
-      // console.log(restostring);
-      // const { token } = res.data;
-      // setRestostring(token);
-      // axios.defaults.headers.common['Authorization'] = token;
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    // console.log('結果:'+json.toString(result));
+    try {
+      console.log('[登入param]',data);
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/v1/auth/login/using-password`,
+         data
+      );
+      console.log('[登入res]',res);
+      const { token } = res.data;
+      setRestostring('登入成功');
+      localStorage.setItem('accessToken',token);
+      axios.defaults.headers.common['Authorization'] = token;
+      if (token) {
+        window.location.href = '/home';
+      }
+    } catch (err) {
+      console.log('[登入Error]',err);
+    }
 
   };
 
