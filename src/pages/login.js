@@ -33,7 +33,7 @@ function Login() {
       localStorage.setItem('accessToken',token);
       axios.defaults.headers.common['Authorization'] = token;
       if (token) {
-        window.location.href = '/home';
+        window.location.href = '/build';
       }
     } catch (err) {
       console.log('[登入Error]',err);
