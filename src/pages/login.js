@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { Button,Input } from "antd";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { api,setAuthToken} from "../api";
 
 function Login() {
   const navigate = useNavigate();
@@ -23,15 +24,12 @@ function Login() {
 
     try {
       console.log('[登入param]',data);
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/v1/auth/login/using-password`,
-         data
-      );
+      const res = await api.post('/v1/auth/login/using-password',data);
       console.log('[登入res]',res);
       const { token } = res.data;
       setRestostring('登入成功');
       localStorage.setItem('accessToken',token);
-      axios.defaults.headers.common['Authorization'] = token;
+      setAuthToken(token);
       if (token) {
         window.location.href = '/build';
       }

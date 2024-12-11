@@ -32,6 +32,7 @@ import {
 import { QueryFilter, ProFormDateRangePicker } from '@ant-design/pro-components';
 
 import "./campDetail.css";
+import {api, setAuthToken} from "../api"
 import axios from "axios";
 import dayjs from "dayjs";
 
@@ -100,31 +101,31 @@ function CampDetail() {
 
   /**
    * 營區照片上一張
-   * @param {*} areaName //營區名稱
+   * @param {*} name //營區名稱
    */
-  const handleCampsitePhotoPrevClick = (areaName) => {
+  const handleCampsitePhotoPrevClick = (name) => {
     setCampsitePhotosIndex((prevState) => {
-      const currentIndex = prevState[areaName] || 0;
+      const currentIndex = prevState[name] || 0;
       console.log(`Current prevState:`, prevState); // 輸出目前的照片索引
-      console.log(`Current index for ${areaName}:`, currentIndex); // 輸出目前的照片索引
-      const campsite = product.campsite.find((c) => c.areaName === areaName);
-      const newIndex = (currentIndex - 1 + campsite.campsitePhotos.length) % campsite.campsitePhotos.length;
+      console.log(`Current index for ${name}:`, currentIndex); // 輸出目前的照片索引
+      const campsite = product.area.find((c) => c.name === name);
+      const newIndex = (currentIndex - 1 + campsite.areaImage.length) % campsite.areaImage.length;
       console.log(`newIndex:`, newIndex); // 輸出目前的照片索引
-      return { ...prevState, [areaName]: newIndex };
+      return { ...prevState, [name]: newIndex };
     });
   };
 
   /**
    * 營區照片下一張
-   * @param {*} areaName //營區名稱
+   * @param {*} name //營區名稱
    */
-  const handleCampsitePhotoNextClick = (areaName) => {
+  const handleCampsitePhotoNextClick = (name) => {
     setCampsitePhotosIndex((prevState) => {
-      const currentIndex = prevState[areaName] || 0;
-      console.log(`Current index for ${areaName}:`, currentIndex); // 輸出目前的照片索引
-      const campsite = product.campsite.find((c) => c.areaName === areaName);
-      const newIndex = (currentIndex + 1) % campsite.campsitePhotos.length;
-      return { ...prevState, [areaName]: newIndex };
+      const currentIndex = prevState[name] || 0;
+      console.log(`Current index for ${name}:`, currentIndex); // 輸出目前的照片索引
+      const campsite = product.area.find((c) => c.name === name);
+      const newIndex = (currentIndex + 1) % campsite.areaImage.length;
+      return { ...prevState, [name]: newIndex };
     });
   };
 
@@ -263,39 +264,64 @@ function CampDetail() {
    * 呼叫存檔訂位api
    * @param {*} param 
    */
-  const booking_camp_confirm = async(params)=> {
+  const booking_camp_confirm = async(params,token)=> {
     try {
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMjYiLCJ1c2VyX25hbWUiOiLmiJHlvojluKXkuIAiLCJleHBpcmVfdGltZSI6MTczNDk1ODY3NywiZXhwIjoxNzM0OTU4Njc3LCJpYXQiOjE3Mjk3NzQ2NzcsImlzcyI6IkdvaHViIiwibmJmIjoxNzI5Nzc0Njc3fQ.30_wXTttwqwtc9ehhuGab6D8-S-_HLGBgURMknpe7UU'
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/v1/booking_camp/confirm`,
-        params,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        }
-      );
+      if (token) {
+        setAuthToken(token);
+      } else {
+        return;
+      };
+      const res = await api.post('/v1/booking_camp/confirm',params);
       if (res.data.success === true) {
         console.log("訂位成功", res);
       } else {
         console.log("訂位失敗", res.data.success);
       }
     }catch(error) {
+      console.error('Error booking camp failed:', error);
+    }
+  };
 
+ /**
+  * 刷新token-api
+  */
+  const refreshToken = async (token) => {
+    try {
+      if (token) {
+        setAuthToken(token);
+      } else {
+        return;
+      };
+      const res = await api.post('/v1/auth/login/refresh-token');
+      token = res.data;
+      console.log("[refreshToken]", token);
+      localStorage.setItem('accessToken', token);
+      if (token) {
+        setAuthToken(token);
+      };
+    } catch(error) {
+      console.error('Error refreshing token:', error);
     }
   }
 
   /**
    * 儲存訂位事件
    */
-  const onSaveBooking = () => {
+  const onSaveBooking = async() => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.log("未取得token，請重新登入");
+      return;
+    }
     const params = {
       start_date: dayjs(dateRange[0]).format('YYYY-MM-DD').toString(),
       end_date: dayjs(dateRange[1]).format('YYYY-MM-DD').toString(),
       booking_item: selectedCampsites
     };
     console.log("[儲存訂位參數]", params);
-    booking_camp_confirm(params);
-  }
+    await refreshToken(token);
+    booking_camp_confirm(params,token);
+  };
 
   /**
    * 初始化取得營地資訊
@@ -504,7 +530,7 @@ function CampDetail() {
                     cellRender={cellRender}
                     onPanelChange={onPanelChange}
                     onSelect={onSelect}
-                    disabledDate={disabledDate}
+                    // disabledDate={disabledDate}
                     fullscreen={true}
                   />
                 </Col>
@@ -559,29 +585,29 @@ function CampDetail() {
                   lg: 32,
                 }}
               >
-                {product.campsite?.length > 0 ? (
-                  product.campsite.map((campsite) => {
-                    const currentIndex = campsitePhotosIndex[campsite.areaName] || 0;
+                {product.area?.length > 0 ? (
+                  product.area.map((area) => {
+                    const currentIndex = campsitePhotosIndex[area.name] || 0;
                     return (
                       <Col
-                        key={campsite.areaName}
+                        key={area.name}
                         xs={24}
                         sm={12}
                         md={12}
                         lg={8}
                         xl={6}
                       >
-                        <div key={campsite.areaName}>
+                        <div key={area.name}>
                           <div className="campsite-carousel">
                             <Button
                               className="campsite-prevButton"
-                              onClick={() => handleCampsitePhotoPrevClick(campsite.areaName)}
+                              onClick={() => handleCampsitePhotoPrevClick(area.name)}
                               shape="circle"
                               icon={<CaretLeftOutlined />}
                             />
                             <img
                               src={
-                                campsite.campsitePhotos[currentIndex].img
+                                area.areaImage[currentIndex].img
                               }
                               alt="營區圖片"
                               className="card-img-top rounded-0 object-cover"
@@ -589,20 +615,20 @@ function CampDetail() {
                             />
                             <Button
                               className="campsite-nextButton"
-                              onClick={() => handleCampsitePhotoNextClick(campsite.areaName)}
+                              onClick={() => handleCampsitePhotoNextClick(area.name)}
                               shape="circle"
                               icon={<CaretRightOutlined />}
                             />
                           </div>
-                          <h2 className="mb-0 mt-2">{campsite.areaName}</h2>
+                          <h2 className="mb-0 mt-2">{area.name}</h2>
                           <p className="price-font">
-                            平日價格: ${campsite.weekdayPrice}
+                            平日價格: ${area.price}
                           </p>
                           <p className="price-font">
-                            假日價格: ${campsite.holidayPrice}
+                            假日價格: ${area.priceHoliday}
                           </p>
                           <Tag color="magenta">
-                            surfaceType: {campsite.surfaceType}
+                            surfaceType: {area.surfaceType}
                           </Tag>
                         </div>
                       </Col>
