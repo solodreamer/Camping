@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
-
 import { Button, Checkbox, Col, Form, Input, Row, Select, DatePicker,} from "antd";
 
+import { api, } from "../api";
 import "./register.css";
 
 const { Option } = Select;
@@ -93,8 +92,8 @@ function Register() {
   /** 取得手機驗證碼api */
   const getVerifyCode = async () => {
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/v1/auth/signup/send-verify-code`,
+      const res = await api.post(
+        '/v1/auth/signup/send-verify-code',
         phone
       );
       console.log("getVerifyCodeApi:", res);
@@ -146,8 +145,8 @@ function Register() {
   /** 呼叫存檔api */
   const saveRegister = async (params) => {
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/v1/auth/signup/using-phone`,
+      const res = await api.post(
+        '/v1/auth/signup/using-phone',
         params
       );
       console.log("註冊存檔成功:", res);

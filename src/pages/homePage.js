@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Layout, Menu, theme, Col, Row, Divider, Typography, } from "antd";
+import { LoginOutlined, UserAddOutlined, HomeOutlined, } from "@ant-design/icons";
+import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker } from '@ant-design/pro-components';
+
+import { api } from "../api";
+import "./homePage.css";
 
 import dayjs from "dayjs";
-import axios from "axios";
-
-import { Layout, Menu, theme, Col, Row, Divider, Typography,} from "antd";
-import { LoginOutlined, UserAddOutlined, HomeOutlined,} from "@ant-design/icons";
-import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker} from '@ant-design/pro-components';
-import "./homePage.css";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
@@ -53,7 +53,7 @@ function HomePage() {
   /** 取得營地清單 */
   const getCampList = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/v1/camps`);
+      const res = await api.get('/v1/camps');
       if (res.data.success === true) {
         setCamps(res.data.data);
       }

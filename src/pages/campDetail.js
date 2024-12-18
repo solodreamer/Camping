@@ -32,8 +32,7 @@ import {
 import { QueryFilter, ProFormDateRangePicker } from '@ant-design/pro-components';
 
 import "./campDetail.css";
-import {api, setAuthToken} from "../api"
-import axios from "axios";
+import { api, setAuthToken } from "../api";
 import dayjs from "dayjs";
 
 //Antd元件屬性設定
@@ -72,9 +71,7 @@ function CampDetail() {
    * @param {*} id 營地ID
    */
   const getCampDetail = async (id) => {
-    const productRes = await axios.get(
-      `${process.env.REACT_APP_API_URL}/v1/camps/${id}`
-    );
+    const productRes = await api.get(`/v1/camps/${id}`);
     if (productRes && productRes.data.success === true) {
       setProduct(productRes.data.data);
     }
@@ -134,7 +131,7 @@ function CampDetail() {
    * @param {*} param 
    */
   const getAvailableCampsite = async (param) => {
-    const availableRes = await axios.post(`${process.env.REACT_APP_API_URL}/v1/camps/available`, param);
+    const availableRes = await api.post('/v1/camps/available', param);
     if (availableRes.data.success === true && availableRes.data.data.length > 0) {
       console.log("[availableRes]", availableRes.data);
       setAvailableCampsite(availableRes.data.data);
@@ -198,7 +195,7 @@ function CampDetail() {
    * @param {*} param 
    */
   const getCampsite_available = async (param) => {
-    const campsiteCountInfo = await axios.post(`${process.env.REACT_APP_API_URL}/v1/camps/campsite_available`, param);
+    const campsiteCountInfo = await api.post('/v1/camps/campsite_available', param);
 
     if (campsiteCountInfo.data.success === true) {
       setCampsiteCountInfo(campsiteCountInfo.data.data);
