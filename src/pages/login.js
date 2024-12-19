@@ -1,12 +1,15 @@
-import { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Button,Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import { api,setAuthToken} from "../api";
+import AuthContext from "../AuthContext";
 
 function Login() {
   const navigate = useNavigate();
   const [restostring, setRestostring] = useState("尚未登入");
-
+  // 取得登入狀態、登入函式
+  const { isLoggedIn,handleLogin } = useContext(AuthContext);
+  // 登入參數
   const [data, setData] = useState({
     login_id: "",
     password: "",
@@ -15,12 +18,12 @@ function Login() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
-    // console.log(name, value);
-    // console.log(data);
   };
 
-  const login = async (e) => {
-
+  /**
+   * 登入事件
+   */
+  const login = async () => {
     try {
       console.log('[登入param]',data);
       const res = await api.post('/v1/auth/login/using-password',data);
@@ -29,16 +32,20 @@ function Login() {
       setRestostring('登入成功');
       localStorage.setItem('accessToken',token);
       setAuthToken(token);
+      handleLogin();
       if (token) {
-        window.location.href = '/build';
+        navigate('/');
       }
     } catch (err) {
       console.log('[登入Error]',err);
+      setRestostring('登入失敗');
     }
-
   };
 
-  const register = (e) => {
+  /**
+   * 註冊事件
+   */
+  const register = () => {
     navigate("/register");
   }
 
@@ -71,7 +78,7 @@ function Login() {
                 id="password"
                 type="password"
                 name="password"
-                placeholder=""
+                placeholder="可使用混合6個字以上的英文字母、數字和符號"
                 onChange={handleChange}
               />
             </div>

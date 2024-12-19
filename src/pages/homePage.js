@@ -1,36 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout, Menu, theme, Col, Row, Divider, Typography, } from "antd";
 import { LoginOutlined, UserAddOutlined, HomeOutlined, } from "@ant-design/icons";
 import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker } from '@ant-design/pro-components';
+import dayjs from "dayjs";
 
 import { api } from "../api";
+import AuthContext from "../AuthContext";
 import "./homePage.css";
-
-import dayjs from "dayjs";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title } = Typography;
 
-//選單項目
-const menuItems = [
-  { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
-  { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
-  { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
-];
-
-//地區選單
-const locations = [
-  { value: 1, label: "北部" },
-  { value: 2, label: "中部" },
-  { value: 3, label: "南部" },
-  { value: 4, label: "東部" },
-  { value: 5, label: "離島" },
-];
-
-
 function HomePage() {
+
+  const { isLoggedIn,handleLogout } = useContext(AuthContext);
+
+  //選單項目
+  const menuItems = isLoggedIn ? 
+  [
+    { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
+    { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
+  ]: 
+  [
+    { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
+    { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
+    { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
+  ];
+  
+  //地區選單
+  const locations = [
+    { value: 1, label: "北部" },
+    { value: 2, label: "中部" },
+    { value: 3, label: "南部" },
+    { value: 4, label: "東部" },
+    { value: 5, label: "離島" },
+  ];
 
   /** 未釐清變數 */
   const navigate = useNavigate();
@@ -39,16 +45,6 @@ function HomePage() {
   } = theme.useToken();
   /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
-
-  /** 初始化取得營地清單 */
-  useEffect(() => {
-    getCampList();
-  }, []);
-
-  /** 營區清單log */
-  useEffect(() => {
-    console.log("getCampList 更新了:", camps);
-  }, [camps]);
 
   /** 取得營地清單 */
   const getCampList = async () => {
@@ -83,18 +79,26 @@ function HomePage() {
   const disabledDate = (current) => {
     return current && current < dayjs().endOf("day");
   }
+
+  /** 初始化取得營地清單 */
+  useEffect(() => {
+    getCampList();
+  }, []);
   
+  /** 營區清單log */
+  useEffect(() => {
+    console.log("getCampList 更新了", camps);
+  }, [camps]);
   
   return (
     <Layout>
       <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
-        <Menu mode="inline" theme="dark">
-          {menuItems.map((item) => (
-            <Menu.Item key={item.key} icon={item.icon}>
-              <Link to={item.path}>{item.label}</Link>
-            </Menu.Item>
-          ))}
-        </Menu>
+        <Menu mode="inline" theme="dark" items={menuItems.map((item) => ({
+          key: item.key,
+          icon: item.icon,
+          label: item.path ? <Link to={item.path}>{item.label}</Link> : item.label,
+          onClick: item.onClick,
+        }))} />
       </Sider>
       <Layout>
         <Header className="home-headerStyle">Go露營</Header>
