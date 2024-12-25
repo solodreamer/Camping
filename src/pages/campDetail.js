@@ -604,7 +604,7 @@ function CampDetail() {
                             />
                             <img
                               src={
-                                area.areaImage[currentIndex].img
+                                area.areaImage[currentIndex].url
                               }
                               alt="營區圖片"
                               className="card-img-top rounded-0 object-cover"
