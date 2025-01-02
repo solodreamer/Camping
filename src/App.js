@@ -8,6 +8,7 @@ import PrivacyPolicy from "./pages/privacyPolicy";
 import TermService from "./pages/termService";
 import SearchPage from "./pages/searchPage";
 import CampDetail from "./pages/campDetail";
+import CheckoutConfirm from "./pages/checkout-confirm";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/termService" element={<TermService />}></Route>
         <Route path="/searchPage" element={<SearchPage />}></Route>
         <Route path="/campDetail/:id" element={<CampDetail />}></Route>
+        <Route path="/checkout-confirm" element={<CheckoutConfirm />}></Route>
       </Routes>
     </div>
   );

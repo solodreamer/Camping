@@ -247,11 +247,11 @@ function CampDetail() {
    * @param {*} id 
    * @param {*} value 
    */
-  const handleQuantityChange = (id, value) => {
+  const handleQuantityChange = (areaId, value) => {
     setSelectedCampsites((prevSelectedCampsites) => {
-      const updatedQuantites = prevSelectedCampsites.filter(item => item.camp_id !== id);
+      const updatedQuantites = prevSelectedCampsites.filter(item => item.areaId !== areaId);
       if(value > 0) {
-        updatedQuantites.push({ camp_id: id, count: value });
+        updatedQuantites.push({ areaId: areaId, count: value });
       }
       return updatedQuantites;
     });
@@ -292,9 +292,9 @@ function CampDetail() {
       const res = await api.post('/v1/auth/login/refresh-token');
       token = res.data;
       console.log("[refreshToken]", token);
-      localStorage.setItem('accessToken', token);
+      localStorage.setItem('accessToken', token.token);
       if (token) {
-        setAuthToken(token);
+        setAuthToken(token.token);
       };
     } catch(error) {
       console.error('Error refreshing token:', error);
@@ -333,8 +333,8 @@ function CampDetail() {
    */
   useEffect(() => {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
+    const year = dayjs(today).format('YYYY');
+    const month = dayjs(today).format('MM');
     getAvailableCampsite({ camp_id: id, year: year.toString(), month: month.toString() });
   }, []);
 
@@ -545,8 +545,8 @@ function CampDetail() {
                             min={0} 
                             defaultValue={0} 
                             max={item.availableCount}
-                            value={selectedCampsites.find(c => item.campsiteId === c.camp_id)?.count || 0}
-                            onChange={value => handleQuantityChange(item.campsiteId, value)}/>,
+                            value={selectedCampsites.find(c => item.areaId === c.areaId)?.count || 0}
+                            onChange={value => handleQuantityChange(item.areaId, value)}/>,
                           <EditFilled />,
                         ]}
                       >

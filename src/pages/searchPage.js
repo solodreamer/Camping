@@ -87,7 +87,7 @@ function SearchPage() {
   const searchCampList = async (param) => {
     try {
       setCamps([]);
-      const res = await api.get('/v1/camps?region=${param.region}&name=${param.name}');
+      const res = await api.get(`/v1/camps?region=${param.region}&name=${param.name}`);
       if (res.data.success === true && res.data.data) {
         setCamps(res.data.data);
       } else {
