@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { Link, NavLink, useParams } from "react-router-dom";
-
+import dayjs from "dayjs";
 import {
   Layout,
   Menu,
@@ -20,6 +20,7 @@ import {
   Card,
   Form,
   Input,
+  Steps,
 } from "antd";
 
 import {
@@ -35,7 +36,7 @@ import { QueryFilter, ProFormDateRangePicker } from '@ant-design/pro-components'
 
 import "./checkout-confirm.css";
 import { api, setAuthToken } from "../api";
-import dayjs from "dayjs";
+import StepsConfirm from "../module/steps-confirm"
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
@@ -69,9 +70,10 @@ function CheckoutConfirm() {
     { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
   ];
+  // 定義狀態來儲存結帳步驟
+  const [currentStep, setCurrentStep] = useState(0);
 
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
   const [campPhotosIndex, setCampPhotosIndex] = useState(0);
   const [campsitePhotosIndex, setCampsitePhotosIndex] = useState({});
   const [availableCampsite, setAvailableCampsite] = useState([]);
@@ -88,19 +90,6 @@ function CheckoutConfirm() {
   //定義狀態儲存是否禁用預定button
   const [isbookDisable, setBookDisable] = useState(true);
 
-  /**
-   * 取得營地資訊
-   * @param {*} id 營地ID
-   */
-  const getCampDetail = async (id) => {
-    const productRes = await api.get(`/v1/camps/${id}`);
-    if (productRes && productRes.data.success === true) {
-      setProduct(productRes.data.data);
-    }
-  };
-
-
-
   return (
     <Layout>
       <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
@@ -115,7 +104,8 @@ function CheckoutConfirm() {
       <Layout>
         <Header className="checkoutConfirm-headerStyle">Go露營</Header>
         <Content className="checkoutConfirm-contentStyle">
-          <Row className="contentRow">
+          <StepsConfirm currentStep={currentStep}/>
+          <Row className="contentRow" >
             <Col className="contentCol1" xs={24} sm={24} md={15} lg={15} xl={15}>
               <Form {...formItemLayout} name="confirmForm" layout="vertical" size="Large"> 
                 <Form.Item label="訂購人姓名" name="name" rules={[
