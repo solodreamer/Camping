@@ -39,10 +39,11 @@ function HomePage() {
   ];
 
   /** 未釐清變數 */
-  const navigate = useNavigate();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  /** 頁面導航hook */
+  const navigate = useNavigate();
   /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
 

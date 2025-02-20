@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { Link, NavLink, useParams, useNavigate } from "react-router-dom";
 
 import {
   Layout,
@@ -38,7 +38,6 @@ import dayjs from "dayjs";
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Paragraph, Text } = Typography;
-const { Meta } = Card;
 
 function CampDetail() {
   //選單項目
@@ -65,6 +64,8 @@ function CampDetail() {
   const [count, setCount] = useState(0);
   //定義狀態儲存是否禁用預定button
   const [isbookDisable, setBookDisable] = useState(true);
+  // 頁面導航hook
+  const navigate = useNavigate();
 
   /**
    * 取得營地資訊
@@ -266,16 +267,19 @@ function CampDetail() {
       if (token) {
         setAuthToken(token);
       } else {
-        return;
+        return false;
       };
       const res = await api.post('/v1/booking_camp/confirm',params);
       if (res.data.success === true) {
         console.log("訂位成功", res);
+        return true;
       } else {
         console.log("訂位失敗", res.data.success);
+        return false;
       }
     }catch(error) {
       console.error('Error booking camp failed:', error);
+      return false;
     }
   };
 
@@ -305,7 +309,9 @@ function CampDetail() {
    * 儲存訂位事件
    */
   const onSaveBooking = async() => {
+    let bookingResult = false;
     const token = localStorage.getItem('accessToken');
+    console.log("[accessToken]", token);
     if (!token) {
       console.log("未取得token，請重新登入");
       return;
@@ -317,8 +323,57 @@ function CampDetail() {
     };
     console.log("[儲存訂位參數]", params);
     await refreshToken(token);
-    booking_camp_confirm(params,token);
+    bookingResult = await booking_camp_confirm(params,token);
+    if (bookingResult) {
+      navigate('/checkout-confirm');
+    }
   };
+
+  /**
+   * 日期區間計算
+   * @param {*} startDate 
+   * @param {*} endDate 
+   * @returns [{date: 'YYYY-MM-DD'}]
+   */
+  const dateInRange = (startDate, endDate) => {
+    const dates = [];
+    let currentDate = dayjs(startDate);
+    const end = dayjs(endDate);
+
+    while (currentDate.isBefore(end) || currentDate.isSame(end)) {
+      dates.push({date: currentDate.format('YYYY-MM-DD')});
+      currentDate = currentDate.add(1,'day');
+    }
+
+    return dates;
+  }
+
+  /**
+   * 平/假日天數計算
+   * @param {*} dates 
+   * @returns {normalday, holiday}
+   */
+  const dayNum = (dates) => {
+    const normalday = dates.filter((item) => {
+      return [1,2,3,4,5].indexOf(new Date(item.date).getDay()) > -1;
+    }).length;
+
+    const holiday = dates.filter((item) => {
+      return [0,6].indexOf(new Date(item.date).getDay()) > -1;
+    }).length;
+
+    return {normalday, holiday};
+  }
+
+  //測試天數計算用
+  useEffect(() => {
+    const startDate = '2025-02-18';
+    const endDate = '2025-02-23';
+    const dates = dateInRange(startDate, endDate);
+    const normalDaynum = dayNum(dates);
+    console.log("[住宿日期計算]", dates);
+    console.log("[平/假日計算]", normalDaynum);
+  }, [])
 
   /**
    * 初始化取得營地資訊
