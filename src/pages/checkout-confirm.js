@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { Link, NavLink, useParams, useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import {
   Layout,
@@ -62,6 +62,32 @@ const formItemLayout = {
   },
 };
 
+function CheckDetail({result}) {
+  return (
+    <div>
+    {result? (
+      <div className="check-detail">
+        <h3>{result.campName}</h3>
+        <h5>{result.areaName}</h5>
+        <div>
+          <span>{result.dateRange[0]}</span>
+          <span>至</span>
+          <span>{result.dateRange[1]}</span>
+        </div>
+        {result.data?.map((detail, index) => {
+          <div key={index}>
+            <span>${detail.price}</span>
+            <span class="ml-3 mr-3">x</span>
+            <span>{detail.count}晚</span>
+          </div>
+        })}
+      </div>
+    ) 
+    : (<div className="check-detail">目前清單沒有任何訂位唷！</div>)}
+    </div>
+  );
+}
+
 
 function CheckoutConfirm() {
   //選單項目
@@ -72,23 +98,12 @@ function CheckoutConfirm() {
   ];
   // 定義狀態來儲存結帳步驟
   const [currentStep, setCurrentStep] = useState(0);
+  const location = useLocation();
+  const { bookingResult } = location.state || {};
 
-  const { id } = useParams();
-  const [campPhotosIndex, setCampPhotosIndex] = useState(0);
-  const [campsitePhotosIndex, setCampsitePhotosIndex] = useState({});
-  const [availableCampsite, setAvailableCampsite] = useState([]);
-  const [campsiteCountInfo, setCampsiteCountInfo] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(() => dayjs());
-  //定義狀態來儲存日期範圍
-  const [dateRange, setDateRange] = useState([dayjs(), dayjs().add(1,'day')]);
-  //定義狀態來儲存已選取的campsite
-  const [selectedCampsites, setSelectedCampsites] = useState([]);
-  //定義狀態儲存campsiteId清單是否載入中
-  const [isLoading, setLoading] = useState(false);
-  //定義狀態儲存總訂位數量
-  const [count, setCount] = useState(0);
-  //定義狀態儲存是否禁用預定button
-  const [isbookDisable, setBookDisable] = useState(true);
+  useEffect(() => {
+    console.log("[bookingResult]", bookingResult);
+  }, [bookingResult])
 
   return (
     <Layout>
@@ -145,11 +160,11 @@ function CheckoutConfirm() {
               <Divider orientation="left" orientationMargin="0">
                 <Title level={5}>明細確認</Title>
               </Divider>
-              <div className="check-detail">目前清單沒有任何訂位唷！</div>
+              <CheckDetail result={bookingResult}/>
               <div className="check-total">
                 <div className="checktt-list">
                   <p className='checktt-list checktt-total h4'>總計</p>
-                  <p className='checktt-list checktt-total h4'>NT$0</p>
+                  <p className='checktt-list checktt-total h4'>NT${bookingResult.totalPrice}</p>
                 </div>
               </div>
             </Col>

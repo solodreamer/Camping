@@ -18,6 +18,7 @@ import {
   List,
   InputNumber,
   Card,
+  message,
 } from "antd";
 
 import {
@@ -263,6 +264,14 @@ function CampDetail() {
    * @param {*} param 
    */
   const booking_camp_confirm = async(params,token)=> {
+    let tempRes = {
+      campName: "Mountain Adventure Camp",
+      areaName: "A區",
+      totalPrice: 3400,
+      dateRange: ["2025-02-27", "2025-03-02"],
+      data: [{price: 1000, count: 1},{price: 1200, count: 2}],
+      success: false
+    };
     try {
       if (token) {
         setAuthToken(token);
@@ -272,10 +281,12 @@ function CampDetail() {
       const res = await api.post('/v1/booking_camp/confirm',params);
       if (res.data.success === true) {
         console.log("訂位成功", res);
-        return true;
+        tempRes = {...tempRes, success: res.data.success};
+        return tempRes;
       } else {
         console.log("訂位失敗", res.data.success);
-        return false;
+        tempRes = {...tempRes, success: res.data.success};
+        return tempRes;
       }
     }catch(error) {
       console.error('Error booking camp failed:', error);
@@ -309,7 +320,6 @@ function CampDetail() {
    * 儲存訂位事件
    */
   const onSaveBooking = async() => {
-    let bookingResult = false;
     const token = localStorage.getItem('accessToken');
     console.log("[accessToken]", token);
     if (!token) {
@@ -323,9 +333,9 @@ function CampDetail() {
     };
     console.log("[儲存訂位參數]", params);
     await refreshToken(token);
-    bookingResult = await booking_camp_confirm(params,token);
-    if (bookingResult) {
-      navigate('/checkout-confirm');
+    let bookingResult = await booking_camp_confirm(params,token);
+    if (bookingResult.success === true) {
+      navigate('/checkout-confirm', { state: { bookingResult }});
     }
   };
 
