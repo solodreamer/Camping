@@ -267,7 +267,7 @@ function CampDetail() {
     let tempRes = {
       campName: "Mountain Adventure Camp",
       areaName: "A區",
-      totalPrice: 3400,
+      sumAmount: 3400,
       dateRange: ["2025-02-27", "2025-03-02"],
       data: [{price: 1000, count: 1},{price: 1200, count: 2}],
       success: false

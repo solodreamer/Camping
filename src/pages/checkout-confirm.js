@@ -166,7 +166,7 @@ function CheckoutConfirm() {
               <div className="check-total">
                 <div className="checktt-list">
                   <p className='checktt-list checktt-total h4'>總計</p>
-                  <p className='checktt-list checktt-total h4'>NT${bookingResult.totalPrice}</p>
+                  <p className='checktt-list checktt-total h4'>NT${bookingResult.sumAmount}</p>
                 </div>
               </div>
             </Col>
