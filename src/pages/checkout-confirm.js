@@ -74,12 +74,14 @@ function CheckDetail({result}) {
           <span>至</span>
           <span>{result.dateRange[1]}</span>
         </div>
-        {result.data?.map((detail, index) => {
-          <div key={index}>
-            <span>${detail.price}</span>
-            <span class="ml-3 mr-3">x</span>
-            <span>{detail.count}晚</span>
+        {result.data?.map((detail) => {
+          return (
+            <div>
+              <span>${detail.price}</span>
+              <span class="ml-3 mr-3">x</span>
+              <span>{detail.count}晚</span>
           </div>
+          )          
         })}
       </div>
     ) 
