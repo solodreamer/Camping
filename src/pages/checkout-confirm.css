@@ -10,15 +10,14 @@
    
    .checkoutConfirm-contentStyle {
     text-align: center;
-    min-height: 120;
-    line-height: 120px;
+    min-height: 200px;
+    height: 100%;
     width: 90%;
     margin: 20px auto;
    }
 
    .siderStyle {
     text-align: center;
-    line-height: 120px;
     color: #fff;
    }
 
@@ -43,7 +42,7 @@
 
    .check-detail{
     border-radius: 5px 5px 0 0;
-    background-color: #f1f1f1;
+    background-color: #ddd5d588;
     padding: 10px 10px 1px;
    }
 
@@ -61,4 +60,30 @@
 
    .checktt-list .checktt-total{
     font-weight: 700;
+   }
+
+   .check-title{
+    font-size: 16px;
+    line-height: 3.5;
+   }
+
+   .checktt-date{
+    color: #888;
+    margin: 5px 0;
+    line-height: 3.5;
+   }
+
+   .check-order{
+    background: #fff;
+    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #ebebeb;
+    margin-bottom: 10px;
+   }
+
+   .check-area-numb{
+    /* display: table; */
+    border-top: 1px solid #ebebeb;
+    line-height: 3.5;
+    position: relative;
    }

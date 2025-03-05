@@ -5,8 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { HashRouter } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
-// import axios from 'axios';
-// axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
