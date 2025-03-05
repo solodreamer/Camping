@@ -72,18 +72,13 @@ function CheckDetail({result}) {
             <Col xs={24} sm={18} md={24} lg={24} xl={18}><div className="check-title">{result.campName}</div></Col>
             <Col xs={24} sm={6} md={24} lg={24} xl={6}><div className="check-title">{result.areaName}</div></Col>
           </Row>
-          {/* <Row>
-            <Col xs={24} sm={18} md={24} lg={24} xl={11}>{result.dateRange[0]}</Col>
-            <Col xs={24} sm={6} md={24} lg={24} xl={2}>至</Col>
-            <Col xs={24} sm={6} md={24} lg={24} xl={11}>{result.dateRange[1]}</Col>
-          </Row> */}
           <div>
             <div className="checktt-date">
               <span>{result.dateRange[0]}</span>
               <span> 至 </span>
               <span>{result.dateRange[1]}</span>
             </div>
-            {result.data?.map((detail) => {
+            {result.amountDetail?.map((detail) => {
               return (
                 <div className="check-area-numb">
                   <span>${detail.price}</span>

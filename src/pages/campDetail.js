@@ -265,13 +265,15 @@ function CampDetail() {
    */
   const booking_camp_confirm = async(params,token)=> {
     let tempRes = {
-      campName: "Mountain Adventure Camp",
-      areaName: "A區",
-      sumAmount: 3400,
-      dateRange: ["2025-02-27", "2025-03-02"],
-      data: [{price: 1000, count: 1},{price: 1200, count: 2}],
-      success: false
+      campName: product.name,
+      areaName: product.area.filter(
+        area => params.booking_item
+        .some( item => item.areaId === area.areaId))
+        .map(area => area.name),
+      dateRange: [params.start_date, params.end_date],
+      success: false,
     };
+
     try {
       if (token) {
         setAuthToken(token);
@@ -280,12 +282,15 @@ function CampDetail() {
       };
       const res = await api.post('/v1/booking_camp/confirm',params);
       if (res.data.success === true) {
-        console.log("訂位成功", res);
-        tempRes = {...tempRes, success: res.data.success};
+        tempRes = {...tempRes,
+           amountDetail: res.data.data.amountDetail,
+           order_id: res.data.data.order_id,
+           sumAmount: res.data.data.sumAmount,
+           success: res.data.success};
+        console.log("訂位成功", tempRes);
         return tempRes;
       } else {
         console.log("訂位失敗", res.data.success);
-        tempRes = {...tempRes, success: res.data.success};
         return tempRes;
       }
     }catch(error) {
@@ -334,56 +339,12 @@ function CampDetail() {
     console.log("[儲存訂位參數]", params);
     await refreshToken(token);
     let bookingResult = await booking_camp_confirm(params,token);
+
+    //成功才會跳轉至結帳確認頁
     if (bookingResult.success === true) {
       navigate('/checkout-confirm', { state: { bookingResult }});
     }
   };
-
-  /**
-   * 日期區間計算
-   * @param {*} startDate 
-   * @param {*} endDate 
-   * @returns [{date: 'YYYY-MM-DD'}]
-   */
-  const dateInRange = (startDate, endDate) => {
-    const dates = [];
-    let currentDate = dayjs(startDate);
-    const end = dayjs(endDate);
-
-    while (currentDate.isBefore(end) || currentDate.isSame(end)) {
-      dates.push({date: currentDate.format('YYYY-MM-DD')});
-      currentDate = currentDate.add(1,'day');
-    }
-
-    return dates;
-  }
-
-  /**
-   * 平/假日天數計算
-   * @param {*} dates 
-   * @returns {normalday, holiday}
-   */
-  const dayNum = (dates) => {
-    const normalday = dates.filter((item) => {
-      return [1,2,3,4,5].indexOf(new Date(item.date).getDay()) > -1;
-    }).length;
-
-    const holiday = dates.filter((item) => {
-      return [0,6].indexOf(new Date(item.date).getDay()) > -1;
-    }).length;
-
-    return {normalday, holiday};
-  }
-
-  //測試天數計算用
-  useEffect(() => {
-    const startDate = '2025-02-18';
-    const endDate = '2025-02-23';
-    const dates = dateInRange(startDate, endDate);
-    const normalDaynum = dayNum(dates);
-    console.log("[住宿日期計算]", dates);
-    console.log("[平/假日計算]", normalDaynum);
-  }, [])
 
   /**
    * 初始化取得營地資訊
