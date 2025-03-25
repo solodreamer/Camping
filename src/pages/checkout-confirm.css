@@ -6,84 +6,53 @@
     line-Height: 64px;
     background-color: #0f3675 !important;
     top: 0;
-   }
-   
-   .checkoutConfirm-contentStyle {
+  }
+
+  .checkoutConfirm-contentStyle {
     text-align: center;
     min-height: 200px;
     height: 100%;
     width: 90%;
     margin: 20px auto;
-   }
+  }
 
-   .siderStyle {
+  .siderStyle {
     text-align: center;
     color: #fff;
-   }
+  }
 
-   .checkoutConfirm-footerStyle {
+  .checkoutConfirm-footerStyle {
     text-align: center;
     color: #fff;
     background-color: #0f3675 !important;
-   }
-   
-   .contentRow {
+  }
+
+  .contentRow {
     width: 95%;
     max-width: 1000px;
-   }
+  }
 
-   .contentCol1{
+  .contentCol1 {
     /* background-color: rgb(182, 220, 235); */
-   }
+  }
 
-   .contentCol2{
+  .contentCol2 {
     /* background-color:rgb(238, 195, 142); */
-   }
+  }
 
-   .check-detail{
-    border-radius: 5px 5px 0 0;
-    background-color: #ddd5d588;
-    padding: 10px 10px 1px;
-   }
-
-   .check-total{
+  .check-total {
     border-radius: 5px 5px 0 0;
     border: 1px solid #ebebeb;
     padding: 15px;
-   }
+  }
 
-   .checktt-list{
+  .checktt-list {
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
-   }
+  }
 
-   .checktt-list .checktt-total{
+  .checktt-list .checktt-total {
     font-weight: 700;
-   }
+  }
 
-   .check-title{
-    font-size: 16px;
-    line-height: 3.5;
-   }
-
-   .checktt-date{
-    color: #888;
-    margin: 5px 0;
-    line-height: 3.5;
-   }
-
-   .check-order{
-    background: #fff;
-    border-radius: 4px;
-    padding: 10px;
-    border: 1px solid #ebebeb;
-    margin-bottom: 10px;
-   }
-
-   .check-area-numb{
-    /* display: table; */
-    border-top: 1px solid #ebebeb;
-    line-height: 3.5;
-    position: relative;
-   }

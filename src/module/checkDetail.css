@@ -1,0 +1,32 @@
+.check-detail {
+    border-radius: 5px 5px 0 0;
+    background-color: #ddd5d588;
+    padding: 10px 10px 1px;
+}
+
+.check-order {
+    background: #fff;
+    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #ebebeb;
+    margin-bottom: 10px;
+}
+
+.check-title {
+    font-size: 16px;
+    line-height: 3.5;
+}
+
+.checktt-date {
+    color: #888;
+    margin: 5px 0;
+    line-height: 3.5;
+}
+
+
+.check-area-numb {
+    /* display: table; */
+    border-top: 1px solid #ebebeb;
+    line-height: 3.5;
+    position: relative;
+}

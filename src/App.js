@@ -9,6 +9,7 @@ import TermService from "./pages/termService";
 import SearchPage from "./pages/searchPage";
 import CampDetail from "./pages/campDetail";
 import CheckoutConfirm from "./pages/checkout-confirm";
+import CheckoutPayment from "./pages/checkout-payment";
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/searchPage" element={<SearchPage />}></Route>
         <Route path="/campDetail/:id" element={<CampDetail />}></Route>
         <Route path="/checkout-confirm" element={<CheckoutConfirm />}></Route>
+        <Route path="/checkout-payment" element={<CheckoutPayment />}></Route>
       </Routes>
     </div>
   );
