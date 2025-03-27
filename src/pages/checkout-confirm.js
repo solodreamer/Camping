@@ -122,7 +122,7 @@ function CheckoutConfirm() {
                 </Form.Item>
                 <Form.Item label="手機號碼" name="phone" rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "請輸入手機號碼",
                   },
                   {
