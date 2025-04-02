@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Button,Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import { api,setAuthToken} from "../api";
@@ -8,7 +8,7 @@ function Login() {
   const navigate = useNavigate();
   const [restostring, setRestostring] = useState("尚未登入");
   // 取得登入狀態、登入函式
-  const { isLoggedIn,handleLogin } = useContext(AuthContext);
+  const { handleLogin } = useContext(AuthContext);
   // 登入參數
   const [data, setData] = useState({
     login_id: "",

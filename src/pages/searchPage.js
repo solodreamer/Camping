@@ -22,7 +22,6 @@ import "./searchPage.css";
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
 const { Meta } = Card;
-const { Title, Paragraph, Text } = Typography;
 
 //選單項目
 const menuItems = [

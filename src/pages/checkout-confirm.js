@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
-import { Link, NavLink, useParams, useLocation, useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Layout,
   Menu,
@@ -8,31 +7,16 @@ import {
   Row,
   Divider,
   Typography,
-  Image,
-  Empty,
-  Tag,
-  Spin,
   Button,
-  Calendar,
-  Select,
-  List,
-  InputNumber,
-  Card,
   Form,
   Input,
-  Steps,
 } from "antd";
 
 import {
   LoginOutlined,
   UserAddOutlined,
   HomeOutlined,
-  CaretLeftOutlined,
-  CaretRightOutlined,
-  EditFilled,
 } from "@ant-design/icons";
-
-import { QueryFilter, ProFormDateRangePicker } from '@ant-design/pro-components';
 
 import "./checkout-confirm.css";
 import StepsConfirm from "../module/steps-confirm"
@@ -40,8 +24,7 @@ import CheckDetail from "../module/checkDetail";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
-const { Title, Paragraph, Text } = Typography;
-const { Meta } = Card;
+const { Title } = Typography;
 const { TextArea } = Input;
 const formItemLayout = {
   labelCol: {
@@ -79,7 +62,7 @@ function CheckoutConfirm() {
 
   const onCheckPayment = (values) => {
     console.log("[onCheckPayment]", values);
-    navigate('/checkout-payment', { state: {bookingResult:bookingResult, detail1: values}});
+    // navigate('/checkout-payment', { state: {bookingResult:bookingResult, detail1: values}});
   }
 
   useEffect(() => {
