@@ -11,6 +11,7 @@ import CampDetail from "./pages/campDetail";
 import CheckoutConfirm from "./pages/checkout-confirm";
 import CheckoutPayment from "./pages/checkout-payment";
 import PaymentResult from "./pages/paymentResult";
+import LoginPage from "./pages/login2";
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/checkout-confirm" element={<CheckoutConfirm />}></Route>
         <Route path="/checkout-payment" element={<CheckoutPayment />}></Route>
         <Route path="/payment-result" element={<PaymentResult />}></Route>
+        <Route path="/login2" element={<LoginPage />}></Route>
       </Routes>
     </div>
   );
