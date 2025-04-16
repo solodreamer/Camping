@@ -25,7 +25,7 @@ const { Meta } = Card;
 
 //選單項目
 const menuItems = [
-  { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
+  { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/loginPage" },
   { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
   { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
 ];

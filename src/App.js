@@ -29,7 +29,7 @@ function App() {
         <Route path="/checkout-confirm" element={<CheckoutConfirm />}></Route>
         <Route path="/checkout-payment" element={<CheckoutPayment />}></Route>
         <Route path="/payment-result" element={<PaymentResult />}></Route>
-        <Route path="/login2" element={<LoginPage />}></Route>
+        <Route path="/loginPage" element={<LoginPage />}></Route>
       </Routes>
     </div>
   );

@@ -41,7 +41,7 @@ const { Title, Paragraph, Text } = Typography;
 function CampDetail() {
   //選單項目
   const menuItems = [
-    { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
+    { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/loginPage" },
     { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
   ];
@@ -313,7 +313,9 @@ function CampDetail() {
       localStorage.setItem('accessToken', token.token);
       if (token) {
         setAuthToken(token.token);
+        return true;
       };
+      return false;
     } catch(error) {
       console.error('Error refreshing token:', error);
     }
@@ -335,12 +337,34 @@ function CampDetail() {
       booking_item: selectedCampsites
     };
     console.log("[儲存訂位參數]", params);
-    await refreshToken(token);
+    const tokenResult = await refreshToken(token);
     let bookingResult = await booking_camp_confirm(params,token);
+    if (tokenResult) {
+      let userInfo = await getUserInfo(token);
+      bookingResult = {...bookingResult, userInfo: userInfo};
+    }
 
     //成功才會跳轉至結帳確認頁
     if (bookingResult.success === true) {
       navigate('/checkout-confirm', { state: { bookingResult }});
+    }
+  };
+
+  /**
+   * 取得使用者資訊
+   * @param {*} token 
+   * @returns 
+   */
+  const getUserInfo = async (token) => {
+    try {
+      const res = await api.get('/v1/auth/user');
+      if (res.data.success === true) {
+        return res.data.data;
+      } else {
+        return {};
+      }
+    } catch (error) {
+      console.log("getUserInfo取得異常:", error);
     }
   };
 

@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
-import { 
-  Form, 
-  Input, 
-  Button, 
-  Typography, 
-  Card, 
-  Row, 
-  Col, 
-  Space, 
+import React, { useState, useContext } from 'react';
+import {
+  Form,
+  Input,
+  Button,
+  Typography,
+  Card,
+  Row,
+  Col,
+  Space,
   message,
   Layout
 } from 'antd';
-import { 
-  UserOutlined, 
-  LockOutlined, 
-  HomeOutlined, 
-  LoginOutlined, 
-  UserAddOutlined 
+import {
+  UserOutlined,
+  LockOutlined,
+  HomeOutlined,
+  LoginOutlined,
+  UserAddOutlined
 } from '@ant-design/icons';
+import { api, setAuthToken } from "../api";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../AuthContext";
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -25,19 +28,25 @@ const { Content } = Layout;
 const LoginPage = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  // 取得登入狀態、登入函式
+  const { handleLogin } = useContext(AuthContext);
+
 
   // 表單提交處理
   const handleSubmit = (values) => {
     setLoading(true);
-    
+
     // 模擬API請求延遲
     setTimeout(() => {
       console.log('登入資訊:', values);
       message.success('登入成功！');
       setLoading(false);
+      login(values);
       // 這裡可以添加實際的登入邏輯和跳轉
-    }, 1500);
+    }, 1000);
   };
+
 
   // 手機號碼驗證
   const validatePhoneNumber = (_, value) => {
@@ -50,16 +59,36 @@ const LoginPage = () => {
     return Promise.resolve();
   };
 
+  /**
+   * 登入事件
+   */
+  const login = async (values) => {
+    try {
+      console.log('[登入param]', values);
+      const res = await api.post('/v1/auth/login/using-password', values);
+      console.log('[登入res]', res);
+      const { token } = res.data;
+      localStorage.setItem('accessToken', token);
+      setAuthToken(token);
+      handleLogin();
+      if (token) {
+        navigate('/');
+      }
+    } catch (err) {
+      console.log('[登入Error]', err);
+    }
+  };
+
   return (
     <Layout style={{ minHeight: '100vh', background: '#f0f2f5' }}>
       <Content>
         <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
           <Col xs={22} sm={18} md={12} lg={8} xl={6}>
-            <Card 
-              bordered={false} 
-              style={{ 
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)', 
-                borderRadius: '12px' 
+            <Card
+              bordered={false}
+              style={{
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                borderRadius: '12px'
               }}
             >
               {/* 標題區域 */}
@@ -71,7 +100,7 @@ const LoginPage = () => {
                   請登入您的帳號以繼續
                 </div>
               </div>
-              
+
               {/* 登入表單 */}
               <Form
                 form={form}
@@ -82,7 +111,7 @@ const LoginPage = () => {
               >
                 {/* 手機號碼輸入框 */}
                 <Form.Item
-                  name="phoneNumber"
+                  name="login_id"
                   rules={[{ validator: validatePhoneNumber }]}
                 >
                   <Input
@@ -92,7 +121,7 @@ const LoginPage = () => {
                     maxLength={10}
                   />
                 </Form.Item>
-                
+
                 {/* 密碼輸入框 */}
                 <Form.Item
                   name="password"
@@ -104,7 +133,7 @@ const LoginPage = () => {
                     prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
                   />
                 </Form.Item>
-                
+
                 {/* 登入按鈕 */}
                 <Form.Item>
                   <Button
@@ -120,30 +149,32 @@ const LoginPage = () => {
                   </Button>
                 </Form.Item>
               </Form>
-              
+
               {/* 其他按鈕 */}
               <div style={{ textAlign: 'center', marginTop: '16px' }}>
                 <Space size="middle">
-                  <Button 
-                    type="link" 
+                  <Button
+                    type="link"
                     icon={<HomeOutlined />}
                     style={{ color: '#389e0d' }}
+                    onClick={() => navigate('/')}
                   >
                     首頁
                   </Button>
-                  <Button 
+                  <Button
                     type="link" 
                     icon={<UserAddOutlined />}
                     style={{ color: '#389e0d' }}
+                    onClick={() => navigate('/register')}
                   >
                     註冊
                   </Button>
                 </Space>
               </div>
-              
+
               {/* 版權信息 */}
               <div style={{ textAlign: 'center', marginTop: '24px', color: '#999', fontSize: '12px' }}>
-              Copyright ©{new Date().getFullYear()} Created by Go露營
+                Copyright ©{new Date().getFullYear()} Created by Go露營
               </div>
             </Card>
           </Col>

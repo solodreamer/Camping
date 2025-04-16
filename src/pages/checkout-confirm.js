@@ -49,7 +49,7 @@ const formItemLayout = {
 function CheckoutConfirm() {
   //選單項目
   const menuItems = [
-    { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/login" },
+    { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/loginPage" },
     { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
   ];
@@ -86,7 +86,8 @@ function CheckoutConfirm() {
           <StepsConfirm currentStep={currentStep}/>
           <Row className="contentRow" >
             <Col xs={24} sm={24} md={15} lg={15} xl={15}>
-              <Form {...formItemLayout} name="confirmForm" layout="vertical" size="Large" onFinish={onCheckPayment}> 
+              <Form {...formItemLayout} name="confirmForm" layout="vertical" size="Large" onFinish={onCheckPayment}
+                initialValues={{name: bookingResult?.userInfo?.name || "", phone: bookingResult?.userInfo?.phone || ""}}> 
                 <Form.Item label="訂購人姓名" name="name" rules={[
                   {
                     required: true,
