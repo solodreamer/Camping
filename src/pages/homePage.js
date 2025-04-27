@@ -92,8 +92,9 @@ function HomePage() {
   }, [camps]);
   
   return (
-    <Layout>
+    <Layout className="layout-container">
       <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
+        <div className="logo">Go露營</div>
         <Menu mode="inline" theme="dark" items={menuItems.map((item) => ({
           key: item.key,
           icon: item.icon,
@@ -102,7 +103,9 @@ function HomePage() {
         }))} />
       </Sider>
       <Layout>
-        <Header className="home-headerStyle">Go露營</Header>
+        <Header className="home-headerStyle">
+          <Title level={3} style={{ color: '#fff', margin: 16 }}>Go露營</Title>
+        </Header>
         <Content className="home-contentStyle">
           <div>
              <QueryFilter defaultCollapsed submitter onFinish={onSearch}>

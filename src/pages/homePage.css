@@ -1,3 +1,23 @@
+.layout-container {
+    min-height: 100vh;
+    background: #f0f2f5;
+}
+
+.siderStyle {
+    text-align: center;
+    color: #fff;
+}
+
+.logo {
+    height: 64px;
+    line-height: 64px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    border-bottom: 1px solid #f0f0f0;
+}
+
 .home-headerStyle {
     text-align: center;
     color: #fff;
@@ -6,20 +26,14 @@
     line-Height: 64px;
     background-color: #0f3675 !important;
     top: 0;
-   }
-   
+}   
+
 .home-contentStyle {
  text-align: center;
  min-height: 120;
  line-height: 120px;
  width: 90%;
  margin: 0 auto;
-}
-
-.siderStyle {
- text-align: center;
- line-height: 120px;
- color: #fff;
 }
 
 .home-footerStyle {
