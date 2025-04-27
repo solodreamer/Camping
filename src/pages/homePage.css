@@ -22,18 +22,15 @@
     text-align: center;
     color: #fff;
     height: 64;
-    padding-Inline: 48;
+    padding: 0 24px;
     line-Height: 64px;
     background-color: #0f3675 !important;
-    top: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
 }   
 
 .home-contentStyle {
- text-align: center;
- min-height: 120;
- line-height: 120px;
- width: 90%;
- margin: 0 auto;
+ padding: 24px;
+ min-height: calc(100vh - 64px - 70px); /* 扣除頭尾高度 */
 }
 
 .home-footerStyle {
