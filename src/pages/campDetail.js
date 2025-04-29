@@ -81,6 +81,10 @@ function CampDetail() {
    * 營地照片上一張
    */
   const handleCampPhotoPrevClick = () => {
+    if (!product || !product.campPhotos || product.campPhotos.length === 0) {
+      console.error("營地照片不存在或為空");
+      return;
+    }
     setCampPhotosIndex(
       (prevIndex) =>
         (prevIndex - 1 + product.campPhotos.length) % product.campPhotos.length
@@ -91,6 +95,10 @@ function CampDetail() {
    * 營地照片下一張
    */
   const handleCampPhotoNextClick = () => {
+    if (!product || !product.campPhotos || product.campPhotos.length === 0) {
+      console.error("營地照片不存在或為空");
+      return;
+    }
     setCampPhotosIndex(
       (prevIndex) => (prevIndex + 1) % product.campPhotos.length
     );
@@ -105,7 +113,11 @@ function CampDetail() {
       const currentIndex = prevState[name] || 0;
       console.log(`Current prevState:`, prevState); // 輸出目前的照片索引
       console.log(`Current index for ${name}:`, currentIndex); // 輸出目前的照片索引
-      const campsite = product.area.find((c) => c.name === name);
+      const campsite = product?.area?.find((c) => c.name === name);
+      if (!campsite || !campsite.areaImage || campsite.areaImage.length === 0) {
+        console.error(`營區 ${name} 的照片不存在或為空`);
+        return prevState;
+      }
       const newIndex = (currentIndex - 1 + campsite.areaImage.length) % campsite.areaImage.length;
       console.log(`newIndex:`, newIndex); // 輸出目前的照片索引
       return { ...prevState, [name]: newIndex };
@@ -120,7 +132,11 @@ function CampDetail() {
     setCampsitePhotosIndex((prevState) => {
       const currentIndex = prevState[name] || 0;
       console.log(`Current index for ${name}:`, currentIndex); // 輸出目前的照片索引
-      const campsite = product.area.find((c) => c.name === name);
+      const campsite = product?.area?.find((c) => c.name === name);
+      if (!campsite || !campsite.areaImage || campsite.areaImage.length === 0) {
+        console.error(`營區 ${name} 的照片不存在或為空`);
+        return prevState;
+      }
       const newIndex = (currentIndex + 1) % campsite.areaImage.length;
       return { ...prevState, [name]: newIndex };
     });
@@ -132,6 +148,7 @@ function CampDetail() {
    */
   const getAvailableCampsite = async (param) => {
     const availableRes = await api.post('/v1/camps/available', param);
+    if (availableRes.data.data == null) { return [] }
     if (availableRes.data.success === true && availableRes.data.data.length > 0) {
       console.log("[availableRes]", availableRes.data);
       setAvailableCampsite(availableRes.data.data);
@@ -157,11 +174,10 @@ function CampDetail() {
    * @returns 
    */
   const cellRender = (current, info) => {
-    if (availableCampsite.length > 0) {
-      return dateCellRender(current);
+    if (!availableCampsite || availableCampsite.length === 0) {
+      return '未取得';
     }
-    return '未取得';
-    // return dateCellRender(current);
+      return dateCellRender(current);
   };
 
   /**
@@ -448,7 +464,7 @@ function CampDetail() {
               <Divider />
               <Row >
                 <Col xs={24} sm={24} md={24} lg={12} xl={12} className="campPhoto-carousel">
-                  {product.campPhotos?.length > 0 ? (
+                  {product?.campPhotos?.length > 0 ? (
                     
                     <Image.PreviewGroup
                       items={product.campPhotos.map((item) => {
@@ -581,6 +597,7 @@ function CampDetail() {
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={12} xl={12} className="list-style">
                   <Spin tip="Loading..." spinning={isLoading}>
+                  {campsiteCountInfo && campsiteCountInfo.length > 0 ? (
                   <List 
                     itemLayout="vertical" 
                     dataSource={campsiteCountInfo} 
@@ -604,6 +621,9 @@ function CampDetail() {
                         (<div className="non-available-count"> 目前無空房 </div>)}
                       </List.Item>
                     )}/>
+                  ) : (
+                    <Empty description="目前無可用營位" />
+                  )}
                     </Spin>
                     <div className="room-book-status">
                       <Row className="row-total-price">
@@ -630,7 +650,7 @@ function CampDetail() {
                   lg: 32,
                 }}
               >
-                {product.area?.length > 0 ? (
+                {product?.area?.length > 0 ? (
                   product.area.map((area) => {
                     const currentIndex = campsitePhotosIndex[area.name] || 0;
                     return (

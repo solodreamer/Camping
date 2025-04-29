@@ -40,7 +40,6 @@ const LoginPage = () => {
     // 模擬API請求延遲
     setTimeout(() => {
       console.log('登入資訊:', values);
-      message.success('登入成功！');
       setLoading(false);
       login(values);
       // 這裡可以添加實際的登入邏輯和跳轉
@@ -69,6 +68,7 @@ const LoginPage = () => {
       console.log('[登入res]', res);
       const { token } = res.data;
       localStorage.setItem('accessToken', token);
+      message.success('登入成功！');
       setAuthToken(token);
       handleLogin();
       if (token) {
@@ -93,7 +93,7 @@ const LoginPage = () => {
             >
               {/* 標題區域 */}
               <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                <Title level={2} style={{ color: '#237804', marginBottom: '8px' }}>
+                <Title level={2} style={{ color: '#0f3675', marginBottom: '8px' }}>
                   歡迎使用Go露營
                 </Title>
                 <div style={{ fontSize: '14px', color: '#666' }}>
@@ -143,7 +143,7 @@ const LoginPage = () => {
                     block
                     icon={<LoginOutlined />}
                     loading={loading}
-                    style={{ background: '#389e0d', borderColor: '#389e0d' }}
+                    style={{ background: '#0f3675', borderColor: '#0f3675' }}
                   >
                     登入
                   </Button>
@@ -156,7 +156,7 @@ const LoginPage = () => {
                   <Button
                     type="link"
                     icon={<HomeOutlined />}
-                    style={{ color: '#389e0d' }}
+                    style={{ color: '#0f3675' }}
                     onClick={() => navigate('/')}
                   >
                     首頁
@@ -164,7 +164,7 @@ const LoginPage = () => {
                   <Button
                     type="link" 
                     icon={<UserAddOutlined />}
-                    style={{ color: '#389e0d' }}
+                    style={{ color: '#0f3675' }}
                     onClick={() => navigate('/register')}
                   >
                     註冊
