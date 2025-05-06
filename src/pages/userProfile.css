@@ -1,0 +1,166 @@
+/* 全局樣式 */
+.layout-container {
+    min-height: 100vh;
+    background: #f0f2f5;
+  }
+  
+  /* 側邊欄樣式 */
+  .profile-siderStyle {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  }
+  
+  .logo {
+    height: 64px;
+    line-height: 64px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #0f3675;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  /* 標題樣式 */
+  .profile-headerStyle {
+    text-align: center;
+    color: #fff;
+    height: 64px;
+    padding: 0 24px;
+    line-height: 64px;
+    background-color: #0f3675 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  }
+  
+  /* 內容區域樣式 */
+  .profile-contentStyle {
+    padding: 24px;
+    background: #f0f2f5;
+    min-height: calc(100vh - 64px - 70px); /* 扣除頭尾高度 */
+  }
+  
+  /* 個人資料卡片 */
+  .profile-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+  }
+  
+  /* 大頭照區域 */
+  .avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+  }
+  
+  .user-avatar {
+    margin-bottom: 16px;
+    border: 3px solid #e6f7ff;
+  }
+  
+  .avatar-uploader {
+    margin-top: 16px;
+    text-align: center;
+  }
+  
+  .avatar-uploader button {
+    background-color: #0f3675;
+    border-color: #0f3675;
+  }
+  
+  .avatar-uploader button:hover, 
+  .avatar-uploader button:focus {
+    background-color: #1e50b3;
+    border-color: #1e50b3;
+  }
+  
+  /* 表單樣式 */
+  .profile-form .ant-form-item-label > label {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .profile-form .ant-input-affix-wrapper {
+    border-radius: 4px;
+  }
+  
+  .profile-form .ant-input-affix-wrapper-focused,
+  .profile-form .ant-input-affix-wrapper:focus {
+    border-color: #0f3675;
+    box-shadow: 0 0 0 2px rgba(15, 54, 117, 0.2);
+  }
+  
+  .profile-form .ant-input:focus,
+  .profile-form .ant-input-focused {
+    border-color: #0f3675;
+    box-shadow: 0 0 0 2px rgba(15, 54, 117, 0.2);
+  }
+  
+  .profile-form .ant-select-focused .ant-select-selector,
+  .profile-form .ant-select-selector:focus,
+  .profile-form .ant-select-open .ant-select-selector {
+    border-color: #0f3675 !important;
+    box-shadow: 0 0 0 2px rgba(15, 54, 117, 0.2) !important;
+  }
+  
+  .profile-form .ant-picker-focused,
+  .profile-form .ant-picker:focus {
+    border-color: #0f3675;
+    box-shadow: 0 0 0 2px rgba(15, 54, 117, 0.2);
+  }
+  
+  /* 儲存按鈕 */
+  .save-button {
+    background-color: #0f3675;
+    border-color: #0f3675;
+    padding: 0 30px;
+    height: 40px;
+  }
+  
+  .save-button:hover, 
+  .save-button:focus {
+    background-color: #1e50b3;
+    border-color: #1e50b3;
+  }
+  
+  /* 區隔線 */
+  .ant-divider-with-text-left::before,
+  .ant-divider-with-text-left::after {
+    border-top-color: #d9e1f2;
+  }
+  
+  .ant-divider-horizontal.ant-divider-with-text-left::before {
+    width: 0%;
+  }
+  
+  .ant-divider-horizontal.ant-divider-with-text-left::after {
+    width: 100%;
+  }
+  
+  .ant-divider-inner-text {
+    color: #0f3675;
+    font-weight: 500;
+  }
+  
+  /* 頁腳樣式 */
+  .profile-footerStyle {
+    text-align: center;
+    color: #fff;
+    padding: 24px;
+    background-color: #0f3675 !important;
+  }
+  
+  /* 響應式調整 */
+  @media (max-width: 768px) {
+    .profile-contentStyle {
+      padding: 16px;
+    }
+    
+    .profile-card {
+      padding: 16px;
+    }
+    
+    .avatar-section {
+      margin-bottom: 24px;
+    }
+  }

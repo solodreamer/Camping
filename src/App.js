@@ -12,6 +12,8 @@ import CheckoutConfirm from "./pages/checkout-confirm";
 import CheckoutPayment from "./pages/checkout-payment";
 import PaymentResult from "./pages/paymentResult";
 import LoginPage from "./pages/login2";
+import UserProfile from "./pages/userProfile";
+
 
 function App() {
 
@@ -30,6 +32,7 @@ function App() {
         <Route path="/checkout-payment" element={<CheckoutPayment />}></Route>
         <Route path="/payment-result" element={<PaymentResult />}></Route>
         <Route path="/loginPage" element={<LoginPage />}></Route>
+        <Route path="/userProfile" element={<UserProfile />}></Route>
       </Routes>
     </div>
   );
