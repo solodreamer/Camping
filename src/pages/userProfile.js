@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
   Layout, 
   Form, 
@@ -32,6 +32,7 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import dayjs from "dayjs";
+import AuthContext from "../AuthContext";
 import './userProfile.css';
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -42,6 +43,14 @@ const UserProfile = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
+
+  // 選單項目
+  const menuItems = 
+  [
+    { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
+    { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
+    { key: "3", label: "登出", icon: <LoginOutlined /> },
+  ];
 
   // 模擬從API獲取用戶資料
   useEffect(() => {
@@ -119,21 +128,11 @@ const UserProfile = () => {
     return isJpgOrPng && isLt2M;
   };
 
-  // 選單項目
-  const menuItems = [
-    { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
-    { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/profile" },
-    { key: "3", label: "登出", icon: <LoginOutlined />, path: "/logout" },
-  ];
-
   return (
     <Layout className="layout-container">
       <Sider className="profile-siderStyle" breakpoint="md" collapsedWidth="0">
         <div className="logo">Go露營</div>
-        <Menu 
-          mode="inline" 
-          theme="light"
-          defaultSelectedKeys={['2']}
+        <Menu mode="inline" theme="dark" defaultSelectedKeys={['2']}
           items={menuItems.map((item) => ({
             key: item.key,
             icon: item.icon,
@@ -143,7 +142,7 @@ const UserProfile = () => {
       </Sider>
       <Layout>
         <Header className="profile-headerStyle">
-          <Title level={3} style={{ color: '#fff', margin: 0 }}>會員個人資料</Title>
+          <Title level={3} style={{ color: '#fff', margin: 16 }}>會員個人資料</Title>
         </Header>
         <Content className="profile-contentStyle">
           <Card className="profile-card">

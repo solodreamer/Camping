@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout, Menu, theme, Col, Row, Divider, Typography, Card} from "antd";
-import { LoginOutlined, UserAddOutlined, HomeOutlined, } from "@ant-design/icons";
+import { LoginOutlined, UserAddOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
 import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker } from '@ant-design/pro-components';
 import dayjs from "dayjs";
 
@@ -20,13 +20,14 @@ function HomePage() {
   //選單項目
   const menuItems = isLoggedIn ?
     [
-      { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
-      { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
+      { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
+      { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
+      { key: "2", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
     ] :
     [
-      { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/loginPage" },
+      { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
       { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
-      { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
+      { key: "3", label: "會員登入", icon: <LoginOutlined />, path: "/loginPage" },
     ];
 
   //地區選單
@@ -95,7 +96,8 @@ function HomePage() {
     <Layout className="layout-container">
       <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
         <div className="logo">Go露營</div>
-        <Menu mode="inline" theme="dark" items={menuItems.map((item) => ({
+        <Menu mode="inline" theme="dark" defaultSelectedKeys={['1']}
+        items={menuItems.map((item) => ({
           key: item.key,
           icon: item.icon,
           label: item.path ? <Link to={item.path}>{item.label}</Link> : item.label,
