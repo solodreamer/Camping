@@ -1,7 +1,6 @@
 // import logo from './logo.svg';
 // import './App.css';
 import { Routes, Route } from "react-router-dom";
-import Login from "./pages/login";
 import Register from "./pages/register";
 import HomePage from "./pages/homePage";
 import PrivacyPolicy from "./pages/privacyPolicy";
@@ -11,8 +10,10 @@ import CampDetail from "./pages/campDetail";
 import CheckoutConfirm from "./pages/checkout-confirm";
 import CheckoutPayment from "./pages/checkout-payment";
 import PaymentResult from "./pages/paymentResult";
-import LoginPage from "./pages/login2";
+import LoginPage from "./pages/loginPage";
 import UserProfile from "./pages/userProfile";
+import RegistrationForm from "./pages/register2";
+
 
 
 function App() {
@@ -22,7 +23,6 @@ function App() {
       {/* 設定路由路徑 */}
       <Routes>
         <Route path="" element={<HomePage />}></Route>
-        <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/privacyPolicy" element={<PrivacyPolicy />}></Route>
         <Route path="/termService" element={<TermService />}></Route>
@@ -33,6 +33,7 @@ function App() {
         <Route path="/payment-result" element={<PaymentResult />}></Route>
         <Route path="/loginPage" element={<LoginPage />}></Route>
         <Route path="/userProfile" element={<UserProfile />}></Route>
+        <Route path="/register2" element={<RegistrationForm />}></Route>
       </Routes>
     </div>
   );

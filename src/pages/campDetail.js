@@ -54,7 +54,7 @@ function CampDetail() {
   const [campsiteCountInfo, setCampsiteCountInfo] = useState([]);
   const [selectedDate, setSelectedDate] = useState(() => dayjs());
   //定義狀態來儲存日期範圍
-  const [dateRange, setDateRange] = useState([dayjs(), dayjs().add(1,'day')]);
+  const [dateRange, setDateRange] = useState([dayjs(), dayjs().add(1, 'day')]);
   //定義狀態來儲存已選取的campsite
   const [selectedCampsites, setSelectedCampsites] = useState([]);
   //定義狀態儲存campsiteId清單是否載入中
@@ -63,6 +63,8 @@ function CampDetail() {
   const [count, setCount] = useState(0);
   //定義狀態儲存是否禁用預定button
   const [isbookDisable, setBookDisable] = useState(true);
+  //定義狀態是否禁用編輯數量
+  const [isCountDisable, setCountDisable] = useState(false);
   // 頁面導航hook
   const navigate = useNavigate();
 
@@ -177,7 +179,7 @@ function CampDetail() {
     if (!availableCampsite || availableCampsite.length === 0) {
       return '未取得';
     }
-      return dateCellRender(current);
+    return dateCellRender(current);
   };
 
   /**
@@ -201,7 +203,7 @@ function CampDetail() {
   const onSelect = (date) => {
     console.log("[日期選擇]", dayjs(date));
     setSelectedDate(date);
-    setDateRange([date, date.add(1,'day')]);
+    setDateRange([date, date.add(1, 'day')]);
     setSelectedCampsites([]);
     onFilterSearch();
   }
@@ -225,10 +227,10 @@ function CampDetail() {
   const onFilterSearch = async () => {
     await waitTime(1000);
     setLoading(true);
-    getCampsite_available({ 
-      camp_id: id, 
+    getCampsite_available({
+      camp_id: id,
       start_date: dayjs(dateRange[0]).format('YYYY-MM-DD').toString(),
-      end_date: dayjs(dateRange[1]).format('YYYY-MM-DD').toString() 
+      end_date: dayjs(dateRange[1]).format('YYYY-MM-DD').toString()
     });
   };
 
@@ -266,7 +268,7 @@ function CampDetail() {
   const handleQuantityChange = (areaId, value) => {
     setSelectedCampsites((prevSelectedCampsites) => {
       const updatedQuantites = prevSelectedCampsites.filter(item => item.areaId !== areaId);
-      if(value > 0) {
+      if (value > 0) {
         updatedQuantites.push({ areaId: areaId, count: value });
       }
       return updatedQuantites;
@@ -277,12 +279,12 @@ function CampDetail() {
    * 呼叫存檔訂位api
    * @param {*} param 
    */
-  const booking_camp_confirm = async(params,token)=> {
+  const booking_camp_confirm = async (params, token) => {
     let tempRes = {
       campName: product.name,
       areaName: product.area.filter(
         area => params.booking_item
-        .some( item => item.areaId === area.areaId))
+          .some(item => item.areaId === area.areaId))
         .map(area => area.name),
       dateRange: [params.start_date, params.end_date],
       success: false,
@@ -294,28 +296,30 @@ function CampDetail() {
       } else {
         return false;
       };
-      const res = await api.post('/v1/booking_camp/confirm',params);
+      const res = await api.post('/v1/booking_camp/confirm', params);
       if (res.data.success === true) {
-        tempRes = {...tempRes,
-           amountDetail: res.data.data.amountDetail,
-           order_id: res.data.data.order_id,
-           sumAmount: res.data.data.sumAmount,
-           success: res.data.success};
+        tempRes = {
+          ...tempRes,
+          amountDetail: res.data.data.amountDetail,
+          order_id: res.data.data.order_id,
+          sumAmount: res.data.data.sumAmount,
+          success: res.data.success
+        };
         console.log("訂位成功", tempRes);
         return tempRes;
       } else {
         console.log("訂位失敗", res.data.success);
         return tempRes;
       }
-    }catch(error) {
+    } catch (error) {
       console.error('Error booking camp failed:', error);
       return false;
     }
   };
 
- /**
-  * 刷新token-api
-  */
+  /**
+   * 刷新token-api
+   */
   const refreshToken = async (token) => {
     try {
       if (token) {
@@ -332,7 +336,7 @@ function CampDetail() {
         return true;
       };
       return false;
-    } catch(error) {
+    } catch (error) {
       console.error('Error refreshing token:', error);
     }
   }
@@ -340,7 +344,7 @@ function CampDetail() {
   /**
    * 儲存訂位事件
    */
-  const onSaveBooking = async() => {
+  const onSaveBooking = async () => {
     const token = localStorage.getItem('accessToken');
     console.log("[accessToken]", token);
     if (!token) {
@@ -354,15 +358,15 @@ function CampDetail() {
     };
     console.log("[儲存訂位參數]", params);
     const tokenResult = await refreshToken(token);
-    let bookingResult = await booking_camp_confirm(params,token);
+    let bookingResult = await booking_camp_confirm(params, token);
     if (tokenResult) {
       let userInfo = await getUserInfo(token);
-      bookingResult = {...bookingResult, userInfo: userInfo};
+      bookingResult = { ...bookingResult, userInfo: userInfo };
     }
 
     //成功才會跳轉至結帳確認頁
     if (bookingResult.success === true) {
-      navigate('/checkout-confirm', { state: { bookingResult }});
+      navigate('/checkout-confirm', { state: { bookingResult } });
     }
   };
 
@@ -389,6 +393,10 @@ function CampDetail() {
    */
   useEffect(() => {
     getCampDetail(id);
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      setCountDisable(true);
+    }
     console.log("[id]", id);
   }, [id]);
 
@@ -422,13 +430,13 @@ function CampDetail() {
   }, [campsiteCountInfo]);
 
   useEffect(() => {
-    console.log("[選擇入住時間]", dateRange[0].format('YYYY-MM-DD'),"-", dateRange[1].format('YYYY-MM-DD'));
+    console.log("[選擇入住時間]", dateRange[0].format('YYYY-MM-DD'), "-", dateRange[1].format('YYYY-MM-DD'));
   }, [dateRange]);
 
   useEffect(() => {
     console.log("[已選擇數量]", selectedCampsites);
-    if(selectedCampsites.length > 0) {
-      const total = selectedCampsites.reduce((sum, item) => sum + item.count,0);
+    if (selectedCampsites.length > 0) {
+      const total = selectedCampsites.reduce((sum, item) => sum + item.count, 0);
       setCount(total);
     } else {
       setCount(0);
@@ -437,7 +445,7 @@ function CampDetail() {
 
   useEffect(() => {
     console.log("[總訂位數量]", count);
-    if(count > 0) {
+    if (count > 0) {
       setBookDisable(false);
     } else {
       setBookDisable(true);
@@ -465,7 +473,7 @@ function CampDetail() {
               <Row >
                 <Col xs={24} sm={24} md={24} lg={12} xl={12} className="campPhoto-carousel">
                   {product?.campPhotos?.length > 0 ? (
-                    
+
                     <Image.PreviewGroup
                       items={product.campPhotos.map((item) => {
                         return { src: item.img };
@@ -512,11 +520,11 @@ function CampDetail() {
               <Divider orientation="left">
                 <Title level={2}>選擇入住時間</Title>
               </Divider>
-              <Row gutter={[16,{ xs: 16, sm: 16}]}>
-                <div  className="queryFilterStyle">
+              <Row gutter={[16, { xs: 16, sm: 16 }]}>
+                <div className="queryFilterStyle">
                   <QueryFilter defaultCollapsed submitter onFinish={onFilterSearch}>
                     <ProFormDateRangePicker name="dateRange" label="日期" value={dateRange}
-                      fieldProps={{ disabledDate, inputReadOnly: true }} onChange={onDateChange}/>
+                      fieldProps={{ disabledDate, inputReadOnly: true }} onChange={onDateChange} />
                   </QueryFilter>
                 </div>
                 <Col xs={24} sm={24} md={24} lg={12} xl={12} className="calendr-outer-frame">
@@ -597,45 +605,52 @@ function CampDetail() {
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={12} xl={12} className="list-style">
                   <Spin tip="Loading..." spinning={isLoading}>
-                  {campsiteCountInfo && campsiteCountInfo.length > 0 ? (
-                  <List 
-                    itemLayout="vertical" 
-                    dataSource={campsiteCountInfo} 
-                    bordered={true}
-                    renderItem={item => (
-                      <List.Item
-                        actions={[
-                          <InputNumber
-                            size="large"
-                            min={0} 
-                            defaultValue={0} 
-                            max={item.availableCount}
-                            value={selectedCampsites.find(c => item.areaId === c.areaId)?.count || 0}
-                            onChange={value => handleQuantityChange(item.areaId, value)}/>,
-                          <EditFilled />,
-                        ]}
-                      >
-                        <List.Item.Meta title={item.areaName} ></List.Item.Meta>
-                        {item.availableCount > 0 ? 
-                        (<div className="available-count">剩餘 {item.availableCount} 間 !</div>) : 
-                        (<div className="non-available-count"> 目前無空房 </div>)}
-                      </List.Item>
-                    )}/>
-                  ) : (
-                    <Empty description="目前無可用營位" />
-                  )}
-                    </Spin>
-                    <div className="room-book-status">
-                      <Row className="row-total-price">
-                        <Col xs={12} sm={10} md={10} lg={10} xl={10}>總帳數:{count}</Col>
-                        <Col xs={0} sm={2} md={2} lg={2} xl={2}>
-                          <Divider type="vertical" orientation="left" style={{ borderColor:'#3b444f' }}/>
-                        </Col>
-                        <Col xs={12} sm={10} md={10} lg={10} xl={10} className="book-button">
-                          <Button type="primary" disabled={isbookDisable} onClick={onSaveBooking}>現在預定</Button>
-                        </Col>
-                      </Row>
-                    </div>
+                    {campsiteCountInfo && campsiteCountInfo.length > 0 ? (
+                      <List
+                        itemLayout="vertical"
+                        dataSource={campsiteCountInfo}
+                        bordered={true}
+                        renderItem={item => (
+                          <List.Item
+                            actions={[
+                              <InputNumber
+                                size="large"
+                                min={0}
+                                disabled={isCountDisable}
+                                defaultValue={0}
+                                max={item.availableCount}
+                                value={selectedCampsites.find(c => item.areaId === c.areaId)?.count || 0}
+                                onChange={value => handleQuantityChange(item.areaId, value)} />,
+                              <EditFilled />,
+                            ]}
+                          >
+                            <List.Item.Meta title={item.areaName} ></List.Item.Meta>
+                            {isCountDisable ? (
+                              <div className="non-login">請先登入會員!</div>
+                            ) : (
+                              item.availableCount > 0 ? (
+                                <div className="available-count">剩餘 {item.availableCount} 間 !</div>
+                              ) : (
+                                <div className="non-available-count">目前無空房</div>
+                              )
+                            )}
+                          </List.Item>
+                        )} />
+                    ) : (
+                      <Empty description="目前無可用營位" />
+                    )}
+                  </Spin>
+                  <div className="room-book-status">
+                    <Row className="row-total-price">
+                      <Col xs={12} sm={10} md={10} lg={10} xl={10}>總帳數:{count}</Col>
+                      <Col xs={0} sm={2} md={2} lg={2} xl={2}>
+                        <Divider type="vertical" orientation="left" style={{ borderColor: '#3b444f' }} />
+                      </Col>
+                      <Col xs={12} sm={10} md={10} lg={10} xl={10} className="book-button">
+                        <Button type="primary" disabled={isbookDisable} onClick={onSaveBooking}>現在預定</Button>
+                      </Col>
+                    </Row>
+                  </div>
                 </Col>
               </Row>
               <Divider orientation="left">
