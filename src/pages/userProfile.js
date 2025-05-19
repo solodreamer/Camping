@@ -147,33 +147,6 @@ const UserProfile = () => {
         <Content className="profile-contentStyle">
           <Card className="profile-card">
             <Row gutter={[24, 24]}>
-              <Col xs={24} sm={24} md={8} lg={6} xl={6}>
-                <div className="avatar-section">
-                  <Avatar 
-                    size={120} 
-                    icon={<UserOutlined />} 
-                    src={imageUrl}
-                    className="user-avatar"
-                  />
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76" // 替換為實際上傳API
-                    beforeUpload={beforeUpload}
-                    onChange={handleAvatarChange}
-                  >
-                    <Button icon={<UploadOutlined />} type="primary">
-                      上傳大頭照
-                    </Button>
-                  </Upload>
-                  <Text type="secondary" style={{marginTop: '8px'}}>
-                    支援JPG、PNG格式，檔案小於2MB
-                  </Text>
-                </div>
-              </Col>
-              
               <Col xs={24} sm={24} md={16} lg={18} xl={18}>
                 <Form
                   form={form}
@@ -255,36 +228,20 @@ const UserProfile = () => {
                   
                   <Form.Item
                     name="password"
-                    label="密碼"
+                    label="舊密碼"
+                    extra="如不修改密碼，請留空此欄位"
+                  >
+                    <Input.Password prefix={<LockOutlined />} placeholder="請輸入舊密碼" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="password"
+                    label="新密碼"
                     extra="如不修改密碼，請留空此欄位"
                   >
                     <Input.Password prefix={<LockOutlined />} placeholder="請輸入新密碼" />
                   </Form.Item>
-                  
-                  <Divider orientation="left">退款帳戶資訊</Divider>
-                  
-                  <Row gutter={16}>
-                    <Col xs={24} sm={8}>
-                      <Form.Item
-                        name="bankCode"
-                        label="銀行代碼"
-                        rules={[{ required: true, message: '請輸入銀行代碼' }]}
-                      >
-                        <Input prefix={<BankOutlined />} placeholder="請輸入銀行代碼" />
-                      </Form.Item>
-                    </Col>
-                    
-                    <Col xs={24} sm={16}>
-                      <Form.Item
-                        name="bankAccount"
-                        label="銀行帳號"
-                        rules={[{ required: true, message: '請輸入銀行帳號' }]}
-                      >
-                        <Input prefix={<CreditCardOutlined />} placeholder="請輸入銀行帳號" />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                  
+                              
                   <Form.Item style={{ marginTop: '24px' }}>
                     <Button
                       type="primary"
