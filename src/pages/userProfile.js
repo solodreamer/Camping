@@ -7,26 +7,19 @@ import {
   DatePicker, 
   Select, 
   Card, 
-  Avatar, 
   Typography, 
   Row, 
   Col, 
-  Upload, 
   message,
-  Divider,
-  Space,
   Menu
 } from 'antd';
 import { 
   UserOutlined, 
   HomeOutlined, 
   SaveOutlined, 
-  UploadOutlined,
   LockOutlined,
   MailOutlined,
   PhoneOutlined,
-  BankOutlined,
-  CreditCardOutlined,
   CalendarOutlined,
   LoginOutlined
 } from '@ant-design/icons';
@@ -34,6 +27,7 @@ import { Link } from 'react-router-dom';
 import dayjs from "dayjs";
 import AuthContext from "../AuthContext";
 import './userProfile.css';
+import { api, } from "../api";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -43,37 +37,17 @@ const UserProfile = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
+  const { isLoggedIn, handleLogout } = useContext(AuthContext);
 
   // 選單項目
   const menuItems = 
   [
     { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
     { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
-    { key: "3", label: "登出", icon: <LoginOutlined /> },
+    { key: "3", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
   ];
+  
 
-  // 模擬從API獲取用戶資料
-  useEffect(() => {
-    // 模擬API請求延遲
-    const timer = setTimeout(() => {
-      // 模擬的用戶數據
-      const userData = {
-        name: '王小明',
-        gender: 'male',
-        birthDate: '1990-01-01',
-        phoneNumber: '0912345678',
-        email: 'wang@example.com',
-        bankCode: '012',
-        bankAccount: '12345678901234',
-      };
-      form.setFieldsValue({
-        ...userData,
-        birthDate: dayjs(userData.birthDate),
-      });
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [form]);
 
   // 處理表單提交
   const handleSubmit = (values) => {
@@ -82,7 +56,7 @@ const UserProfile = () => {
     // 處理日期格式
     const formattedValues = {
       ...values,
-      birthDate: dayjs(values.birthDate).format('YYYY-MM-DD'),
+      birthday: dayjs(values.birthday).format('YYYY-MM-DD'),
       avatar: imageUrl
     };
     
@@ -95,38 +69,26 @@ const UserProfile = () => {
     }, 1500);
   };
 
-  // 處理頭像上傳
-  const handleAvatarChange = (info) => {
-    if (info.file.status === 'uploading') {
-      return;
-    }
-    if (info.file.status === 'done') {
-      // 獲取上傳的圖像URL（這裡模擬，實際應使用從服務器返回的URL）
-      getBase64(info.file.originFileObj, imageUrl => {
-        setImageUrl(imageUrl);
+  // 取得會員資料
+  const getUserProfile = async () => {
+    try {
+      const res = await api.get('/v1/auth/user/full-info');
+      if (res.data.success === true) {
+        form.setFieldsValue({
+          ...res.data.data,
+          birthday: dayjs(res.data.data.birthday),
       });
+      }
     }
-  };
+    catch (error) {
 
-  // 轉換圖像為Base64
-  const getBase64 = (img, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  };
+    }
+  }
 
-  // 上傳前驗證
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('您只能上傳JPG/PNG格式的圖片！');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('圖片大小不能超過2MB！');
-    }
-    return isJpgOrPng && isLt2M;
-  };
+  /** 初始化取得會員資料 */
+  useEffect(() => {
+    getUserProfile();
+  }, [form]);
 
   return (
     <Layout className="layout-container">
@@ -168,14 +130,14 @@ const UserProfile = () => {
                     
                     <Col xs={24} sm={12}>
                       <Form.Item
-                        name="gender"
+                        name="sex"
                         label="性別"
                         rules={[{ required: true, message: '請選擇您的性別' }]}
                       >
                         <Select placeholder="請選擇性別">
-                          <Option value="male">男</Option>
-                          <Option value="female">女</Option>
-                          <Option value="other">其他</Option>
+                          <Option value="m">男</Option>
+                          <Option value="f">女</Option>
+                          <Option value="o">其他</Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -184,7 +146,7 @@ const UserProfile = () => {
                   <Row gutter={16}>
                     <Col xs={24} sm={12}>
                       <Form.Item
-                        name="birthDate"
+                        name="birthday"
                         label="出生年月日"
                         rules={[{ required: true, message: '請選擇出生日期' }]}
                       >
@@ -199,7 +161,7 @@ const UserProfile = () => {
                     
                     <Col xs={24} sm={12}>
                       <Form.Item
-                        name="phoneNumber"
+                        name="phone"
                         label="手機號碼"
                         rules={[
                           { required: true, message: '請輸入手機號碼' },
@@ -235,7 +197,7 @@ const UserProfile = () => {
                   </Form.Item>
 
                   <Form.Item
-                    name="password"
+                    name="newPassword"
                     label="新密碼"
                     extra="如不修改密碼，請留空此欄位"
                   >
