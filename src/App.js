@@ -11,7 +11,7 @@ import CheckoutConfirm from "./pages/checkout-confirm";
 import CheckoutPayment from "./pages/checkout-payment";
 import PaymentResult from "./pages/paymentResult";
 import LoginPage from "./pages/loginPage";
-import UserProfile from "./pages/userProfile";
+import UserProfile from "./pages/user/userProfile";
 import RegistrationForm from "./pages/register2";
 
 

@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { 
-  Layout, 
-  Form, 
-  Input, 
-  Button, 
-  DatePicker, 
-  Select, 
-  Card, 
-  Typography, 
-  Row, 
-  Col, 
+import {
+  Layout,
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Select,
+  Card,
+  Typography,
+  Row,
+  Col,
   message,
   Menu
 } from 'antd';
-import { 
-  UserOutlined, 
-  HomeOutlined, 
-  SaveOutlined, 
+import {
+  UserOutlined,
+  HomeOutlined,
+  SaveOutlined,
   LockOutlined,
   MailOutlined,
   PhoneOutlined,
@@ -25,9 +25,9 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import dayjs from "dayjs";
-import AuthContext from "../AuthContext";
+import AuthContext from "../../AuthContext";
 import './userProfile.css';
-import { api, } from "../api";
+import { api, } from "../../api";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -40,33 +40,75 @@ const UserProfile = () => {
   const { isLoggedIn, handleLogout } = useContext(AuthContext);
 
   // 選單項目
-  const menuItems = 
-  [
-    { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
-    { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
-    { key: "3", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
-  ];
-  
+  const menuItems =
+    [
+      { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
+      { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
+      { key: "3", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
+    ];
+
 
 
   // 處理表單提交
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     setLoading(true);
-    
-    // 處理日期格式
-    const formattedValues = {
-      ...values,
+
+    // 組裝基本資料參數
+    const profileParams = {
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      sex: values.sex,
       birthday: dayjs(values.birthday).format('YYYY-MM-DD'),
-      avatar: imageUrl
     };
-    
-    console.log('提交的資料:', formattedValues);
-    
-    // 模擬API請求
-    setTimeout(() => {
-      message.success('個人資料已更新成功！');
+
+    // 組裝密碼資料參數
+    const passwordParams = {
+      password: values.password,
+      newPassword: values.newPassword,
+      newPassword_confirm: values.newPassword_confirm,
+    };
+
+    console.log('提交的資料:', profileParams, passwordParams);
+
+    try {
+      const [profileResult, passwordResult] = await Promise.allSettled([
+        api.put('/v1/auth/user/profile', profileParams),
+        api.put('/v1/auth/user/password', passwordParams),
+      ]);
+
+      let hasError = false;
+
+      // 儲存個人資料 API 回傳
+      if (profileResult.status === "fulfilled") {
+        if (profileResult.value.data.success === false) {
+          hasError = true;
+          message.error(profileResult.value.data.message || "個人資料更新失敗");
+        }
+      } else {
+        hasError = true;
+        message.error("個人資料 API 請求失敗");
+      }
+
+      // 處理密碼 API 回傳
+      if (passwordResult.status === "fulfilled") {
+        if (passwordResult.value.data.success === false) {
+          hasError = true;
+          message.error(passwordResult.value.data.message || "密碼更新失敗");
+        }
+      } else {
+        hasError = true;
+        message.error("密碼更新 API 請求失敗");
+      }
+
+      if (!hasError) {
+        message.success("個人資料與密碼已更新成功！");
+      }
+    } catch (error) {
+      message.error('更新失敗，請檢查資料或稍後再試');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   // 取得會員資料
@@ -77,7 +119,7 @@ const UserProfile = () => {
         form.setFieldsValue({
           ...res.data.data,
           birthday: dayjs(res.data.data.birthday),
-      });
+        });
       }
     }
     catch (error) {
@@ -127,7 +169,7 @@ const UserProfile = () => {
                         <Input prefix={<UserOutlined />} placeholder="請輸入姓名" />
                       </Form.Item>
                     </Col>
-                    
+
                     <Col xs={24} sm={12}>
                       <Form.Item
                         name="sex"
@@ -142,7 +184,7 @@ const UserProfile = () => {
                       </Form.Item>
                     </Col>
                   </Row>
-                  
+
                   <Row gutter={16}>
                     <Col xs={24} sm={12}>
                       <Form.Item
@@ -150,15 +192,15 @@ const UserProfile = () => {
                         label="出生年月日"
                         rules={[{ required: true, message: '請選擇出生日期' }]}
                       >
-                        <DatePicker 
-                          style={{ width: '100%' }} 
+                        <DatePicker
+                          style={{ width: '100%' }}
                           placeholder="請選擇日期"
                           format="YYYY-MM-DD"
                           prefix={<CalendarOutlined />}
                         />
                       </Form.Item>
                     </Col>
-                    
+
                     <Col xs={24} sm={12}>
                       <Form.Item
                         name="phone"
@@ -168,15 +210,15 @@ const UserProfile = () => {
                           { pattern: /^[0-9]{10}$/, message: '請輸入10位數字的手機號碼' }
                         ]}
                       >
-                        <Input 
-                          prefix={<PhoneOutlined />} 
-                          placeholder="請輸入手機號碼" 
+                        <Input
+                          prefix={<PhoneOutlined />}
+                          placeholder="請輸入手機號碼"
                           maxLength={10}
                         />
                       </Form.Item>
                     </Col>
                   </Row>
-                  
+
                   <Form.Item
                     name="email"
                     label="電子郵件"
@@ -187,7 +229,7 @@ const UserProfile = () => {
                   >
                     <Input prefix={<MailOutlined />} placeholder="請輸入電子郵件" />
                   </Form.Item>
-                  
+
                   <Form.Item
                     name="password"
                     label="舊密碼"
@@ -203,7 +245,15 @@ const UserProfile = () => {
                   >
                     <Input.Password prefix={<LockOutlined />} placeholder="請輸入新密碼" />
                   </Form.Item>
-                              
+
+                  <Form.Item
+                    name="newPassword_confirm"
+                    label="新密碼確認"
+                    extra="如不修改密碼，請留空此欄位"
+                  >
+                    <Input.Password prefix={<LockOutlined />} placeholder="新密碼確認" />
+                  </Form.Item>
+
                   <Form.Item style={{ marginTop: '24px' }}>
                     <Button
                       type="primary"
