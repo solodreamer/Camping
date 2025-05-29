@@ -63,23 +63,35 @@ const UserProfile = () => {
     };
 
     // 組裝密碼資料參數
+    const hasPasswordFields =
+      values.old_password || values.password || values.password_confirm;
+
+    // 組裝密碼資料參數
     const passwordParams = {
+      old_password: values.old_password,
       password: values.password,
-      newPassword: values.newPassword,
-      newPassword_confirm: values.newPassword_confirm,
+      password_confirm: values.password_confirm,
     };
 
     console.log('提交的資料:', profileParams, passwordParams);
 
     try {
-      const [profileResult, passwordResult] = await Promise.allSettled([
-        api.put('/v1/auth/user/profile', profileParams),
-        api.put('/v1/auth/user/password', passwordParams),
-      ]);
+      let results;
+      if (hasPasswordFields) {
+        results = await Promise.allSettled([
+          api.put('/v1/auth/user/profile', profileParams),
+          api.put('/v1/auth/user/password', passwordParams),
+        ]);
+      } else {
+        results = await Promise.allSettled([
+          api.put('/v1/auth/user/profile', profileParams),
+        ]);
+      }
 
       let hasError = false;
 
-      // 儲存個人資料 API 回傳
+      // 處理個人資料 API 回傳
+      const profileResult = results[0];
       if (profileResult.status === "fulfilled") {
         if (profileResult.value.data.success === false) {
           hasError = true;
@@ -90,19 +102,22 @@ const UserProfile = () => {
         message.error("個人資料 API 請求失敗");
       }
 
-      // 處理密碼 API 回傳
-      if (passwordResult.status === "fulfilled") {
-        if (passwordResult.value.data.success === false) {
+      // 處理密碼 API 回傳（僅有密碼欄位有填時才會有第二個結果）
+      if (hasPasswordFields && results[1]) {
+        const passwordResult = results[1];
+        if (passwordResult.status === "fulfilled") {
+          if (passwordResult.value.data.success === false) {
+            hasError = true;
+            message.error(passwordResult.value.data.message || "密碼更新失敗");
+          }
+        } else {
           hasError = true;
-          message.error(passwordResult.value.data.message || "密碼更新失敗");
+          message.error("密碼更新 API 請求失敗");
         }
-      } else {
-        hasError = true;
-        message.error("密碼更新 API 請求失敗");
       }
 
       if (!hasError) {
-        message.success("個人資料與密碼已更新成功！");
+        message.success("個人資料" + (hasPasswordFields ? "與密碼" : "") + "已更新成功！");
       }
     } catch (error) {
       message.error('更新失敗，請檢查資料或稍後再試');
@@ -231,25 +246,74 @@ const UserProfile = () => {
                   </Form.Item>
 
                   <Form.Item
-                    name="password"
+                    name="old_password"
                     label="舊密碼"
                     extra="如不修改密碼，請留空此欄位"
+                    rules={[
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          const password = getFieldValue('password');
+                          const password_confirm = getFieldValue('password_confirm');
+                          if (
+                            (!value && (password || password_confirm)) ||
+                            (value && (!password || !password_confirm))
+                          ) {
+                            return Promise.reject(new Error('請同時填寫舊密碼、新密碼與新密碼確認'));
+                          }
+                          return Promise.resolve();
+                        },
+                      }),
+                    ]}
                   >
                     <Input.Password prefix={<LockOutlined />} placeholder="請輸入舊密碼" />
                   </Form.Item>
 
                   <Form.Item
-                    name="newPassword"
+                    name="password"
                     label="新密碼"
                     extra="如不修改密碼，請留空此欄位"
+                    rules={[
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          const old_password = getFieldValue('old_password');
+                          const password_confirm = getFieldValue('password_confirm');
+                          if (
+                            (!value && (old_password || password_confirm)) ||
+                            (value && (!old_password || !password_confirm))
+                          ) {
+                            return Promise.reject(new Error('請同時填寫舊密碼、新密碼與新密碼確認'));
+                          }
+                          return Promise.resolve();
+                        },
+                      }),
+                    ]}
                   >
                     <Input.Password prefix={<LockOutlined />} placeholder="請輸入新密碼" />
                   </Form.Item>
 
                   <Form.Item
-                    name="newPassword_confirm"
+                    name="password_confirm"
                     label="新密碼確認"
                     extra="如不修改密碼，請留空此欄位"
+                    dependencies={['password']}
+                    rules={[
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          const old_password = getFieldValue('old_password');
+                          const password = getFieldValue('password');
+                          if (
+                            (!value && (old_password || password)) ||
+                            (value && (!old_password || !password))
+                          ) {
+                            return Promise.reject(new Error('請同時填寫舊密碼、新密碼與新密碼確認'));
+                          }
+                          if (value && value !== password) {
+                            return Promise.reject(new Error('密碼不相符!'));
+                          }
+                          return Promise.resolve();
+                        },
+                      }),
+                    ]}
                   >
                     <Input.Password prefix={<LockOutlined />} placeholder="新密碼確認" />
                   </Form.Item>

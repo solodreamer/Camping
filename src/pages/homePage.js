@@ -22,7 +22,7 @@ function HomePage() {
     [
       { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
       { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
-      { key: "2", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
+      { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
     ] :
     [
       { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
