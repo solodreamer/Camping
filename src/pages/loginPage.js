@@ -76,6 +76,7 @@ const LoginPage = () => {
       }
     } catch (err) {
       console.log('[登入Error]', err);
+      message.error('登入失敗，請確認手機號碼和密碼是否正確');
     }
   };
 
