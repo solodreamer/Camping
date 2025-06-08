@@ -12,7 +12,6 @@ import CheckoutPayment from "./pages/checkout-payment";
 import PaymentResult from "./pages/paymentResult";
 import LoginPage from "./pages/loginPage";
 import UserProfile from "./pages/user/userProfile";
-import RegistrationForm from "./pages/register2";
 
 
 
@@ -33,7 +32,6 @@ function App() {
         <Route path="/payment-result" element={<PaymentResult />}></Route>
         <Route path="/loginPage" element={<LoginPage />}></Route>
         <Route path="/userProfile" element={<UserProfile />}></Route>
-        <Route path="/register2" element={<RegistrationForm />}></Route>
       </Routes>
     </div>
   );
