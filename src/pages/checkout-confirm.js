@@ -18,9 +18,10 @@ import {
   HomeOutlined,
 } from "@ant-design/icons";
 
-import "./checkout-confirm.css";
+import { api, setAuthToken } from "../api";
 import StepsConfirm from "../module/steps-confirm"
 import CheckDetail from "../module/checkDetail";
+import "./checkout-confirm.css";
 
 //Antd元件屬性設定
 const { Header, Content, Footer, Sider } = Layout;
@@ -60,10 +61,39 @@ function CheckoutConfirm() {
   // 頁面導航hook
   const navigate = useNavigate();
 
-  const onCheckPayment = (values) => {
+  const onCheckPayment = async (values) => {
     console.log("[onCheckPayment]", values);
+    const confirmParams = 
+    {
+      preview_uuid: bookingResult.preview_uuid,
+    }
+    await booking_camp_confirm(confirmParams);
     // navigate('/checkout-payment', { state: {bookingResult:bookingResult, detail1: values}});
   }
+
+    /**
+   * 呼叫confirm-api
+   * @param {*} param 
+   */
+  const booking_camp_confirm = async (params, token) => {
+
+    try {
+      if (token) {
+        setAuthToken(token);
+      } else {
+        return false;
+      };
+      const res = await api.post('/v1/booking_camp/confirm', params);
+      if (res.data.success === true) {
+        console.log("訂位成功", res.data.success);
+      } else {
+        console.log("訂位失敗", res.data.success);
+      }
+    } catch (error) {
+      console.error('Error booking camp failed:', error);
+      return false;
+    }
+  };
 
   useEffect(() => {
     console.log("[bookingResult]", bookingResult);

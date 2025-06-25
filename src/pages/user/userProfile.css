@@ -45,35 +45,6 @@
     padding: 24px;
   }
   
-  /* 大頭照區域 */
-  .avatar-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-  }
-  
-  .user-avatar {
-    margin-bottom: 16px;
-    border: 3px solid #e6f7ff;
-  }
-  
-  .avatar-uploader {
-    margin-top: 16px;
-    text-align: center;
-  }
-  
-  .avatar-uploader button {
-    background-color: #0f3675;
-    border-color: #0f3675;
-  }
-  
-  .avatar-uploader button:hover, 
-  .avatar-uploader button:focus {
-    background-color: #1e50b3;
-    border-color: #1e50b3;
-  }
-  
   /* 表單樣式 */
   .profile-form .ant-form-item-label > label {
     font-weight: 500;

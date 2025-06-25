@@ -21,7 +21,8 @@ import {
   MailOutlined,
   PhoneOutlined,
   CalendarOutlined,
-  LoginOutlined
+  LoginOutlined,
+  FileSearchOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import dayjs from "dayjs";
@@ -36,7 +37,6 @@ const { Option } = Select;
 const UserProfile = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
   const { isLoggedIn, handleLogout } = useContext(AuthContext);
 
   // 選單項目
@@ -44,7 +44,8 @@ const UserProfile = () => {
     [
       { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
       { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
-      { key: "3", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
+      { key: "3", label: "訂單查詢", icon: <FileSearchOutlined />, path: "/userOrderQuery" },
+      { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
     ];
 
 
@@ -161,7 +162,7 @@ const UserProfile = () => {
       </Sider>
       <Layout>
         <Header className="profile-headerStyle">
-          <Title level={3} style={{ color: '#fff', margin: 16 }}>會員個人資料</Title>
+          <Title level={3} style={{ color: '#fff', margin: 16 }}>個人資料</Title>
         </Header>
         <Content className="profile-contentStyle">
           <Card className="profile-card">

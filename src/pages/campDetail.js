@@ -276,11 +276,12 @@ function CampDetail() {
   };
 
   /**
-   * 呼叫存檔訂位api
+   * 呼叫preview-api
    * @param {*} param 
    */
-  const booking_camp_confirm = async (params, token) => {
-    let tempRes = {
+  const booking_camp_preview = async (params, token) => {
+    let tempRes = 
+    {
       campName: product.name,
       areaName: product.area.filter(
         area => params.booking_item
@@ -296,12 +297,12 @@ function CampDetail() {
       } else {
         return false;
       };
-      const res = await api.post('/v1/booking_camp/confirm', params);
+      const res = await api.post('/v1/booking_camp/preview', params);
       if (res.data.success === true) {
         tempRes = {
           ...tempRes,
           amountDetail: res.data.data.amountDetail,
-          order_id: res.data.data.order_id,
+          preview_uuid: res.data.data.preview_uuid,
           sumAmount: res.data.data.sumAmount,
           success: res.data.success
         };
@@ -358,7 +359,7 @@ function CampDetail() {
     };
     console.log("[儲存訂位參數]", params);
     const tokenResult = await refreshToken(token);
-    let bookingResult = await booking_camp_confirm(params, token);
+    let bookingResult = await booking_camp_preview(params, token);
     if (tokenResult) {
       let userInfo = await getUserInfo(token);
       bookingResult = { ...bookingResult, userInfo: userInfo };
