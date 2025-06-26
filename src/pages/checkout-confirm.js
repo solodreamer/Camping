@@ -62,12 +62,19 @@ function CheckoutConfirm() {
   const navigate = useNavigate();
 
   const onCheckPayment = async (values) => {
-    console.log("[onCheckPayment]", values);
+    const token = localStorage.getItem('accessToken');
+    console.log("[accessToken]", token);
+    if (!token) {
+      console.log("未取得token，請重新登入");
+      return;
+    }
     const confirmParams = 
     {
       preview_uuid: bookingResult.preview_uuid,
     }
-    await booking_camp_confirm(confirmParams);
+    console.log("[onCheckPayment]", confirmParams);
+    const result = await booking_camp_confirm(confirmParams, token);
+    console.log("[預定API回傳]", result);
     // navigate('/checkout-payment', { state: {bookingResult:bookingResult, detail1: values}});
   }
 
@@ -86,8 +93,10 @@ function CheckoutConfirm() {
       const res = await api.post('/v1/booking_camp/confirm', params);
       if (res.data.success === true) {
         console.log("訂位成功", res.data.success);
+        return res.data.success;
       } else {
         console.log("訂位失敗", res.data.success);
+        return false;
       }
     } catch (error) {
       console.error('Error booking camp failed:', error);
