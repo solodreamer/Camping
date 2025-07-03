@@ -45,22 +45,13 @@ const mockOrderData = {
     return: "2025年6月9日(一)",
     duration: "4日",
   },
-  passengers: [
-    {
+  passengers: {
       id: 1,
       name: "AAH PRICE (男)",
       birthDate: "0912345678",
       passport: "tommy.liu@asiayo.com",
       status: "尚未完成",
     },
-    {
-      id: 2,
-      name: "FHF WW (男)",
-      birthDate: "0912345678",
-      passport: "tommy.liu@asiayo.com",
-      status: "尚未完成",
-    },
-  ],
   representative: {
     status: "尚未完成",
   },
@@ -110,11 +101,11 @@ const UserOrderQuery = () => {
             </Title>
 
             {/* 警告訊息 */}
-            <Space direction="vertical" style={{ width: "100%", marginBottom: "24px" }}>
+            {/* <Space direction="vertical" style={{ width: "100%", marginBottom: "24px" }}>
               {mockOrderData.warnings.map((warning, index) => (
                 <Alert key={index} message={warning} type="warning" showIcon style={{ borderRadius: "6px" }} />
               ))}
-            </Space>
+            </Space> */}
 
             <Row gutter={24}>
               {/* 左側：套裝行程資訊 */}
@@ -186,33 +177,30 @@ const UserOrderQuery = () => {
               {/* 右側：旅客資訊 */}
               <Col xs={24} lg={12}>
                 <Card title="訂位者資訊" style={{ marginBottom: "24px" }}>
-                  {mockOrderData.passengers.map((passenger, index) => (
-                    <div key={passenger.id} style={{ marginBottom: "16px" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <Text strong>旅客 {passenger.id}</Text>
-                        {/* <Tag color={passenger.status === "尚未完成" ? "orange" : "green"}>{passenger.status}</Tag> */}
-                      </div>
-                      <div style={{ paddingLeft: "16px" }}>
-                        <div style={{ marginBottom: "4px" }}>
-                          <Text>{passenger.name}</Text>
-                        </div>
-                        <div style={{ marginBottom: "4px" }}>
-                          <Text type="secondary">聯絡電話：{passenger.birthDate}</Text>
-                        </div>
-                        <div>
-                          <Text type="secondary">聯絡信箱：{passenger.passport}</Text>
-                        </div>
-                      </div>
-                      {index < mockOrderData.passengers.length - 1 && <Divider style={{ margin: "16px 0" }} />}
+                  <div style={{ marginBottom: "16px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <Text strong>旅客 {mockOrderData.passengers.id}</Text>
+                      {/* <Tag color={mockOrderData.passengers.status === "尚未完成" ? "orange" : "green"}>{mockOrderData.passengers.status}</Tag> */}
                     </div>
-                  ))}
+                    <div style={{ paddingLeft: "16px" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <Text>{mockOrderData.passengers.name}</Text>
+                      </div>
+                      <div style={{ marginBottom: "4px" }}>
+                        <Text type="secondary">聯絡電話：{mockOrderData.passengers.birthDate}</Text>
+                      </div>
+                      <div>
+                        <Text type="secondary">聯絡信箱：{mockOrderData.passengers.passport}</Text>
+                      </div>
+                    </div>
+                  </div>
                 </Card>
 
               </Col>
