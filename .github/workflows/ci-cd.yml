@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: '14'
       
+      - name: Install TypeScript (for peer dependencies)
+        run: npm install typescript --save-dev
+
       - name: Install dependencies
         run: npm install
         
