@@ -9,7 +9,8 @@ import {
   PhoneOutlined,
   MobileOutlined,
   MailOutlined,
-  FileSearchOutlined
+  FileSearchOutlined,
+  CheckCircleOutlined 
 } from "@ant-design/icons";
 import { api, } from "../../api";
 import dayjs from "dayjs";
@@ -140,22 +141,32 @@ const UserOrderDetail = () => {
                       title={
                         <Space>
                           <Text strong style={{ fontSize: "18px", color: COLORS.primary }}>
-                            {orderDetail.order.status_name}
+                            {orderDetail.order.camp_name}
                           </Text>
                         </Space>
                       }
                       style={{ marginBottom: "24px" }}
                     >
+                      <Space direction="vertical" style={{ width: "100%", marginBottom: "16px" }}>
+                        <Space>
+                          <HomeOutlined style={{ color: COLORS.primary }} />
+                          <Text>地址：{orderDetail.order.camp_address}</Text>
+                        </Space>
+                        <Space>
+                          <PhoneOutlined style={{ color: COLORS.primary }} />
+                          <Text>電話：{orderDetail.order.camp_phone}</Text>
+                        </Space>
+                      </Space>
                       <Space direction="vertical" style={{ width: "100%" }}>
                         {orderDetail.reservations.map((reservation, index) => (
                           <div key={index}>
                             <div style={{ display: "flex", alignItems: "center", marginBottom: 15 }}>
-                              <MobileOutlined style={{ color: COLORS.primary }} />
-                              <Text>電話：reservation.mobile</Text>
+                              <CheckCircleOutlined style={{ color: COLORS.primary }} />
+                              <Text>營位：{reservation.area_name}</Text>
                             </div>
                             <div style={{ display: "flex", alignItems: "center" }}>
-                              <MailOutlined style={{ color: COLORS.primary }} />
-                              <Text>營位：{reservation.area_name}</Text>
+                              <CheckCircleOutlined style={{ color: COLORS.primary }} />
+                              <Text>營地：{reservation.campsite_name}</Text>
                             </div>
                           </div>
                         ))}
