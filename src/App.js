@@ -12,7 +12,8 @@ import CheckoutPayment from "./pages/checkout-payment";
 import PaymentResult from "./pages/paymentResult";
 import LoginPage from "./pages/loginPage";
 import UserProfile from "./pages/user/userProfile";
-import UserOrderQuery from "./pages/user/userOrderQuery";
+import UserOrderDetail from "./pages/user/userOrderDetail";
+import UserOrderList from "./pages/user/userOrderList";
 
 
 
@@ -33,7 +34,8 @@ function App() {
         <Route path="/payment-result" element={<PaymentResult />}></Route>
         <Route path="/loginPage" element={<LoginPage />}></Route>
         <Route path="/userProfile" element={<UserProfile />}></Route>
-        <Route path="/userOrderQuery" element={<UserOrderQuery />}></Route>
+        <Route path="/userOrderDetail" element={<UserOrderDetail />}></Route>
+        <Route path="/userOrderList" element={<UserOrderList />}></Route>
       </Routes>
     </div>
   );

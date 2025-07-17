@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from "react-router-dom";
 import {
   Input,
   Button,
@@ -159,12 +158,12 @@ const Register = () => {
   useEffect(() => {
     form.validateFields(["email"]);
     console.log("[failEmail-status]", failEmail);
-  }, [failEmail]);
+  }, [failEmail, form]);
 
   useEffect(() => {
     form.validateFields(["phone"]);
     console.log("[failPhone-status]", failPhone);
-  }, [failPhone]);
+  }, [failPhone, form]);
 
   return (
     <div className="registration-container">

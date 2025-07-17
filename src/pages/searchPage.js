@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 
 import dayjs from "dayjs";
 
-import { Layout, Menu, List, Card, Typography } from "antd";
+import { Layout, Menu, List, Card } from "antd";
 import {
   LoginOutlined,
   UserAddOutlined,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Layout,
   Menu,
@@ -55,11 +55,10 @@ function CheckoutConfirm() {
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
   ];
   // 定義狀態來儲存結帳步驟
-  const [currentStep, setCurrentStep] = useState(0);
+  const currentStep = 0; // 若 StepsConfirm 需要 currentStep 傳入
   const location = useLocation();
   const { bookingResult } = location.state || {};
   // 頁面導航hook
-  const navigate = useNavigate();
 
   const onCheckPayment = async (values) => {
     const token = localStorage.getItem('accessToken');

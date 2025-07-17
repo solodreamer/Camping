@@ -9,7 +9,6 @@ import {
   Typography,
   Button,
   Select,
-  Card,
   Form,
   Input,
 } from "antd";
@@ -54,8 +53,7 @@ function CheckoutPayment() {
     { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
     { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
   ];
-  // 定義狀態來儲存結帳步驟
-  const [currentStep, setCurrentStep] = useState(0);
+ 
   const location = useLocation();
   const { bookingResult } = location.state || {};
   const { detail1 } = location.state || {};

@@ -44,7 +44,7 @@ const UserProfile = () => {
     [
       { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
       { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
-      { key: "3", label: "訂單查詢", icon: <FileSearchOutlined />, path: "/userOrderQuery" },
+      { key: "3", label: "訂單查詢", icon: <FileSearchOutlined />, path: "/userOrderDetail" },
       { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
     ];
 
@@ -139,7 +139,7 @@ const UserProfile = () => {
       }
     }
     catch (error) {
-
+      console.error('取得會員資料失敗:', error);
     }
   }
 

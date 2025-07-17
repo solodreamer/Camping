@@ -2,7 +2,6 @@ import React from 'react';
 import { Result, Button, Typography, Space, Card, Divider } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled, HomeFilled, RollbackOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
-import { param } from 'framer-motion/client';
 
 const { Title, Text, Paragraph } = Typography;
 

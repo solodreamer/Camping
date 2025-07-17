@@ -401,6 +401,7 @@ function CampDetail() {
     console.log("[id]", id);
   }, [id]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   /**
    * 初始化取得當月可預約營區
    */
@@ -411,6 +412,7 @@ function CampDetail() {
     getAvailableCampsite({ camp_id: id, year: year.toString(), month: month.toString() });
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   /**
    *  初始化查詢單一營位可訂位數量
    */
