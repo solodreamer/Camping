@@ -147,14 +147,18 @@ const UserOrderDetail = () => {
                       style={{ marginBottom: "24px" }}
                     >
                       <Space direction="vertical" style={{ width: "100%" }}>
-                        <Space>
-                          <MobileOutlined style={{ color: COLORS.primary }} />
-                          <Text>電話：orderDetail.reservations.mobile</Text>
-                        </Space>
-                        <Space>
-                          <MailOutlined style={{ color: COLORS.primary }} />
-                          <Text>營位：{orderDetail.reservations.area_name}</Text>
-                        </Space>
+                        {orderDetail.reservations.map((reservation, index) => (
+                          <div key={index} style={{ marginBottom: "16px" }}>
+                            <Space>
+                              <MobileOutlined style={{ color: COLORS.primary }} />
+                              <Text>電話：reservation.mobile</Text>
+                            </Space>
+                            <Space>
+                              <MailOutlined style={{ color: COLORS.primary }} />
+                              <Text>營位：{reservation.area_name}</Text>
+                            </Space>
+                          </div>
+                        ))}
                       </Space>
                     </Card>
 
