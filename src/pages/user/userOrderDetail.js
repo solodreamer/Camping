@@ -140,7 +140,7 @@ const UserOrderDetail = () => {
                       title={
                         <Space>
                           <Text strong style={{ fontSize: "18px", color: COLORS.primary }}>
-                            {orderDetail.reservations.campsite_name}
+                            {orderDetail.order.status_name}
                           </Text>
                         </Space>
                       }
@@ -148,15 +148,15 @@ const UserOrderDetail = () => {
                     >
                       <Space direction="vertical" style={{ width: "100%" }}>
                         {orderDetail.reservations.map((reservation, index) => (
-                          <div key={index} style={{ marginBottom: "16px" }}>
-                            <Space>
+                          <div key={index}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: 15 }}>
                               <MobileOutlined style={{ color: COLORS.primary }} />
                               <Text>電話：reservation.mobile</Text>
-                            </Space>
-                            <Space>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center" }}>
                               <MailOutlined style={{ color: COLORS.primary }} />
                               <Text>營位：{reservation.area_name}</Text>
-                            </Space>
+                            </div>
                           </div>
                         ))}
                       </Space>
