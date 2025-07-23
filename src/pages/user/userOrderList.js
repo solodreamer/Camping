@@ -354,27 +354,18 @@ export default function Home() {
               }}
             >
               <Space wrap style={{ width: "100%" }}>
-                <Search
-                  placeholder="搜尋訂單號碼或營區名稱"
-                  style={{ width: 250 }}
-                  onSearch={(value) => console.log("搜尋:", value)}
-                />
                 <Select
                   placeholder="付款狀態"
                   style={{ width: 120 }}
                   allowClear
                   onChange={(value) => console.log("篩選狀態:", value)}
                 >
+                  <Option value="">全部</Option>
                   <Option value="已付款">已付款</Option>
                   <Option value="待付款">待付款</Option>
                   <Option value="已取消">已取消</Option>
                 </Select>
-                <RangePicker
-                  placeholder={["開始日期", "結束日期"]}
-                  onChange={(dates) => console.log("日期範圍:", dates)}
-                />
                 <Button type="primary">搜尋</Button>
-                <Button>重置</Button>
               </Space>
             </div>
 

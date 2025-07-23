@@ -1,19 +1,16 @@
 "use client"
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from 'react-router-dom';
-import { Layout, Menu, Card, Typography, Alert, Button, Tag, Space, Avatar, Row, Col, Divider } from "antd"
+import { Layout, Menu, Card, Typography, Space, Row, Col } from "antd"
 import {
   HomeOutlined,
   UserOutlined,
   LoginOutlined,
   PhoneOutlined,
-  MobileOutlined,
-  MailOutlined,
   FileSearchOutlined,
   CheckCircleOutlined 
 } from "@ant-design/icons";
 import { api, } from "../../api";
-import dayjs from "dayjs";
 import AuthContext from "../../AuthContext";
 import './userOrderDetail.css';
 
@@ -30,38 +27,7 @@ const COLORS = {
   borderColor: "#d9d9d9",
 }
 
-// 模擬訂單資料
-const mockOrderData = {
-  orderNumber: "T202506020001",
-  status: "已確認",
-  warnings: ["請於 2025/06/05 前繳清旅客資料", "有條件退款"],
-  packageInfo: {
-    name: "Mountain Adventure Camp",
-    image: "/placeholder.svg?height=80&width=80",
-    phone: "+886 422614486",
-    mobile: "+886 912345678",
-    email: "tommy.liu@asiayo.com",
-    areaId: "A區",
-  },
-  travelDates: {
-    departure: "2025年6月6日(五)",
-    return: "2025年6月9日(一)",
-    duration: "4日",
-  },
-  passengers: {
-    id: 1,
-    name: "AAH PRICE (男)",
-    birthDate: "0912345678",
-    passport: "tommy.liu@asiayo.com",
-    status: "尚未完成",
-  },
-  representative: {
-    status: "尚未完成",
-  },
-}
-
 const UserOrderDetail = () => {
-  const [selectedKey, setSelectedKey] = useState("order-inquiry")
   const { isLoggedIn, handleLogout } = useContext(AuthContext);
   const [orderDetail, setOrderDetail] = useState(null);
 
