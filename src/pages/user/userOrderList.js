@@ -1,30 +1,43 @@
 "use client"
-import { useState } from "react"
-import { Layout, Typography, Table, Button, Input, Select, DatePicker, Space, Modal, Row, Col, Divider } from "antd"
+import React, { useState, useContext, useEffect } from "react";
+import { Link } from 'react-router-dom';
+import {
+  Layout, Typography, Table, Button, Input, Select, DatePicker, Space, Modal, Row, Col, Divider, Menu
+} from "antd";
+import {
+  HomeOutlined,
+  UserOutlined,
+  LoginOutlined,
+  FileSearchOutlined,
+} from "@ant-design/icons";
+
+import AuthContext from "../../AuthContext";
 import { api, } from "../../api";
 import "./userOrderList.css";
 
-const { Header, Sider, Content } = Layout
-const { Title, Text } = Typography
-const { Search } = Input
-const { Option } = Select
-const { RangePicker } = DatePicker
+const { Header, Sider, Content, Footer } = Layout;
+const { Title, Text } = Typography;
+const { Search } = Input;
+const { Option } = Select;
+const { RangePicker } = DatePicker;
 
-export default function Home() {
+const UserOrderList = () => {
   const [selectedMenu, setSelectedMenu] = useState("order-list")
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
+  const { isLoggedIn, handleLogout } = useContext(AuthContext);
+  const [orderList, setOrderList] = useState([]);
+  const [status, setStatus] = useState(""); // 新增付款狀態
 
   // 模擬露營訂單資料
   const mockOrderData = [
     {
-      key: "1",
-      orderNumber: "T202506020001",
-      campsiteName: "Mountain Adventure Camp",
+      order_no: "T202506020001",
+      camp_name: "Mountain Adventure Camp",
       amount: 3200,
-      startDate: "2025-06-06",
-      endDate: "2025-06-09",
-      paymentStatus: "已付款",
+      start_date: "2025-06-06",
+      end_date: "2025-06-09",
+      status_name: "已付款",
       campsiteDetails: {
         address: "台北市陽明山國家公園內",
         phone: "+886 2 2861-1234",
@@ -45,123 +58,7 @@ export default function Home() {
         tax: 280,
         discount: 80,
       },
-    },
-    {
-      key: "2",
-      orderNumber: "T202505150002",
-      campsiteName: "Forest Lake Camping",
-      amount: 2800,
-      startDate: "2025-05-15",
-      endDate: "2025-05-17",
-      paymentStatus: "待付款",
-      campsiteDetails: {
-        address: "新竹縣尖石鄉森林湖畔",
-        phone: "+886 3 5841-567",
-        email: "contact@forestlake.com",
-        facilities: ["湖景營位", "釣魚區", "兒童遊戲區", "餐廳"],
-      },
-      bookingDetails: {
-        guestName: "李美華",
-        guestPhone: "+886 987654321",
-        guestEmail: "lee@example.com",
-        adults: 4,
-        children: 2,
-        tents: 2,
-      },
-      priceBredown: {
-        basePrice: 2400,
-        serviceFee: 150,
-        tax: 250,
-        discount: 0,
-      },
-    },
-    {
-      key: "3",
-      orderNumber: "T202504280003",
-      campsiteName: "Sunset Valley Camp",
-      amount: 4500,
-      startDate: "2025-04-28",
-      endDate: "2025-05-01",
-      paymentStatus: "已付款",
-      campsiteDetails: {
-        address: "南投縣清境農場附近",
-        phone: "+886 49 2803-789",
-        email: "hello@sunsetvalley.com",
-        facilities: ["高山景觀", "溫泉", "觀星台", "咖啡廳", "導覽服務"],
-      },
-      bookingDetails: {
-        guestName: "陳大偉",
-        guestPhone: "+886 956789123",
-        guestEmail: "chen@example.com",
-        adults: 6,
-        children: 0,
-        tents: 3,
-      },
-      priceBredown: {
-        basePrice: 4000,
-        serviceFee: 300,
-        tax: 400,
-        discount: 200,
-      },
-    },
-    {
-      key: "4",
-      orderNumber: "T202504100004",
-      campsiteName: "Riverside Camping Ground",
-      amount: 1800,
-      startDate: "2025-04-10",
-      endDate: "2025-04-12",
-      paymentStatus: "已取消",
-      campsiteDetails: {
-        address: "宜蘭縣冬山河親水公園旁",
-        phone: "+886 3 9591-456",
-        email: "info@riverside.com",
-        facilities: ["河景營位", "獨木舟", "腳踏車租借", "烤肉區"],
-      },
-      bookingDetails: {
-        guestName: "張志明",
-        guestPhone: "+886 923456789",
-        guestEmail: "zhang@example.com",
-        adults: 2,
-        children: 0,
-        tents: 1,
-      },
-      priceBredown: {
-        basePrice: 1600,
-        serviceFee: 100,
-        tax: 160,
-        discount: 60,
-      },
-    },
-    {
-      key: "5",
-      orderNumber: "T202503220005",
-      campsiteName: "Highland Adventure Park",
-      amount: 5200,
-      startDate: "2025-03-22",
-      endDate: "2025-03-25",
-      paymentStatus: "已付款",
-      campsiteDetails: {
-        address: "台中市和平區梨山風景區",
-        phone: "+886 4 2598-234",
-        email: "service@highland.com",
-        facilities: ["高山氣候", "果園體驗", "登山步道", "溫室餐廳", "接駁服務"],
-      },
-      bookingDetails: {
-        guestName: "林雅婷",
-        guestPhone: "+886 934567890",
-        guestEmail: "lin@example.com",
-        adults: 8,
-        children: 4,
-        tents: 4,
-      },
-      priceBredown: {
-        basePrice: 4600,
-        serviceFee: 350,
-        tax: 460,
-        discount: 210,
-      },
-    },
+    }
   ]
 
   //選單項目
@@ -184,6 +81,31 @@ export default function Home() {
     setIsModalVisible(false)
     setSelectedOrder(null)
   }
+
+  // 搜尋按鈕事件
+  const onSearchClick = () => {
+    getOrderList(status);
+  };
+
+  // 取得訂單清單
+  const getOrderList = async (status) => {
+    try {
+      const res = await api.get(`/v1/orders?status=${status}`);
+      if (res.data.success === true) {
+        setOrderList(res.data.data);
+      }
+    }
+    catch (error) {
+      console.error('取得訂單清單失敗:', error);
+    }
+  }
+
+  /**
+   * 初始化取得訂單詳情
+   */
+  useEffect(() => {
+    getOrderList();
+  }, []);
 
   // 表格欄位定義
   const columns = [
@@ -210,15 +132,15 @@ export default function Home() {
     },
     {
       title: "訂單號碼",
-      dataIndex: "orderNumber",
-      key: "orderNumber",
+      dataIndex: "order_no",
+      key: "order_no",
       width: 150,
       render: (text) => <Text style={{ color: "#1890ff", cursor: "pointer" }}>{text}</Text>,
     },
     {
       title: "營區名稱",
-      dataIndex: "campsiteName",
-      key: "campsiteName",
+      dataIndex: "camp_name",
+      key: "camp_name",
       width: 200,
     },
     {
@@ -235,22 +157,22 @@ export default function Home() {
     },
     {
       title: "開始日期",
-      dataIndex: "startDate",
-      key: "startDate",
+      dataIndex: "start_date",
+      key: "start_date",
       width: 120,
-      sorter: (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      sorter: (a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime(),
     },
     {
       title: "結束日期",
-      dataIndex: "endDate",
-      key: "endDate",
+      dataIndex: "end_date",
+      key: "end_date",
       width: 120,
-      sorter: (a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
+      sorter: (a, b) => new Date(a.end_date).getTime() - new Date(b.end_date).getTime(),
     },
     {
       title: "付款狀態",
-      dataIndex: "paymentStatus",
-      key: "paymentStatus",
+      dataIndex: "status_name",
+      key: "status_name",
       width: 120,
       render: (status) => {
         let color = "#52c41a" // 綠色 - 已付款
@@ -285,7 +207,7 @@ export default function Home() {
         { text: "待付款", value: "待付款" },
         { text: "已取消", value: "已取消" },
       ],
-      onFilter: (value, record) => record.paymentStatus === value,
+      onFilter: (value, record) => record.status_name === value,
     },
   ]
 
@@ -293,30 +215,20 @@ export default function Home() {
     <Layout>
       {/* 側邊欄 */}
       <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
-        <Menu mode="inline" theme="dark">
-          {menuItems.map((item) => (
-            <Menu.Item key={item.key} icon={item.icon}>
-              <Link to={item.path}>{item.label}</Link>
-            </Menu.Item>
-          ))}
-        </Menu>
+        <div className="logo">Go露營</div>
+        <Menu mode="inline" theme="dark" defaultSelectedKeys={['3']}
+          items={menuItems.map((item) => ({
+            key: item.key,
+            icon: item.icon,
+            label: item.path ? <Link to={item.path}>{item.label}</Link> : item.label,
+            onClick: item.onClick,
+          }))} />
       </Sider>
 
       <Layout>
-        <Header className="campdetail-headerStyle">Go露營</Header>
-        {/* <Header
-          style={{
-            background: "#1c4ba0",
-            padding: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Title level={3} style={{ color: "white", margin: 0, fontWeight: "bold" }}>
-            訂單查詢
-          </Title>
-        </Header> */}
+        <Header className="order-headerStyle">
+          <Title level={3} style={{ color: '#fff', margin: 16 }}>訂單查詢</Title>
+        </Header>
 
         {/* 主要內容區域 */}
         <Content className="campdetail-contentStyle">
@@ -336,14 +248,15 @@ export default function Home() {
                   placeholder="付款狀態"
                   style={{ width: 120 }}
                   allowClear
-                  onChange={(value) => console.log("篩選狀態:", value)}
+                  value={status}
+                  onChange={(value) => setStatus(value)}
                 >
                   <Option value="">全部</Option>
-                  <Option value="已付款">已付款</Option>
-                  <Option value="待付款">待付款</Option>
-                  <Option value="已取消">已取消</Option>
+                  <Option value="1">已付款</Option>
+                  <Option value="2">待付款</Option>
+                  <Option value="3">已取消</Option>
                 </Select>
-                <Button type="primary">搜尋</Button>
+                <Button type="primary" onClick={onSearchClick}>搜尋</Button>
               </Space>
             </div>
 
@@ -357,9 +270,9 @@ export default function Home() {
             >
               <Table
                 columns={columns}
-                dataSource={mockOrderData}
+                dataSource={orderList}
                 pagination={{
-                  total: mockOrderData.length,
+                  total: orderList.length,
                   pageSize: 10,
                   showSizeChanger: true,
                   showQuickJumper: true,
@@ -378,7 +291,7 @@ export default function Home() {
 
       {/* 訂單明細彈窗 */}
       <Modal
-        title={<div style={{ fontSize: "18px", fontWeight: "bold" }}>訂單明細 - {selectedOrder?.orderNumber}</div>}
+        title={<div style={{ fontSize: "18px", fontWeight: "bold" }}>訂單明細 - {selectedOrder?.order_no}</div>}
         open={isModalVisible}
         onCancel={handleModalClose}
         footer={[
@@ -399,33 +312,33 @@ export default function Home() {
               <Row gutter={[16, 8]}>
                 <Col span={12}>
                   <Text strong>訂單號碼：</Text>
-                  <Text>{selectedOrder.orderNumber}</Text>
+                  <Text>{selectedOrder.order_no}</Text>
                 </Col>
                 <Col span={12}>
                   <Text strong>營區名稱：</Text>
-                  <Text>{selectedOrder.campsiteName}</Text>
+                  <Text>{selectedOrder.camp_name}</Text>
                 </Col>
                 <Col span={12}>
                   <Text strong>入住日期：</Text>
-                  <Text>{selectedOrder.startDate}</Text>
+                  <Text>{selectedOrder.start_date}</Text>
                 </Col>
                 <Col span={12}>
                   <Text strong>退房日期：</Text>
-                  <Text>{selectedOrder.endDate}</Text>
+                  <Text>{selectedOrder.end_date}</Text>
                 </Col>
                 <Col span={12}>
                   <Text strong>付款狀態：</Text>
                   <Text
                     style={{
                       color:
-                        selectedOrder.paymentStatus === "已付款"
+                        selectedOrder.status_name === "已付款"
                           ? "#52c41a"
-                          : selectedOrder.paymentStatus === "待付款"
+                          : selectedOrder.status_name === "待付款"
                             ? "#faad14"
                             : "#f5222d",
                     }}
                   >
-                    {selectedOrder.paymentStatus}
+                    {selectedOrder.status_name}
                   </Text>
                 </Col>
                 <Col span={12}>
@@ -569,3 +482,5 @@ export default function Home() {
     </Layout>
   )
 }
+
+export default UserOrderList;

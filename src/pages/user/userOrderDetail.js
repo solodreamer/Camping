@@ -74,7 +74,7 @@ const UserOrderDetail = () => {
       </Sider>
 
       <Layout>
-        <Header className="profile-headerStyle">
+        <Header className="order-headerStyle">
           <Title level={3} style={{ color: '#fff', margin: 16 }}>訂單查詢</Title>
         </Header>
 
