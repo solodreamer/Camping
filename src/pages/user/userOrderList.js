@@ -88,7 +88,7 @@ const UserOrderList = () => {
   };
 
   // 取得訂單清單
-  const getOrderList = async (status) => {
+  const getOrderList = async (status='') => {
     try {
       const res = await api.get(`/v1/orders?status=${status}`);
       if (res.data.success === true) {
