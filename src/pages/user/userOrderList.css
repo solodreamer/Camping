@@ -1,0 +1,29 @@
+.campdetail-headerStyle {
+ text-align: center;
+ color: #fff;
+ height: 64;
+ padding-Inline: 48;
+ line-Height: 64px;
+ background-color: #0f3675 !important;
+ top: 0;
+}
+
+.campdetail-contentStyle {
+ text-align: center;
+ min-height: 120;
+ line-height: 120px;
+ width: 90%;
+ margin: 0 auto;
+}
+
+.siderStyle {
+ text-align: center;
+ line-height: 120px;
+ color: #fff;
+}
+
+.campdetail-footerStyle {
+ text-align: center;
+ color: #fff;
+ background-color: #0f3675 !important;
+}

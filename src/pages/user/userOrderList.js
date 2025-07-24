@@ -1,6 +1,8 @@
 "use client"
 import { useState } from "react"
 import { Layout, Typography, Table, Button, Input, Select, DatePicker, Space, Modal, Row, Col, Divider } from "antd"
+import { api, } from "../../api";
+import "./userOrderList.css";
 
 const { Header, Sider, Content } = Layout
 const { Title, Text } = Typography
@@ -162,12 +164,14 @@ export default function Home() {
     },
   ]
 
-  const menuItems = [
-    { key: "home", label: "首頁", icon: "🏠" },
-    { key: "profile", label: "個人資料", icon: "👤" },
-    { key: "order-list", label: "訂單查詢", icon: "📋" },
-    { key: "logout", label: "登出", icon: "🚪" },
-  ]
+  //選單項目
+  const menuItems =
+    [
+      { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
+      { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
+      { key: "3", label: "訂單查詢", icon: <FileSearchOutlined />, path: "/userOrderDetail" },
+      { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
+    ];
 
   // 顯示訂單明細
   const showOrderDetail = (order) => {
@@ -286,47 +290,21 @@ export default function Home() {
   ]
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout>
       {/* 側邊欄 */}
-      <Sider width={200} style={{ background: "#1c4ba0" }}>
-        <div
-          style={{
-            padding: "16px",
-            textAlign: "center",
-            borderBottom: "1px solid #2c5aa0",
-            marginBottom: "8px",
-          }}
-        >
-          <Text strong style={{ color: "white", fontSize: "16px" }}>
-            Go會員
-          </Text>
-        </div>
-
-        <div style={{ padding: "8px 0" }}>
+      <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
+        <Menu mode="inline" theme="dark">
           {menuItems.map((item) => (
-            <div
-              key={item.key}
-              style={{
-                padding: "12px 16px",
-                display: "flex",
-                alignItems: "center",
-                cursor: "pointer",
-                backgroundColor: selectedMenu === item.key ? "#2c5aa0" : "transparent",
-                color: "white",
-                borderLeft: selectedMenu === item.key ? "3px solid #40a9ff" : "3px solid transparent",
-              }}
-              onClick={() => setSelectedMenu(item.key)}
-            >
-              <span style={{ marginRight: "8px" }}>{item.icon}</span>
-              <span>{item.label}</span>
-            </div>
+            <Menu.Item key={item.key} icon={item.icon}>
+              <Link to={item.path}>{item.label}</Link>
+            </Menu.Item>
           ))}
-        </div>
+        </Menu>
       </Sider>
 
       <Layout>
-        {/* 頂部標題欄 */}
-        <Header
+        <Header className="campdetail-headerStyle">Go露營</Header>
+        {/* <Header
           style={{
             background: "#1c4ba0",
             padding: 0,
@@ -338,10 +316,10 @@ export default function Home() {
           <Title level={3} style={{ color: "white", margin: 0, fontWeight: "bold" }}>
             訂單查詢
           </Title>
-        </Header>
+        </Header> */}
 
         {/* 主要內容區域 */}
-        <Content style={{ padding: "24px", background: "#f0f2f5" }}>
+        <Content className="campdetail-contentStyle">
           <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
             {/* 搜尋和篩選區域 */}
             <div
@@ -393,6 +371,9 @@ export default function Home() {
             </div>
           </div>
         </Content>
+        <Footer className="campdetail-footerStyle">
+          Copyright ©{new Date().getFullYear()} Created by Go露營
+        </Footer>
       </Layout>
 
       {/* 訂單明細彈窗 */}
