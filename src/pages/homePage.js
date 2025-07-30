@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout, Menu, theme, Col, Row, Divider, Typography, Card} from "antd";
-import { LoginOutlined, UserAddOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
+import { LoginOutlined, UserAddOutlined, HomeOutlined, UserOutlined, FileSearchOutlined} from "@ant-design/icons";
 import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker } from '@ant-design/pro-components';
 import dayjs from "dayjs";
 
@@ -22,6 +22,7 @@ function HomePage() {
     [
       { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
       { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
+      { key: "3", label: "訂單查詢", icon: <FileSearchOutlined />, path: "/userOrderList" },
       { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
     ] :
     [
