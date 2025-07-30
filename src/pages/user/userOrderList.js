@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
 import {
   Layout, Typography, Table, Button, Input, Select, DatePicker, Space, Modal, Row, Col, Divider, Menu
@@ -14,72 +14,36 @@ import {
 import AuthContext from "../../AuthContext";
 import { api, } from "../../api";
 import "./userOrderList.css";
+import UserOrderDetail from "./userOrderDetail";
 
 const { Header, Sider, Content, Footer } = Layout;
 const { Title, Text } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+//UserOrderList 內容...
 
 const UserOrderList = () => {
+  const orderDetailRef = useRef();
   const [selectedMenu, setSelectedMenu] = useState("order-list")
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [selectedOrder, setSelectedOrder] = useState(null)
   const { isLoggedIn, handleLogout } = useContext(AuthContext);
   const [orderList, setOrderList] = useState([]);
   const [status, setStatus] = useState(""); // 新增付款狀態
-
-  // 模擬露營訂單資料
-  const mockOrderData = [
-    {
-      order_no: "T202506020001",
-      camp_name: "Mountain Adventure Camp",
-      amount: 3200,
-      start_date: "2025-06-06",
-      end_date: "2025-06-09",
-      status_name: "已付款",
-      campsiteDetails: {
-        address: "台北市陽明山國家公園內",
-        phone: "+886 2 2861-1234",
-        email: "info@mountaincamp.com",
-        facilities: ["衛浴設備", "烤肉區", "停車場", "便利商店", "WiFi"],
-      },
-      bookingDetails: {
-        guestName: "王小明",
-        guestPhone: "+886 912345678",
-        guestEmail: "wang@example.com",
-        adults: 2,
-        children: 1,
-        tents: 1,
-      },
-      priceBredown: {
-        basePrice: 2800,
-        serviceFee: 200,
-        tax: 280,
-        discount: 80,
-      },
-    }
-  ]
 
   //選單項目
   const menuItems =
     [
       { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
       { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
-      { key: "3", label: "訂單查詢", icon: <FileSearchOutlined />, path: "/userOrderDetail" },
+      { key: "3", label: "訂單查詢", icon: <FileSearchOutlined />, path: "/userOrderList" },
       { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
     ];
 
-  // 顯示訂單明細
-  const showOrderDetail = (order) => {
-    setSelectedOrder(order)
-    setIsModalVisible(true)
-  }
-
-  // 關閉彈窗
-  const handleModalClose = () => {
-    setIsModalVisible(false)
-    setSelectedOrder(null)
+  // 顯示訂單明細（改為呼叫 UserOrderDetail 的 showOrderDetail 方法）
+  const showOrderDetail = (record) => {
+    if (orderDetailRef.current) {
+      orderDetailRef.current.showOrderDetail(record.order_no);
+    }
   }
 
   // 搜尋按鈕事件
@@ -289,196 +253,8 @@ const UserOrderList = () => {
         </Footer>
       </Layout>
 
-      {/* 訂單明細彈窗 */}
-      <Modal
-        title={<div style={{ fontSize: "18px", fontWeight: "bold" }}>訂單明細 - {selectedOrder?.order_no}</div>}
-        open={isModalVisible}
-        onCancel={handleModalClose}
-        footer={[
-          <Button key="close" onClick={handleModalClose}>
-            關閉
-          </Button>,
-        ]}
-        width={800}
-        style={{ top: 20 }}
-      >
-        {selectedOrder && (
-          <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
-            {/* 基本訂單資訊 */}
-            <div style={{ marginBottom: "24px" }}>
-              <Title level={4} style={{ color: "#1890ff", marginBottom: "16px" }}>
-                📋 基本資訊
-              </Title>
-              <Row gutter={[16, 8]}>
-                <Col span={12}>
-                  <Text strong>訂單號碼：</Text>
-                  <Text>{selectedOrder.order_no}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>營區名稱：</Text>
-                  <Text>{selectedOrder.camp_name}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>入住日期：</Text>
-                  <Text>{selectedOrder.start_date}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>退房日期：</Text>
-                  <Text>{selectedOrder.end_date}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>付款狀態：</Text>
-                  <Text
-                    style={{
-                      color:
-                        selectedOrder.status_name === "已付款"
-                          ? "#52c41a"
-                          : selectedOrder.status_name === "待付款"
-                            ? "#faad14"
-                            : "#f5222d",
-                    }}
-                  >
-                    {selectedOrder.status_name}
-                  </Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>總金額：</Text>
-                  <Text style={{ color: "#f5222d", fontWeight: "bold" }}>
-                    NT$ {selectedOrder.amount.toLocaleString()}
-                  </Text>
-                </Col>
-              </Row>
-            </div>
-
-            <Divider />
-
-            {/* 營區資訊 */}
-            <div style={{ marginBottom: "24px" }}>
-              <Title level={4} style={{ color: "#1890ff", marginBottom: "16px" }}>
-                🏕️ 營區資訊
-              </Title>
-              <Row gutter={[16, 8]}>
-                <Col span={24}>
-                  <Text strong>地址：</Text>
-                  <Text>{selectedOrder.campsiteDetails.address}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>電話：</Text>
-                  <Text>{selectedOrder.campsiteDetails.phone}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>Email：</Text>
-                  <Text>{selectedOrder.campsiteDetails.email}</Text>
-                </Col>
-                <Col span={24}>
-                  <Text strong>設施：</Text>
-                  <div style={{ marginTop: "8px" }}>
-                    {selectedOrder.campsiteDetails.facilities.map((facility, index) => (
-                      <span
-                        key={index}
-                        style={{
-                          display: "inline-block",
-                          background: "#f0f2f5",
-                          padding: "4px 8px",
-                          borderRadius: "4px",
-                          marginRight: "8px",
-                          marginBottom: "4px",
-                          fontSize: "12px",
-                        }}
-                      >
-                        {facility}
-                      </span>
-                    ))}
-                  </div>
-                </Col>
-              </Row>
-            </div>
-
-            <Divider />
-
-            {/* 預訂者資訊 */}
-            <div style={{ marginBottom: "24px" }}>
-              <Title level={4} style={{ color: "#1890ff", marginBottom: "16px" }}>
-                👤 預訂者資訊
-              </Title>
-              <Row gutter={[16, 8]}>
-                <Col span={12}>
-                  <Text strong>姓名：</Text>
-                  <Text>{selectedOrder.bookingDetails.guestName}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>電話：</Text>
-                  <Text>{selectedOrder.bookingDetails.guestPhone}</Text>
-                </Col>
-                <Col span={24}>
-                  <Text strong>Email：</Text>
-                  <Text>{selectedOrder.bookingDetails.guestEmail}</Text>
-                </Col>
-                <Col span={8}>
-                  <Text strong>成人：</Text>
-                  <Text>{selectedOrder.bookingDetails.adults} 人</Text>
-                </Col>
-                <Col span={8}>
-                  <Text strong>兒童：</Text>
-                  <Text>{selectedOrder.bookingDetails.children} 人</Text>
-                </Col>
-                <Col span={8}>
-                  <Text strong>帳篷：</Text>
-                  <Text>{selectedOrder.bookingDetails.tents} 頂</Text>
-                </Col>
-              </Row>
-            </div>
-
-            <Divider />
-
-            {/* 費用明細 */}
-            <div>
-              <Title level={4} style={{ color: "#1890ff", marginBottom: "16px" }}>
-                💰 費用明細
-              </Title>
-              <Row gutter={[16, 8]}>
-                <Col span={12}>
-                  <Text>基本費用：</Text>
-                </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
-                  <Text>NT$ {selectedOrder.priceBredown.basePrice.toLocaleString()}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text>服務費：</Text>
-                </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
-                  <Text>NT$ {selectedOrder.priceBredown.serviceFee.toLocaleString()}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text>稅金：</Text>
-                </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
-                  <Text>NT$ {selectedOrder.priceBredown.tax.toLocaleString()}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text style={{ color: "#52c41a" }}>折扣：</Text>
-                </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
-                  <Text style={{ color: "#52c41a" }}>-NT$ {selectedOrder.priceBredown.discount.toLocaleString()}</Text>
-                </Col>
-                <Col span={24}>
-                  <Divider style={{ margin: "12px 0" }} />
-                </Col>
-                <Col span={12}>
-                  <Text strong style={{ fontSize: "16px" }}>
-                    總計：
-                  </Text>
-                </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
-                  <Text strong style={{ fontSize: "16px", color: "#f5222d" }}>
-                    NT$ {selectedOrder.amount.toLocaleString()}
-                  </Text>
-                </Col>
-              </Row>
-            </div>
-          </div>
-        )}
-      </Modal>
+      {/* 訂單明細彈窗元件 */}
+      <UserOrderDetail ref={orderDetailRef} />
     </Layout>
   )
 }
