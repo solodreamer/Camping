@@ -1,14 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
-
 import dayjs from "dayjs";
-
-import { Layout, Menu, List, Card } from "antd";
-import {
-  LoginOutlined,
-  UserAddOutlined,
-  HomeOutlined,
-} from "@ant-design/icons";
+import { Layout, List, Card } from "antd";
 import {
   QueryFilter,
   ProFormSelect,
@@ -17,18 +10,13 @@ import {
 } from "@ant-design/pro-components";
 
 import { api, } from "../api";
+import MainLayout from "../module/mainLayout";
+import AuthContext from "../AuthContext";
 import "./searchPage.css";
 
 //Antd元件屬性設定
-const { Header, Content, Footer, Sider } = Layout;
+const { Content } = Layout;
 const { Meta } = Card;
-
-//選單項目
-const menuItems = [
-  { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/loginPage" },
-  { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
-  { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
-];
 
 //地區選單
 const locations = [
@@ -40,6 +28,7 @@ const locations = [
 ];
 
 function SearchPage() {
+  const { isLoggedIn, handleLogout } = useContext(AuthContext);
   const location = useLocation();
   /** 營地清單設定 */
   const [camps, setCamps] = useState([]);
@@ -144,19 +133,8 @@ function SearchPage() {
   };
 
   return (
-    <Layout>
-      <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
-        <Menu mode="inline" theme="dark">
-          {menuItems.map((item) => (
-            <Menu.Item key={item.key} icon={item.icon}>
-              <Link to={item.path}>{item.label}</Link>
-            </Menu.Item>
-          ))}
-        </Menu>
-      </Sider>
-      <Layout>
-        <Header className="seach-headerStyle">Go露營</Header>
-        <Content className="seach-contentStyle">
+    <MainLayout isLoggedIn={isLoggedIn} handleLogout={handleLogout} headerTitle="Go露營" >
+              <Content className="seach-contentStyle">
           <div>
             <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
               <ProFormSelect
@@ -198,11 +176,7 @@ function SearchPage() {
             )}
           />
         </Content>
-        <Footer className="seach-footerStyle">
-          Copyright ©{new Date().getFullYear()} Created by Go露營
-        </Footer>
-      </Layout>
-    </Layout>
+    </MainLayout>
   );
 }
 

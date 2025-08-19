@@ -1,9 +1,7 @@
-import React, { useEffect, useState, } from "react";
-import { Link, NavLink, useParams, useNavigate } from "react-router-dom";
-
+import React, { useEffect, useState, useContext } from "react";
+import { NavLink, useParams, useNavigate } from "react-router-dom";
 import {
   Layout,
-  Menu,
   Col,
   Row,
   Divider,
@@ -18,34 +16,26 @@ import {
   List,
   InputNumber,
 } from "antd";
-
 import {
-  LoginOutlined,
-  UserAddOutlined,
-  HomeOutlined,
   CaretLeftOutlined,
   CaretRightOutlined,
   EditFilled,
 } from "@ant-design/icons";
-
 import { QueryFilter, ProFormDateRangePicker } from '@ant-design/pro-components';
-
-import "./campDetail.css";
-import { api, setAuthToken } from "../api";
 import dayjs from "dayjs";
 
+import { api, setAuthToken } from "../api";
+import MainLayout from "../module/mainLayout";
+import AuthContext from "../AuthContext";
+import "./campDetail.css";
+
 //Antd元件屬性設定
-const { Header, Content, Footer, Sider } = Layout;
+const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 
 function CampDetail() {
-  //選單項目
-  const menuItems = [
-    { key: "1", label: "會員登入", icon: <LoginOutlined />, path: "/loginPage" },
-    { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
-    { key: "3", label: "首頁", icon: <HomeOutlined />, path: "/" },
-  ];
 
+  const { isLoggedIn, handleLogout } = useContext(AuthContext);
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [campPhotosIndex, setCampPhotosIndex] = useState(0);
@@ -61,12 +51,11 @@ function CampDetail() {
   const [isLoading, setLoading] = useState(false);
   //定義狀態儲存總訂位數量
   const [count, setCount] = useState(0);
-  //定義狀態儲存是否禁用預定button
-  const [isbookDisable, setBookDisable] = useState(true);
   //定義狀態是否禁用編輯數量
   const [isCountDisable, setCountDisable] = useState(false);
   // 頁面導航hook
   const navigate = useNavigate();
+
 
   /**
    * 取得營地資訊
@@ -280,7 +269,7 @@ function CampDetail() {
    * @param {*} param 
    */
   const booking_camp_preview = async (params, token) => {
-    let tempRes = 
+    let tempRes =
     {
       campName: product.name,
       areaName: product.area.filter(
@@ -348,7 +337,7 @@ function CampDetail() {
   const onSaveBooking = async () => {
     const token = localStorage.getItem('accessToken');
     console.log("[accessToken]", token);
-    if (!token) {
+    if (!isLoggedIn) {
       console.log("未取得token，請重新登入");
       return;
     }
@@ -401,7 +390,6 @@ function CampDetail() {
     console.log("[id]", id);
   }, [id]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   /**
    * 初始化取得當月可預約營區
    */
@@ -412,7 +400,6 @@ function CampDetail() {
     getAvailableCampsite({ camp_id: id, year: year.toString(), month: month.toString() });
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   /**
    *  初始化查詢單一營位可訂位數量
    */
@@ -446,293 +433,268 @@ function CampDetail() {
     }
   }, [selectedCampsites]);
 
-  useEffect(() => {
-    console.log("[總訂位數量]", count);
-    if (count > 0) {
-      setBookDisable(false);
-    } else {
-      setBookDisable(true);
-    }
-  }, [count]);
-
-
   return (
-    <Layout>
-      <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
-        <Menu mode="inline" theme="dark">
-          {menuItems.map((item) => (
-            <Menu.Item key={item.key} icon={item.icon}>
-              <Link to={item.path}>{item.label}</Link>
-            </Menu.Item>
-          ))}
-        </Menu>
-      </Sider>
-      <Layout>
-        <Header className="campdetail-headerStyle">Go露營</Header>
-        <Content className="campdetail-contentStyle">
-          {product ? (
-            <Typography>
-              <Divider />
-              <Row >
-                <Col xs={24} sm={24} md={24} lg={12} xl={12} className="campPhoto-carousel">
-                  {product?.campPhotos?.length > 0 ? (
+    <MainLayout isLoggedIn={isLoggedIn} handleLogout={handleLogout} headerTitle="Go露營" >
+      <Content className="campdetail-contentStyle">
+        {product ? (
+          <Typography>
+            <Divider />
+            <Row >
+              <Col xs={24} sm={24} md={24} lg={12} xl={12} className="campPhoto-carousel">
+                {product?.campPhotos?.length > 0 ? (
 
-                    <Image.PreviewGroup
-                      items={product.campPhotos.map((item) => {
-                        return { src: item.img };
-                      })}
-                    >
-                      <Button
-                        className="campPhoto-prevButton"
-                        onClick={handleCampPhotoPrevClick}
-                        shape="circle"
-                        icon={<CaretLeftOutlined />}
-                      />
-                      <Image
-                        className="card-img-top rounded-0 object-cover"
-                        src={product.campPhotos[campPhotosIndex].img}
-                        fallback={Empty.PRESENTED_IMAGE_DEFAULT}
-                      />
-                      <Button
-                        className="campPhoto-nextButton"
-                        onClick={handleCampPhotoNextClick}
-                        shape="circle"
-                        icon={<CaretRightOutlined />}
-                      />
-                    </Image.PreviewGroup>
-                  ) : (
-                    <p>
-                      無營地照片 <Empty />
-                    </p>
-                  )}
-                  <br />
-                </Col>
-                <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                  <Title>{product.name}</Title>
-                  <Paragraph>{product.desc}</Paragraph>
-                  <Paragraph>
-                    <Text strong underline>
-                      <NavLink to="https://www.google.com/maps">
-                        {product.fullAddress}
-                      </NavLink>
-                    </Text>
-                  </Paragraph>
-                </Col>
-              </Row>
-              <Divider />
-              <Divider orientation="left">
-                <Title level={2}>選擇入住時間</Title>
-              </Divider>
-              <Row gutter={[16, { xs: 16, sm: 16 }]}>
-                <div className="queryFilterStyle">
-                  <QueryFilter defaultCollapsed submitter onFinish={onFilterSearch}>
-                    <ProFormDateRangePicker name="dateRange" label="日期" value={dateRange}
-                      fieldProps={{ disabledDate, inputReadOnly: true }} onChange={onDateChange} />
-                  </QueryFilter>
-                </div>
-                <Col xs={24} sm={24} md={24} lg={12} xl={12} className="calendr-outer-frame">
-                  <Calendar
-                    headerRender={({ value, type, onChange, onTypeChange }) => {
-                      const start = 0;
-                      const end = 12;
-                      const monthOptions = [];
-                      let current = value.clone();
-                      const localeData = value.localeData();
-                      const months = [];
-                      for (let i = 0; i < 12; i++) {
-                        current = current.month(i);
-                        months.push(localeData.monthsShort(current));
-                      }
-                      for (let i = start; i < end; i++) {
-                        monthOptions.push(
-                          <Select.Option key={i} value={i} className="month-item">
-                            {months[i]}
-                          </Select.Option>,
-                        );
-                      }
-                      const year = value.year();
-                      const month = value.month();
-                      const options = [];
-                      for (let i = year - 10; i < year + 10; i += 1) {
-                        options.push(
-                          <Select.Option key={i} value={i} className="year-item">
-                            {i}
-                          </Select.Option>,
-                        );
-                      }
-                      return (
-                        <div
-                          style={{
-                            padding: 8,
-                          }}
-                        >
-                          <Typography.Title level={2}>{`${selectedDate?.format('YYYY')}年${selectedDate?.format('MM')}月`}</Typography.Title>
-                          <Row gutter={8} className="calendr-select-row">
-                            <Col>
-                              <Select
-                                size="small"
-                                popupMatchSelectWidth={false}
-                                className="my-year-select"
-                                value={year}
-                                onChange={(newYear) => {
-                                  const now = value.clone().year(newYear);
-                                  onChange(now);
-                                }}
-                              >
-                                {options}
-                              </Select>
-                            </Col>
-                            <Col>
-                              <Select
-                                size="small"
-                                popupMatchSelectWidth={false}
-                                value={month}
-                                onChange={(newMonth) => {
-                                  const now = value.clone().month(newMonth);
-                                  onChange(now);
-                                }}
-                              >
-                                {monthOptions}
-                              </Select>
-                            </Col>
-                          </Row>
-                        </div>
-                      );
-                    }}
-                    cellRender={cellRender}
-                    onPanelChange={onPanelChange}
-                    onSelect={onSelect}
-                    // disabledDate={disabledDate}
-                    fullscreen={true}
-                  />
-                </Col>
-                <Col xs={24} sm={24} md={24} lg={12} xl={12} className="list-style">
-                  <Spin tip="Loading..." spinning={isLoading}>
-                    {campsiteCountInfo && campsiteCountInfo.length > 0 ? (
-                      <List
-                        itemLayout="vertical"
-                        dataSource={campsiteCountInfo}
-                        bordered={true}
-                        renderItem={item => (
-                          <List.Item
-                            actions={[
-                              <InputNumber
-                                size="large"
-                                min={0}
-                                disabled={isCountDisable}
-                                defaultValue={0}
-                                max={item.availableCount}
-                                value={selectedCampsites.find(c => item.areaId === c.areaId)?.count || 0}
-                                onChange={value => handleQuantityChange(item.areaId, value)} />,
-                              <EditFilled />,
-                            ]}
-                          >
-                            <List.Item.Meta title={item.areaName} ></List.Item.Meta>
-                            {isCountDisable ? (
-                              <div className="non-login">請先登入會員!</div>
-                            ) : (
-                              item.availableCount > 0 ? (
-                                <div className="available-count">剩餘 {item.availableCount} 間 !</div>
-                              ) : (
-                                <div className="non-available-count">目前無空房</div>
-                              )
-                            )}
-                          </List.Item>
-                        )} />
-                    ) : (
-                      <Empty description="目前無可用營位" />
-                    )}
-                  </Spin>
-                  <div className="room-book-status">
-                    <Row className="row-total-price">
-                      <Col xs={12} sm={10} md={10} lg={10} xl={10}>總帳數:{count}</Col>
-                      <Col xs={0} sm={2} md={2} lg={2} xl={2}>
-                        <Divider type="vertical" orientation="left" style={{ borderColor: '#3b444f' }} />
-                      </Col>
-                      <Col xs={12} sm={10} md={10} lg={10} xl={10} className="book-button">
-                        <Button type="primary" disabled={isbookDisable} onClick={onSaveBooking}>現在預定</Button>
-                      </Col>
-                    </Row>
-                  </div>
-                </Col>
-              </Row>
-              <Divider orientation="left">
-                <Title level={2}>營區選擇</Title>
-              </Divider>
-              <Row
-                className="campsite-row"
-                gutter={{
-                  xs: 8,
-                  sm: 16,
-                  md: 24,
-                  lg: 32,
-                }}
-              >
-                {product?.area?.length > 0 ? (
-                  product.area.map((area) => {
-                    const currentIndex = campsitePhotosIndex[area.name] || 0;
-                    return (
-                      <Col
-                        key={area.name}
-                        xs={24}
-                        sm={12}
-                        md={12}
-                        lg={8}
-                        xl={6}
-                      >
-                        <div key={area.name}>
-                          <div className="campsite-carousel">
-                            <Button
-                              className="campsite-prevButton"
-                              onClick={() => handleCampsitePhotoPrevClick(area.name)}
-                              shape="circle"
-                              icon={<CaretLeftOutlined />}
-                            />
-                            <img
-                              src={
-                                area.areaImage[currentIndex].url
-                              }
-                              alt="營區圖片"
-                              className="card-img-top rounded-0 object-cover"
-                              height={300}
-                            />
-                            <Button
-                              className="campsite-nextButton"
-                              onClick={() => handleCampsitePhotoNextClick(area.name)}
-                              shape="circle"
-                              icon={<CaretRightOutlined />}
-                            />
-                          </div>
-                          <h2 className="mb-0 mt-2">{area.name}</h2>
-                          <p className="price-font">
-                            平日價格: ${area.price}
-                          </p>
-                          <p className="price-font">
-                            假日價格: ${area.priceHoliday}
-                          </p>
-                          <Tag color="magenta">
-                            surfaceType: {area.surfaceType}
-                          </Tag>
-                        </div>
-                      </Col>
-                    );
-                  })
+                  <Image.PreviewGroup
+                    items={product.campPhotos.map((item) => {
+                      return { src: item.img };
+                    })}
+                  >
+                    <Button
+                      className="campPhoto-prevButton"
+                      onClick={handleCampPhotoPrevClick}
+                      shape="circle"
+                      icon={<CaretLeftOutlined />}
+                    />
+                    <Image
+                      className="card-img-top rounded-0 object-cover"
+                      src={product.campPhotos[campPhotosIndex].img}
+                      fallback={Empty.PRESENTED_IMAGE_DEFAULT}
+                    />
+                    <Button
+                      className="campPhoto-nextButton"
+                      onClick={handleCampPhotoNextClick}
+                      shape="circle"
+                      icon={<CaretRightOutlined />}
+                    />
+                  </Image.PreviewGroup>
                 ) : (
                   <p>
-                    無營地資料 <Empty />
+                    無營地照片 <Empty />
                   </p>
                 )}
-              </Row>
-            </Typography>
-          ) : (
-            <Spin tip="Loading" size="large" />
-          )}
-        </Content>
-        <Footer className="campdetail-footerStyle">
-          Copyright ©{new Date().getFullYear()} Created by Go露營
-        </Footer>
-      </Layout>
-    </Layout>
+                <br />
+              </Col>
+              <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+                <Title>{product.name}</Title>
+                <Paragraph>{product.desc}</Paragraph>
+                <Paragraph>
+                  <Text strong underline>
+                    <NavLink to="https://www.google.com/maps">
+                      {product.fullAddress}
+                    </NavLink>
+                  </Text>
+                </Paragraph>
+              </Col>
+            </Row>
+            <Divider />
+            <Divider orientation="left">
+              <Title level={2}>選擇入住時間</Title>
+            </Divider>
+            <Row gutter={[16, { xs: 16, sm: 16 }]}>
+              <div className="queryFilterStyle">
+                <QueryFilter defaultCollapsed submitter onFinish={onFilterSearch}>
+                  <ProFormDateRangePicker name="dateRange" label="日期" value={dateRange}
+                    fieldProps={{ disabledDate, inputReadOnly: true }} onChange={onDateChange} />
+                </QueryFilter>
+              </div>
+              <Col xs={24} sm={24} md={24} lg={12} xl={12} className="calendr-outer-frame">
+                <Calendar
+                  headerRender={({ value, type, onChange, onTypeChange }) => {
+                    const start = 0;
+                    const end = 12;
+                    const monthOptions = [];
+                    let current = value.clone();
+                    const localeData = value.localeData();
+                    const months = [];
+                    for (let i = 0; i < 12; i++) {
+                      current = current.month(i);
+                      months.push(localeData.monthsShort(current));
+                    }
+                    for (let i = start; i < end; i++) {
+                      monthOptions.push(
+                        <Select.Option key={i} value={i} className="month-item">
+                          {months[i]}
+                        </Select.Option>,
+                      );
+                    }
+                    const year = value.year();
+                    const month = value.month();
+                    const options = [];
+                    for (let i = year - 10; i < year + 10; i += 1) {
+                      options.push(
+                        <Select.Option key={i} value={i} className="year-item">
+                          {i}
+                        </Select.Option>,
+                      );
+                    }
+                    return (
+                      <div
+                        style={{
+                          padding: 8,
+                        }}
+                      >
+                        <Typography.Title level={2}>{`${selectedDate?.format('YYYY')}年${selectedDate?.format('MM')}月`}</Typography.Title>
+                        <Row gutter={8} className="calendr-select-row">
+                          <Col>
+                            <Select
+                              size="small"
+                              popupMatchSelectWidth={false}
+                              className="my-year-select"
+                              value={year}
+                              onChange={(newYear) => {
+                                const now = value.clone().year(newYear);
+                                onChange(now);
+                              }}
+                            >
+                              {options}
+                            </Select>
+                          </Col>
+                          <Col>
+                            <Select
+                              size="small"
+                              popupMatchSelectWidth={false}
+                              value={month}
+                              onChange={(newMonth) => {
+                                const now = value.clone().month(newMonth);
+                                onChange(now);
+                              }}
+                            >
+                              {monthOptions}
+                            </Select>
+                          </Col>
+                        </Row>
+                      </div>
+                    );
+                  }}
+                  cellRender={cellRender}
+                  onPanelChange={onPanelChange}
+                  onSelect={onSelect}
+                  // disabledDate={disabledDate}
+                  fullscreen={true}
+                />
+              </Col>
+              <Col xs={24} sm={24} md={24} lg={12} xl={12} className="list-style">
+                <Spin tip="Loading..." spinning={isLoading}>
+                  {campsiteCountInfo && campsiteCountInfo.length > 0 ? (
+                    <List
+                      itemLayout="vertical"
+                      dataSource={campsiteCountInfo}
+                      bordered={true}
+                      renderItem={item => (
+                        <List.Item
+                          actions={[
+                            <InputNumber
+                              size="large"
+                              min={0}
+                              disabled={isCountDisable}
+                              defaultValue={0}
+                              max={item.availableCount}
+                              value={selectedCampsites.find(c => item.areaId === c.areaId)?.count || 0}
+                              onChange={value => handleQuantityChange(item.areaId, value)} />,
+                            <EditFilled />,
+                          ]}
+                        >
+                          <List.Item.Meta title={item.areaName} ></List.Item.Meta>
+                          {isCountDisable ? (
+                            <div className="non-login">請先登入會員!</div>
+                          ) : (
+                            item.availableCount > 0 ? (
+                              <div className="available-count">剩餘 {item.availableCount} 間 !</div>
+                            ) : (
+                              <div className="non-available-count">目前無空房</div>
+                            )
+                          )}
+                        </List.Item>
+                      )} />
+                  ) : (
+                    <Empty description="目前無可用營位" />
+                  )}
+                </Spin>
+                <div className="room-book-status">
+                  <Row className="row-total-price">
+                    <Col xs={12} sm={10} md={10} lg={10} xl={10}>總帳數:{count}</Col>
+                    <Col xs={0} sm={2} md={2} lg={2} xl={2}>
+                      <Divider type="vertical" orientation="left" style={{ borderColor: '#3b444f' }} />
+                    </Col>
+                    <Col xs={12} sm={10} md={10} lg={10} xl={10} className="book-button">
+                      <Button type="primary" disabled={!isLoggedIn} onClick={onSaveBooking}>現在預定</Button>
+                    </Col>
+                  </Row>
+                </div>
+              </Col>
+            </Row>
+            <Divider orientation="left">
+              <Title level={2}>營區選擇</Title>
+            </Divider>
+            <Row
+              className="campsite-row"
+              gutter={{
+                xs: 8,
+                sm: 16,
+                md: 24,
+                lg: 32,
+              }}
+            >
+              {product?.area?.length > 0 ? (
+                product.area.map((area) => {
+                  const currentIndex = campsitePhotosIndex[area.name] || 0;
+                  return (
+                    <Col
+                      key={area.name}
+                      xs={24}
+                      sm={12}
+                      md={12}
+                      lg={8}
+                      xl={6}
+                    >
+                      <div key={area.name}>
+                        <div className="campsite-carousel">
+                          <Button
+                            className="campsite-prevButton"
+                            onClick={() => handleCampsitePhotoPrevClick(area.name)}
+                            shape="circle"
+                            icon={<CaretLeftOutlined />}
+                          />
+                          <img
+                            src={
+                              area.areaImage[currentIndex].url
+                            }
+                            alt="營區圖片"
+                            className="card-img-top rounded-0 object-cover"
+                            height={300}
+                          />
+                          <Button
+                            className="campsite-nextButton"
+                            onClick={() => handleCampsitePhotoNextClick(area.name)}
+                            shape="circle"
+                            icon={<CaretRightOutlined />}
+                          />
+                        </div>
+                        <h2 className="mb-0 mt-2">{area.name}</h2>
+                        <p className="price-font">
+                          平日價格: ${area.price}
+                        </p>
+                        <p className="price-font">
+                          假日價格: ${area.priceHoliday}
+                        </p>
+                        <Tag color="magenta">
+                          surfaceType: {area.surfaceType}
+                        </Tag>
+                      </div>
+                    </Col>
+                  );
+                })
+              ) : (
+                <p>
+                  無營地資料 <Empty />
+                </p>
+              )}
+            </Row>
+          </Typography>
+        ) : (
+          <Spin tip="Loading" size="large" />
+        )}
+      </Content>
+    </MainLayout>
   );
 }
 

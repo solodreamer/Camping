@@ -1,0 +1,40 @@
+.layout-container {
+  min-height: 100vh;
+  background: #f0f2f5;
+}
+
+.siderStyle {
+  text-align: center;
+  color: #fff;
+}
+
+.logo {
+  height: 64px;
+  line-height: 64px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.headerStyle {
+  text-align: center;
+  color: #fff;
+  height: 64;
+  padding: 0 24px;
+  line-Height: 64px;
+  background-color: #0f3675 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}   
+
+.contentStyle {
+  padding: 24px;
+  min-height: calc(100vh - 64px - 70px); /* 扣除頭尾高度 */
+}
+
+.footerStyle {
+  text-align: center;
+  color: #fff;
+  background-color: #0f3675 !important;
+}

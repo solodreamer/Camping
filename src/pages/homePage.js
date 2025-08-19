@@ -1,35 +1,21 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Layout, Menu, theme, Col, Row, Divider, Typography, Card} from "antd";
-import { LoginOutlined, UserAddOutlined, HomeOutlined, UserOutlined, FileSearchOutlined} from "@ant-design/icons";
+import { Layout, Col, Row, Divider, Typography, Card } from "antd";
 import { QueryFilter, ProFormSelect, ProFormText, ProFormDateRangePicker } from '@ant-design/pro-components';
 import dayjs from "dayjs";
 
 import { api } from "../api";
 import AuthContext from "../AuthContext";
+import MainLayout from "../module/mainLayout";
 import "./homePage.css";
 
 //Antd元件屬性設定
-const { Header, Content, Footer, Sider } = Layout;
+const { Content } = Layout;
 const { Title } = Typography;
 
 function HomePage() {
 
   const { isLoggedIn, handleLogout } = useContext(AuthContext);
-
-  //選單項目
-  const menuItems = isLoggedIn ?
-    [
-      { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
-      { key: "2", label: "個人資料", icon: <UserOutlined />, path: "/userProfile" },
-      { key: "3", label: "訂單查詢", icon: <FileSearchOutlined />, path: "/userOrderList" },
-      { key: "4", label: "登出", icon: <LoginOutlined />, onClick: handleLogout },
-    ] :
-    [
-      { key: "1", label: "首頁", icon: <HomeOutlined />, path: "/" },
-      { key: "2", label: "註冊", icon: <UserAddOutlined />, path: "/register" },
-      { key: "3", label: "會員登入", icon: <LoginOutlined />, path: "/loginPage" },
-    ];
 
   //地區選單
   const locations = [
@@ -40,10 +26,6 @@ function HomePage() {
     { value: 5, label: "離島" },
   ];
 
-  /** 未釐清變數 */
-  // const {
-  //   token: { colorBgContainer, borderRadiusLG },
-  // } = theme.useToken(); // 移除未使用的變數
   /** 頁面導航hook */
   const navigate = useNavigate();
   /** 營地清單設定 */
@@ -94,67 +76,49 @@ function HomePage() {
   }, [camps]);
 
   return (
-    <Layout className="layout-container">
-      <Sider className="siderStyle" breakpoint="md" collapsedWidth="0">
-        <div className="logo">Go露營</div>
-        <Menu mode="inline" theme="dark" defaultSelectedKeys={['1']}
-        items={menuItems.map((item) => ({
-          key: item.key,
-          icon: item.icon,
-          label: item.path ? <Link to={item.path}>{item.label}</Link> : item.label,
-          onClick: item.onClick,
-        }))} />
-      </Sider>
-      <Layout>
-        <Header className="home-headerStyle">
-          <Title level={3} style={{ color: '#fff', margin: 16 }}>Go露營</Title>
-        </Header>
-        <Content className="home-contentStyle">
-          <div>
-            <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
-              <ProFormSelect name="region" label="選擇地區" options={locations} placeholder="請選擇地區" />
-              <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]} fieldProps={{ disabledDate, inputReadOnly: true }} />
-              <ProFormText name="name" label="關鍵字" placeholder="搜索..." />
-            </QueryFilter>
-          </div>
-          <Card className="camps-container">
-              <Divider orientation="left" orientationMargin="0">
-                <Title level={2}>熱門營地</Title>
-              </Divider>
-              <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 16]}>
-                {camps?.map((camp) => {
-                  return (
-                    <Col key={camp.id} xs={24} sm={12} md={8} lg={6} xl={6}>
-                      <Card
-                        hoverable
-                        cover={
-                          <img
-                            src={camp.coverImage}
-                            alt="營區圖片"
-                            style={{ height: 200, objectFit: 'cover' }}
-                          />
-                        }
-                        className="camp-card"
-                      >
-                        <Card.Meta title={camp.name} />
-                        <Link
-                          to={`/campDetail/${camp.id}`}
-                          className="detail-button"
-                        >
-                          詳細資訊
-                        </Link>
-                      </Card>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </Card>
-        </Content>
-        <Footer className="home-footerStyle">
-          Copyright ©{new Date().getFullYear()} Created by Go露營
-        </Footer>
-      </Layout>
-    </Layout>
+    <MainLayout isLoggedIn={isLoggedIn} handleLogout={handleLogout} headerTitle="Go露營">
+      <Content className="home-contentStyle">
+        <div>
+          <QueryFilter defaultCollapsed submitter onFinish={onSearch}>
+            <ProFormSelect name="region" label="選擇地區" options={locations} placeholder="請選擇地區" />
+            <ProFormDateRangePicker name="dateRange" label="日期" initialValue={[dayjs(), dayjs()]} fieldProps={{ disabledDate, inputReadOnly: true }} />
+            <ProFormText name="name" label="關鍵字" placeholder="搜索..." />
+          </QueryFilter>
+        </div>
+        <Card className="camps-container">
+          <Divider orientation="left" orientationMargin="0">
+            <Title level={2}>熱門營地</Title>
+          </Divider>
+          <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 16]}>
+            {camps?.map((camp) => {
+              return (
+                <Col key={camp.id} xs={24} sm={12} md={8} lg={6} xl={6}>
+                  <Card
+                    hoverable
+                    cover={
+                      <img
+                        src={camp.coverImage}
+                        alt="營區圖片"
+                        style={{ height: 200, objectFit: 'cover' }}
+                      />
+                    }
+                    className="camp-card"
+                  >
+                    <Card.Meta title={camp.name} />
+                    <Link
+                      to={`/campDetail/${camp.id}`}
+                      className="detail-button"
+                    >
+                      詳細資訊
+                    </Link>
+                  </Card>
+                </Col>
+              );
+            })}
+          </Row>
+        </Card>
+      </Content>
+    </MainLayout>
   );
 }
 
